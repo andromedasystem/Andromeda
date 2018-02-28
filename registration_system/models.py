@@ -60,13 +60,12 @@ class PartTimeStudent(models.Model):
 
 
 class Faculty(models.Model):
-    # TODO: add Department FK Constraint when Department Model is created
     faculty_id = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    # TODO: add FK Deparment ID
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     faculty_type = models.CharField(max_length=1)
 
 
@@ -119,7 +118,7 @@ class StudentHold(models.Model):
 
 class Major(models.Model):
     major_id = models.AutoField(primary_key=True)
-    # TODO: add FK Deparment ID
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=254)
 
 
@@ -132,9 +131,18 @@ class StudentMajor(models.Model):
         unique_together = ('student_id', 'major_id')
 
 
+class MajorRequirement(models.Model):
+    major_req_id = models.AutoField(primary_key=True)
+    major_id = models.ForeignKey(Major, on_delete=models.CASCADE)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('course_id', 'major_id')
+
+
 class Minor(models.Model):
     minor_id = models.AutoField(primary_key=True)
-    # TODO: add FK Deparment ID
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=254)
 
 
@@ -146,9 +154,65 @@ class StudentMinor(models.Model):
     class Meta:
         unique_together = ('student_id', 'minor_id')
 
-# TODO: Student History, Department, Meetings, Enrollment, Section, Course,
-# TODO: Major/Minor Requirement, Prerequisite
+
+class MinorRequirement(models.Model):
+    minor_req_id = models.AutoField(primary_key=True)
+    minor_id = models.ForeignKey(Minor, on_delete=models.CASCADE)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('course_id', 'minor_id')
+
+# TODO: Student History, Meetings, Prerequisite
 # TODO: add __str__ methods
+
+
+class StudentHistory(models.Model):
+    student_hist_id = models.AutoField(primary_key=True)
+    # TODO: Student History
+
+
+class Section(models.Model):
+    section_id = models.AutoField(primary_key=True)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    faculty_id = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    seat_capacity = models.IntegerField()
+    seats_taken = models.IntegerField()
+    semester_id = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('section_id', 'course_id')
+
+
+class Enrollment(models.Model):
+    enrollment_id = models.AutoField(primary_key=True)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    section_id = models.ForeignKey(Section, on_delete=models.CASCADE)
+    grade = models.CharField(max_length=2)
+
+    class Meta:
+        unique_together = ('student_id', 'section_id')
+
+
+class Department(models.Model):
+    department_id = models.AutoField(primary_key=True)
+    chair_id = models.OneToOneField(
+        Faculty,
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    # TODO: PHONE NUMBER
+    # TODO: BUILDING
+
+
+class Course(models.Model):
+    course_id = models.AutoField(primary_key=True)
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
+    credits = models.IntegerField()
 
 
 class Semester(models.Model):
