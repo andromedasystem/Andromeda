@@ -1,11 +1,14 @@
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 import datetime
 YEAR_CHOICES = []
 for r in range(1980, (datetime.datetime.now().year+1)):
     YEAR_CHOICES.append((r, r))
 
+# TODO: add __str__ methods
+# TODO: add helper methods, defaults, constraints and choices to models that require them.
 
-# Create your models here.
+
 class User(models.Model):
     # TODO: Hashing strategy for password
     # TODO: encryption algorithm or nah ? password =
@@ -163,13 +166,39 @@ class MinorRequirement(models.Model):
     class Meta:
         unique_together = ('course_id', 'minor_id')
 
-# TODO: Student History, Meetings, Prerequisite
-# TODO: add __str__ methods
+
+class Meetings(models.Model):
+    meeting_id = models.AutoField(primary_key=True)
+    enrollment_id = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    meeting_date = models.DateTimeField('meeting date')
+    present_or_absent = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('enrollment_id', 'student_id')
+
+
+class Prerequisite(models.Model):
+    prerequisite_id = models.AutoField(primary_key=True)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_required_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('course_id', 'course_required_id')
 
 
 class StudentHistory(models.Model):
     student_hist_id = models.AutoField(primary_key=True)
-    # TODO: Student History
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    enrollment_id = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    adviser = models.OneToOneField(
+        Faculty,
+        on_delete=models.CASCADE,
+    )
+    status = models.CharField(max_length=35)
+
+    class Meta:
+        unique_together = ('student_id', 'enrollment_id')
 
 
 class Section(models.Model):
@@ -203,8 +232,11 @@ class Department(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=100)
-    # TODO: PHONE NUMBER
-    # TODO: BUILDING
+    phone_number = PhoneNumberField()
+    building_id = models.OneToOneField(
+        Building,
+        on_delete=models.CASCADE,
+    )
 
 
 class Course(models.Model):
@@ -218,7 +250,7 @@ class Course(models.Model):
 class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True)
     season = models.CharField(max_length=50)
-    year = models.IntegerField(_('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
 
 
 class Building(models.Model):
