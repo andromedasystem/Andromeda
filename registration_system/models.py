@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from .utils import ChoiceEnum
 from phonenumber_field.modelfields import PhoneNumberField
 import datetime
 YEAR_CHOICES = []
@@ -6,30 +8,23 @@ for r in range(1980, (datetime.datetime.now().year+1)):
     YEAR_CHOICES.append((r, r))
 
 # TODO: add helper methods, defaults, constraints and choices to models that require them.
-# TODO: choose the option to extend the django user model and user their auth or another option.
 
 
-class User(models.Model):
-    # TODO: Hashing strategy for password
-    # TODO: encryption algorithm or nah ? password =
-    user_id = models.AutoField(primary_key=True)
-    email = models.CharField(max_length=254, unique=True)
-    first_name = models.CharField(max_length=35)
-    last_name = models.CharField(max_length=70)
-    user_type = models.CharField(max_length=1)
-    # password =
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return '{} {} {} {} {}'.format(self.user_id, self.email, self.first_name,
-                                          self.last_name, self.user_type)
+    class UserType(ChoiceEnum):
+        ADMIN = 'A'
+        STUDENT = 'S'
+        FACULTY = 'F'
+        RESEARCHER = 'R'
 
-    class Meta:
-        unique_together = ""
+    user_type = models.CharField(max_length=1, choices=UserType.choices())
 
 
 class Admin(models.Model):
     admin_id = models.OneToOneField(
-        User,
+        UserProfile,
         on_delete=models.CASCADE,
         primary_key=True,
     )
@@ -40,12 +35,17 @@ class Admin(models.Model):
 
 class Student(models.Model):
     student_id = models.OneToOneField(
-        User,
+        UserProfile,
         on_delete=models.CASCADE,
         primary_key=True,
     )
     date_of_birth = models.DateField()
-    student_type = models.CharField(max_length=1)
+
+    class StudentType(ChoiceEnum):
+        FULL_TIME = 'F'
+        PART_TIME = 'P'
+
+    student_type = models.CharField(max_length=1, choices=StudentType.choices())
 
     def __str__(self):
         return '{}'.format(self.student_id, self.date_of_birth, self.student_type)
@@ -57,7 +57,7 @@ class FullTimeStudent(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    credits = models.IntegerField()
+    credits = models.IntegerField(default=0)
 
     def __str__(self):
         return '{} {}'.format(self.student_id, self.credits)
@@ -69,7 +69,7 @@ class PartTimeStudent(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    credits = models.IntegerField()
+    credits = models.IntegerField(default=0)
 
     def __str__(self):
         return '{} {}'.format(self.student_id, self.credits)
@@ -77,12 +77,17 @@ class PartTimeStudent(models.Model):
 
 class Faculty(models.Model):
     faculty_id = models.OneToOneField(
-        User,
+        UserProfile,
         on_delete=models.CASCADE,
         primary_key=True,
     )
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
-    faculty_type = models.CharField(max_length=1)
+
+    class FacultyType(ChoiceEnum):
+        FULL_TIME = 'F'
+        PART_TIME = 'P'
+
+    faculty_type = models.CharField(max_length=1, choices=FacultyType.choices())
 
     def __str__(self):
         return '{} {} {}'.format(self.faculty_id, self.department_id, self.faculty_type)
@@ -112,7 +117,7 @@ class PartTimeFaculty(models.Model):
 
 class Researcher(models.Model):
     researcher_id = models.OneToOneField(
-        User,
+        UserProfile,
         on_delete=models.CASCADE,
         primary_key=True,
     )
@@ -253,6 +258,7 @@ class StudentHistory(models.Model):
     adviser = models.OneToOneField(
         Faculty,
         on_delete=models.CASCADE,
+        null=True
     )
     status = models.CharField(max_length=35)
 
@@ -267,12 +273,12 @@ class StudentHistory(models.Model):
 class Section(models.Model):
     section_id = models.AutoField(primary_key=True)
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
-    faculty_id = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    faculty_id = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True)
+    time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, null=True)
     seat_capacity = models.IntegerField()
-    seats_taken = models.IntegerField()
-    semester_id = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
+    seats_taken = models.IntegerField(default=0)
+    semester_id = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
+    room_id = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return '{} {} {} {} {} {} {} {}'.format(self.section_id, self.course_id, self.faculty_id,
@@ -287,7 +293,7 @@ class Enrollment(models.Model):
     enrollment_id = models.AutoField(primary_key=True)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     section_id = models.ForeignKey(Section, on_delete=models.CASCADE)
-    grade = models.CharField(max_length=2)
+    grade = models.CharField(max_length=2, default='NA')
 
     def __str__(self):
         return '{} {} {} P{'.format(self.student_id, self.section_id, self.enrollment_id, self.grade)
@@ -301,6 +307,7 @@ class Department(models.Model):
     chair_id = models.OneToOneField(
         Faculty,
         on_delete=models.CASCADE,
+        null=True
     )
     name = models.CharField(max_length=100)
     phone_number = PhoneNumberField()
