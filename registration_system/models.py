@@ -50,6 +50,12 @@ class Student(models.Model):
     def __str__(self):
         return '{}'.format(self.student_id, self.date_of_birth, self.student_type)
 
+    def was_born_before_year(self, year):
+        return self.date_of_birth < datetime.date(year, 1, 1)
+
+    def was_born_after_year(self, year):
+        return self.date_of_birth >= datetime.date(year, 1, 1)
+
 
 class FullTimeStudent(models.Model):
     student_id = models.OneToOneField(
@@ -61,6 +67,9 @@ class FullTimeStudent(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.student_id, self.credits)
+
+    def is_senior(self):
+        return self.credits > 108
 
 
 class PartTimeStudent(models.Model):
@@ -74,6 +83,28 @@ class PartTimeStudent(models.Model):
     def __str__(self):
         return '{} {}'.format(self.student_id, self.credits)
 
+    def is_senior(self):
+        return self.credits > 108
+
+
+class Department(models.Model):
+    department_id = models.AutoField(primary_key=True)
+    chair_id = models.OneToOneField(
+        'Faculty',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    name = models.CharField(max_length=100)
+    phone_number = PhoneNumberField()
+    building_id = models.OneToOneField(
+        'Building',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return '{} {} {} {} {}'.format(self.department_id, self.chair_id, self.name,
+                                       self.phone_number, self.building_id)
+
 
 class Faculty(models.Model):
     faculty_id = models.OneToOneField(
@@ -81,7 +112,7 @@ class Faculty(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department_id = models.ForeignKey('Department', on_delete=models.CASCADE)
 
     class FacultyType(ChoiceEnum):
         FULL_TIME = 'F'
@@ -189,7 +220,7 @@ class StudentMajor(models.Model):
 class MajorRequirement(models.Model):
     major_req_id = models.AutoField(primary_key=True)
     major_id = models.ForeignKey(Major, on_delete=models.CASCADE)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} {} {}'.format(self.major_req_id, self.course_id, self.major_id)
@@ -222,7 +253,7 @@ class StudentMinor(models.Model):
 class MinorRequirement(models.Model):
     minor_req_id = models.AutoField(primary_key=True)
     minor_id = models.ForeignKey(Minor, on_delete=models.CASCADE)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} {} {}'.format(self.minor_id, self.minor_req_id, self.course_id)
@@ -233,14 +264,14 @@ class MinorRequirement(models.Model):
 
 class Meetings(models.Model):
     meeting_id = models.AutoField(primary_key=True)
-    enrollment_id = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    enrollment_id = models.ForeignKey('Enrollment', on_delete=models.CASCADE)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     meeting_date = models.DateTimeField('meeting date')
     present_or_absent = models.BooleanField(default=False)
 
     def __str__(self):
-        return '{} {} {} {} {}'.format(self.meeting_id, self.enrollment_id, self.student_id
-                                       , self.meeting_date, self.present_or_absent)
+        return '{} {} {} {} {}'.format(self.meeting_id, self.enrollment_id, self.student_id, self.meeting_date,
+                                       self.present_or_absent)
 
     class Meta:
         unique_together = ('enrollment_id', 'student_id')
@@ -248,8 +279,8 @@ class Meetings(models.Model):
 
 class Prerequisite(models.Model):
     prerequisite_id = models.AutoField(primary_key=True)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
-    course_required_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_id = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='prerequisite_course_id')
+    course_required_id = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='course_required_id')
 
     def __str__(self):
         return '{} {} {}'.format(self.prerequisite_id, self.course_required_id, self.course_id)
@@ -261,7 +292,7 @@ class Prerequisite(models.Model):
 class StudentHistory(models.Model):
     student_hist_id = models.AutoField(primary_key=True)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
-    enrollment_id = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    enrollment_id = models.ForeignKey('Enrollment', on_delete=models.CASCADE)
     adviser = models.OneToOneField(
         Faculty,
         on_delete=models.CASCADE,
@@ -276,7 +307,7 @@ class StudentHistory(models.Model):
         GRADUATED = 'GRADUATE'
         GRADUATE_STUDENT = 'GRADUATE_STUDENT'
 
-    status = models.CharField(max_length=35, choices=StatusType)
+    status = models.CharField(max_length=35, choices=StatusType.choices())
 
     def __str__(self):
         return '{} {} {} {} {}'.format(self.student_id, self.student_hist_id, self.enrollment_id,
@@ -288,18 +319,24 @@ class StudentHistory(models.Model):
 
 class Section(models.Model):
     section_id = models.AutoField(primary_key=True)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
     faculty_id = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True)
-    time_slot_id = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, null=True)
+    time_slot_id = models.ForeignKey('TimeSlot', on_delete=models.CASCADE, null=True)
     seat_capacity = models.IntegerField()
     seats_taken = models.IntegerField(default=0)
-    semester_id = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
-    room_id = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
+    semester_id = models.ForeignKey('Semester', on_delete=models.CASCADE, null=True)
+    room_id = models.ForeignKey('Room', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return '{} {} {} {} {} {} {} {}'.format(self.section_id, self.course_id, self.faculty_id,
                                                 self.time_slot_id, self.seat_capacity, self.seats_taken,
                                                 self.semester_id, self.room_id)
+
+    def seats_filled(self):
+        return self.seat_capacity == self.seats_taken
+
+    def is_offered_in_season(self, season):
+        return self.semester_id.season == season
 
     class Meta:
         unique_together = ('section_id', 'course_id')
@@ -324,32 +361,16 @@ class Enrollment(models.Model):
         Withdraw = 'W'
         NA = 'NA'
 
-    grade = models.CharField(max_length=2, default='NA', choices=GradeType)
+    grade = models.CharField(max_length=2, default='NA', choices=GradeType.choices())
 
     def __str__(self):
-        return '{} {} {} P{'.format(self.student_id, self.section_id, self.enrollment_id, self.grade)
+        return '{} {} {} {}'.format(self.student_id, self.section_id, self.enrollment_id, self.grade)
+
+    def grade_c_or_above(self):
+        return self.grade in ['A', 'A-', 'B', 'B-', 'C',]
 
     class Meta:
         unique_together = ('student_id', 'section_id')
-
-
-class Department(models.Model):
-    department_id = models.AutoField(primary_key=True)
-    chair_id = models.OneToOneField(
-        Faculty,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    name = models.CharField(max_length=100)
-    phone_number = PhoneNumberField()
-    building_id = models.OneToOneField(
-        Building,
-        on_delete=models.CASCADE,
-    )
-
-    def __str__(self):
-        return '{} {} {} {} {}'.format(self.department_id, self.chair_id, self.name,
-                                       self.phone_number, self.building_id)
 
 
 class Course(models.Model):
@@ -357,7 +378,13 @@ class Course(models.Model):
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1000)
-    credits = models.IntegerField()
+
+    class CreditsType(ChoiceEnum):
+        TWO = 2
+        THREE = 3
+        FOUR = 4
+
+    credits = models.IntegerField(choices=CreditsType.choices())
 
     def __str__(self):
         return '{} {} {} {} {}'.format(self.course_id, self.department_id, self.name,
@@ -374,7 +401,7 @@ class Semester(models.Model):
         FALL = 'FALL'
         SUMMER = 'SUMMER'
 
-    season = models.CharField(max_length=7, choices=SeasonType)
+    season = models.CharField(max_length=7, choices=SeasonType.choices())
 
     def __str__(self):
         return '{} {} {}'.format(self.semester_id, self.season, self.year)
@@ -396,6 +423,9 @@ class Room(models.Model):
     capacity = models.IntegerField()
     room_number = models.CharField(max_length=5)
 
+    def room_cap_greater_than(self, value):
+        return self.capacity > value
+
     def __str__(self):
         return '{} {} {} {} {}'.format(self.room_id, self.building_id, self.capacity,
                                        self.room_number, self.type)
@@ -413,8 +443,8 @@ class MeetingDays(models.Model):
         SATURDAY = 'SATURDAY'
         SUNDAY = 'SUNDAY'
 
-    day_1 = models.CharField(max_length=10, choices=DayType)
-    day_2 = models.CharField(max_length=10, choices=DayType)
+    day_1 = models.CharField(max_length=10, choices=DayType.choices())
+    day_2 = models.CharField(max_length=10, choices=DayType.choices())
 
     def __str__(self):
         return '{} {} {}'.format(self.days_id, self.day_1, self.day_2)
@@ -422,8 +452,8 @@ class MeetingDays(models.Model):
 
 class Period(models.Model):
     period_id = models.AutoField(primary_key=True)
-    start_time = models.TimeField(input_formats="%H:%i")
-    end_time = models.TimeField(input_formats="%H:%i")
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
     def __str__(self):
         return '{} {} {}'.format(self.period_id, self.start_time, self.end_time)
