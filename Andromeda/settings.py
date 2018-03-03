@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'phonenumber_field',
     'registration_system.apps.RegistrationSystemConfig',
+    'social_django'     # <--  Oauth module
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware', # <-- Oauth Middleware
 ]
 
 ROOT_URLCONF = 'Andromeda.urls'
@@ -64,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',        # <-- Oauth context processors
+                'social_django.context_processors.login_redirect',  # <--
             ],
         },
     },
@@ -105,7 +109,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Any other Social Media backends besides github, twitter ,facebook will have to be specified.
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
 
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 
 # Internationalization
@@ -128,3 +139,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR,  'templates'),)
+
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'home'
+
+SOCIAL_AUTH_GITHUB_KEY = 'df37f355b201ca0f42ba'
+SOCIAL_AUTH_GITHUB_SECRET = 'ba09bf0f1684246844cf76fc84f38eab7360ebdc'
+
