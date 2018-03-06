@@ -1,5 +1,9 @@
 
 {% block content %}
     <h2>Welcome</h2>
-    <p> Hello {{ user.username }}!</p>
+{#    <p> Hello {{ user.username }}!</p>#}
+    <div class="container">
+        {{ rendered|safe }}
+    </div>
+
 {% endblock %}

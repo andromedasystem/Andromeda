@@ -1,0 +1,37 @@
+{
+  "name": "andromeda",
+  "version": "1.0.0",
+  "description": "Andromeda Node Modules",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andromedasystem/Andromeda.git"
+  },
+  "author": "James McCarthy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andromedasystem/Andromeda/issues"
+  },
+  "homepage": "https://github.com/andromedasystem/Andromeda#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.3",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jquery": "^3.3.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-render": "^1.2.1",
+    "webpack": "^4.1.0",
+    "webpack-bundle-tracker": "^0.2.1",
+    "webpack-cli": "^2.0.10",
+    "yargs": "^11.0.0"
+  }
+}
