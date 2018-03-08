@@ -3,8 +3,8 @@ import React from 'react';
 class Text extends React.Component {
     render() {
         return <div>
-                <h1>This is a {this.props.test}</h1>
-                <p>Hello World!</p>
+                <p>This is a {this.props.test} using react-django serve-rendering</p>
+
         </div>
     }
 }

@@ -9,9 +9,9 @@ from react.render import render_component
 def home(request):
     # return render(request, 'registration_system/index.html')
     rendered = render_component(
-        os.path.join(os.getcwd(), 'registration_system', 'static', 'js', 'Test.jsx'),
+        os.path.join(os.getcwd(), 'registration_system', 'static', 'registration_system', 'js', 'Test.jsx'),
         {
-            'test': 'full test',
+            'test': 'REALLY LONG full test',
         },
         to_static_markup=False,
     )

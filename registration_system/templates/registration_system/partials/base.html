@@ -1,0 +1,31 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block extra_head %}
+        <link rel="stylesheet" type="text/css" href="{% static 'registration_system/css/semantic.min.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'registration_system/css/style.css' %}" />
+        <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    {% endblock %}
+    <title>{% block title %}Andromeda Registration System{% endblock %}</title>
+</head>
+<body>
+    <div id="andromeda_navbar">
+        {% block navbar %}
+            {% include "registration_system/partials/main_navbar.html" %}
+        {% endblock %}
+    </div>
+
+    <div class="ui container centered m-top6" id="andromeda_content">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+
+    <div id="andromeda_footer">
+        {% block footer %}{% endblock %}
+    </div>
+</body>
+</html>
