@@ -11,13 +11,18 @@
     <title>{% block title %}Andromeda Registration System{% endblock %}</title>
 </head>
 <body>
-    <div id="andromeda_navbar">
+    <div class="br-0" id="andromeda_navbar">
         {% block navbar %}
             {% include "registration_system/partials/main_navbar.html" %}
         {% endblock %}
     </div>
 
-    <div class="ui container centered m-top6" id="andromeda_content">
+    <div id="andromeda_banner_img">
+        {% block banner %}
+        {% endblock %}
+    </div>
+
+    <div class="ui container centered m-top2" id="andromeda_content">
         {% block content %}
 
         {% endblock %}

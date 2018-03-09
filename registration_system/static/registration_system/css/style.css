@@ -1,3 +1,29 @@
-.m-top6{
-    margin-top: 6rem;
+.m-top2{
+    margin-top: 2rem;
+}
+
+.tsize-2 {
+    font-size: 3em !important;
+}
+
+.br-0{
+    border-radius: 0px !important;
+}
+
+.banner-image {
+    min-height: 150px;
+    max-height: 300px;
+    object-fit: cover;
+    object-position: center;
+}
+
+hr.title-rule {
+    margin-top: 2em;
+    margin-bottom: 6em;
+  border: 0;
+  height: 1px;
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
 }
