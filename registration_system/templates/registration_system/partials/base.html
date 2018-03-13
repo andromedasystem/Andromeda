@@ -11,32 +11,34 @@
     <title>{% block title %}Andromeda Registration System{% endblock %}</title>
 </head>
 <body>
-    <div class="br-0" id="andromeda_navbar">
-        {% block navbar %}
-            {% include "registration_system/partials/main_navbar.html" %}
-        {% endblock %}
-    </div>
+    <main class="site-content">
+        <div class="br-0" id="andromeda_navbar">
+            {% block navbar %}
+                {% include "registration_system/partials/main_navbar.html" %}
+            {% endblock %}
+        </div>
 
-    <div id="andromeda_banner_img">
-        {% block banner %}
-        {% endblock %}
-    </div>
+        <div id="andromeda_banner_img">
+            {% block banner %}
+            {% endblock %}
+        </div>
 
-    <div class="ui container centered m-top2" id="andromeda_content">
-        {% block content %}
+        <div class="ui container centered m-top2" id="andromeda_content">
+            {% block content %}
 
-        {% endblock %}
-    </div>
+            {% endblock %}
+        </div>
 
 
-    <div id="andromeda_footer">
-        {% block footer %}
-            <div class="ui inverted vertical footer segment form-page">
-              <div class="ui container">
-                James McCarthy 2017. All Rights Reserved
-              </div>
-            </div>
-        {% endblock %}
-    </div>
+        <div id="andromeda_footer">
+            {% block footer %}
+                <div class="ui inverted vertical footer segment form-page">
+                  <div class="ui container">
+                    James McCarthy 2017. All Rights Reserved
+                  </div>
+                </div>
+            {% endblock %}
+        </div>
+    </main>
 </body>
 </html>

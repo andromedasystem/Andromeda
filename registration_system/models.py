@@ -19,7 +19,7 @@ class UserProfile(models.Model):
         FACULTY = 'F'
         RESEARCHER = 'R'
 
-    user_type = models.CharField(max_length=1, choices=UserType.choices())
+    user_type = models.CharField(max_length=1, choices=UserType.choices(), blank=True)
 
 
 class Admin(models.Model):
