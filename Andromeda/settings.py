@@ -165,7 +165,7 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR,  'templates'),)
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'display'
 
 SOCIAL_AUTH_GITHUB_KEY = 'df37f355b201ca0f42ba'
 SOCIAL_AUTH_GITHUB_SECRET = 'ba09bf0f1684246844cf76fc84f38eab7360ebdc'

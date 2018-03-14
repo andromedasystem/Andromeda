@@ -7,6 +7,10 @@ body {
     height: 100%;
 }
 
+.m-right1{
+    margin-right: 1rem !important;
+}
+
 .m-top2{
     margin-top: 2rem;
 }
