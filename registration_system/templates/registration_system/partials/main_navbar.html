@@ -3,11 +3,17 @@
         <h1>Andromeda</h1>
     </a>
     <a class="item">Master Schedule</a>
-    <a class="item">Course Catalog</a>
+    <a class="item" href="https://www.oldwestbury.edu/sites/default/files/documents/Catalogs/2016-18/undergrad-catalog-16-18.pdf">Course Catalog</a>
     <div class="right menu">
-        <a class="ui item" href="{% url 'login' %}">
-            LogIn <i class="fas fa-user"></i>
-        </a>
+        {% if  user.is_authenticated  %}
+            <a class="ui item" href="{% url 'registration_system_logout' %}">
+                Log-out <i class="fas fa-user"></i>
+            </a>
+        {% else %}
+            <a class="ui item" href="{% url 'login' %}">
+                Log-in <i class="fas fa-user"></i>
+            </a>
+        {% endif %}
     </div>
 
 </div>

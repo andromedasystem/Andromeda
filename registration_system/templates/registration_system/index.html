@@ -1,5 +1,8 @@
 {% extends "registration_system/partials/base.html" %}
 {% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
 
 {% block banner %}
     <img class="ui fluid image banner-image" src="{% static 'registration_system/images/college_test_image.jpeg' %}">

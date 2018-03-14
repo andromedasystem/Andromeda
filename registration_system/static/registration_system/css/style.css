@@ -1,3 +1,8 @@
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
 body {
     height: 100%;
 }
@@ -8,6 +13,10 @@ body {
 
 .m-top6{
     margin-top: 6rem;
+}
+
+.m-top12{
+    margin-top: 12rem;
 }
 
 .tsize-2 {
@@ -25,6 +34,7 @@ body {
     object-position: center;
 }
 
+
 hr.title-rule {
     margin-top: 2em;
     margin-bottom: 6em;
@@ -40,6 +50,12 @@ hr.title-rule {
     margin-top: 8em;
     bottom: 0 !important;
     left: 0 !important;
-    position: fixed !important;
+    right: 0 !important;
+    position: fixed;
     width: 100% !important;
+
+}
+
+#login-content {
+    width: 45%;
 }

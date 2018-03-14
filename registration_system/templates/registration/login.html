@@ -1,14 +1,18 @@
 {% extends "registration_system/partials/base.html" %}
 {% load staticfiles %}
-
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-  <br>
-  <p><strong>-- OR --</strong></p>
-  <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a><br>
+    <div id="login-content" class="m-top12">
+      <h2 class="ui black image header"><div class="content">Log-in to your account</div></h2>
+      <form class="ui large form " method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="ui fluid medium black submit button" type="submit">Login</button>
+      </form>
+      <br>
+      <p><strong>-- OR --</strong></p>
+      <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a><br>
+    </div>
 {% endblock %}
