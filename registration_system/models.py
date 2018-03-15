@@ -21,6 +21,38 @@ class UserProfile(models.Model):
 
     user_type = models.CharField(max_length=1, choices=UserType.choices(), blank=True)
 
+    def has_student(self):
+        has_student = False
+        try:
+            has_student = (self.student is not None)
+        except Student.DoesNotExist:
+            pass
+        return has_student
+
+    def has_admin(self):
+        has_admin = False
+        try:
+            has_admin = (self.admin is not None)
+        except Admin.DoesNotExist:
+            pass
+        return has_admin
+
+    def has_researcher(self):
+        has_researcher = False
+        try:
+            has_researcher = (self.researcher is not None)
+        except Researcher.DoesNotExist:
+            pass
+        return has_researcher
+
+    def has_faculty(self):
+        has_faculty = False
+        try:
+            has_faculty = (self.faculty is not None)
+        except Faculty.DoesNotExist:
+            pass
+        return has_faculty
+
 
 class Admin(models.Model):
     admin_id = models.OneToOneField(
@@ -49,6 +81,22 @@ class Student(models.Model):
 
     def __str__(self):
         return '{}'.format(self.student_id, self.date_of_birth, self.student_type)
+
+    def has_full_time_student(self):
+        has_ft = False
+        try:
+            has_ft = (self.fulltimestudent is not None)
+        except FullTimeStudent.DoesNotExist:
+            pass
+        return has_ft
+
+    def has_part_time_student(self):
+        has_pt = False
+        try:
+            has_pt = (self.parttimestudent is not None)
+        except PartTimeStudent.DoesNotExist:
+            pass
+        return has_pt
 
     def was_born_before_year(self, year):
         return self.date_of_birth < datetime.date(year, 1, 1)
