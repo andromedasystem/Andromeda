@@ -19,8 +19,24 @@ body {
     margin-top: 6rem;
 }
 
+.m-top8{
+    margin-top: 8rem;
+}
+
+.m-top9{
+    margin-top: 9rem;
+}
+
+.m-top10{
+    margin-top: 10rem;
+}
+
 .m-top12{
     margin-top: 12rem;
+}
+
+.m-top16{
+    margin-top: 16rem;
 }
 
 .tsize-2 {

@@ -171,6 +171,22 @@ class Faculty(models.Model):
     def __str__(self):
         return '{} {} {}'.format(self.faculty_id, self.department_id, self.faculty_type)
 
+    def has_full_time_faculty(self):
+        has_ft = False
+        try:
+            has_ft = (self.fulltimefaculty is not None)
+        except FullTimeFaculty.DoesNotExist:
+            pass
+        return has_ft
+
+    def has_part_time_faculty(self):
+        has_pt = False
+        try:
+            has_pt = (self.parttimefaculty is not None)
+        except PartTimeFaculty.DoesNotExist:
+            pass
+        return has_pt
+
 
 class FullTimeFaculty(models.Model):
     faculty_id = models.OneToOneField(

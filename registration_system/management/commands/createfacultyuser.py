@@ -12,7 +12,7 @@ class Command(BaseCommand):
         :param args: not used
         :param options: not used
         """
-        print("CREATE FacultyT\n")
+        print("CREATE FACULTY\n")
         first_name = input("Enter Users First Name:")
         last_name = input("Enter Users Last Name:")
         username = input("Enter Username:")
@@ -31,5 +31,6 @@ class Command(BaseCommand):
         profile = user.userprofile
         profile.user_type = 'F'
         profile.save()
-        faculty = Faculty.objects.create(faculty_id=profile, department_id=chosen_department, faculty_type=faculty_type.strip())
+        faculty = Faculty.objects.create(faculty_id=profile, department_id=chosen_department,
+                                         faculty_type=faculty_type.strip())
         print(faculty)

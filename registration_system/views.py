@@ -41,10 +41,17 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+# class CreateCourse(LoginRequiredMixin, generic.View):
+#
+#
+
 class UserDisplay(LoginRequiredMixin, generic.View):
     template_name ='registration_system/user_display.html'
     is_part_time_student = False
     is_full_time_student = False
+    is_part_time_faculty = False
+    is_full_time_faculty = False
+    is_faculty = False
     is_admin = False
     is_researcher = False
 
@@ -56,12 +63,16 @@ class UserDisplay(LoginRequiredMixin, generic.View):
                 student = Student.objects.get(student_id=userprofile)
                 if student.has_full_time_student():
                     self.is_full_time_student = True
-                if student.has_part_time_student():
+                elif student.has_part_time_student():
                     self.is_part_time_student = True
             elif userprofile.has_admin():
                 self.is_admin = True
             elif userprofile.has_researcher():
                 self.is_researcher = True
+            elif userprofile.has_faculty():
+                faculty = Faculty.objects.get(faculty_id=userprofile)
+                print(faculty)
+                self.is_faculty = True
 
         rendered = render_component(
                 os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -74,6 +85,7 @@ class UserDisplay(LoginRequiredMixin, generic.View):
                     'is_admin': self.is_admin,
                     'is_full_time_student': self.is_full_time_student,
                     'is_part_time_student': self.is_part_time_student,
+                    'is_faculty': self.is_faculty,
                     'is_researcher': self.is_researcher
                 },
                 to_static_markup=False,

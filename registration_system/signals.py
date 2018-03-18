@@ -51,18 +51,20 @@ def create_part_time_student(sender, instance, created, **kwargs):
             instance.parttimestudent.save()
 
 
+@receiver(post_save, sender=Faculty, dispatch_uid="full_time_faculty_post_create")
+def create_full_time_faculty(sender, instance, created, **kwargs):
+    if created:
+        if instance.faculty_type == 'F':
+            FullTimeFaculty.objects.create(faculty_id=instance)
+            instance.fulltimefaculty.save()
+
+
 @receiver(post_save, sender=Faculty, dispatch_uid="part_time_faculty_post_create")
 def create_part_time_faculty(sender, instance, created, **kwargs):
     if created:
-        if instance.faculty_type == 'F':
+        if instance.faculty_type == 'P':
             PartTimeFaculty.objects.create(faculty_id=instance)
             instance.parttimefaculty.save()
 
 
-@receiver(post_save, sender=Faculty, dispatch_uid="full_time_faculty_post_create")
-def create_full_time_faculty(sender, instance, created, **kwargs):
-    if created:
-        if instance.faculty_type == 'P':
-            FullTimeFaculty.objects.create(faculty_id=instance)
-            instance.fulltimefaculty.save()
 
