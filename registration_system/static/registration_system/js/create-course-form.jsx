@@ -8,6 +8,7 @@ class Index extends React.Component {
         super(props);
     }
 
+
     render() {
         let departments = this.props.departments.map((department, index) => {
             return <option key={department.value} value={department.value}>{department.name}</option>
@@ -19,7 +20,7 @@ class Index extends React.Component {
                 <h2>Create Course</h2>
                 <Form action={this.props.url} method="post" className="m-top2">
                     <Form.Group widths='equal'>
-                        <Form.Input required fluid label='Name' name='name' maxLength="100" placeholder="Enter Course Name" id='id_name'/>
+                        <Form.Input required fluid label='Course Name' name='name' maxLength="100" placeholder="Enter Course Name" id='id_name'/>
                         <Form.Input required fluid label='Credits' name='credits' type='number' step={1} min={2} max={4} id="id_credits"/>
                     </Form.Group>
                     <Form.TextArea label="Description" placeholder="Enter Course Description..." name='description' maxLength={1000} required id="id_description"/>

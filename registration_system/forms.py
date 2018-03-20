@@ -7,3 +7,5 @@ class CreateCourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ['name', 'description', 'credits', 'department_id']
+
+

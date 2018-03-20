@@ -21,11 +21,11 @@ class Nav extends Component {
         let menu;
         if(this.state.is_admin) {
             menu = <Dropdown.Menu>
-                <Dropdown.Item><a href="/student_system/create_course/">Create Course</a></Dropdown.Item>
-                <Dropdown.Item>Update Course</Dropdown.Item>
-                <Dropdown.Item>Create Section</Dropdown.Item>
-                <Dropdown.Item>Update Section</Dropdown.Item>
-            </Dropdown.Menu>;
+                        <Dropdown.Item ><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_course/">Create Course</a></Dropdown.Item>
+                        <Dropdown.Item>Update Course</Dropdown.Item>
+                        <Dropdown.Item>Create Section</Dropdown.Item>
+                        <Dropdown.Item>Update Section</Dropdown.Item>
+                    </Dropdown.Menu>;
         } else if(this.state.is_faculty) {
             menu = <Dropdown.Menu>
                     <Dropdown.Item><a href="/student_system/">Faculty Course Placeholder</a></Dropdown.Item>

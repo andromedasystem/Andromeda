@@ -1,0 +1,101 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+    <div class="ui container">
+        <div class="ui form" id="ui-form">
+            <div class="two fields">
+                <div class="field">
+                    <label for="course_id">Course ID</label>
+                    <input id="course_id" type="text" value="{{ value }}" readonly/>
+                </div>
+                <div class="field">
+                    <label for="courses_required_id">Course Required</label>
+                    <select id="courses_required_id" class="ui fluid dropdown">
+                        <option value="0">--------</option>
+                        {% if courses %}
+                            {% for course in courses %}
+                                <option value="{{ course.course_id }}" label="{{ course.name }}">{{ course.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="display-inline ">
+                <button class="ui primary button" id="add_course" type="button">Add Course</button>
+                <button class="ui negative button" id="clear_courses" type="button">Clear</button>
+            </div>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                    </tr>
+                </thead>
+                <tbody id="courses_added">
+
+                </tbody>
+            </table>
+            <button class="ui positive button" id="submit" type="button">Submit</button>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+        function addCourse(){
+            var course = document.getElementById('courses_required_id');
+            var course_name = course.options[course.selectedIndex].label;
+            var course_id = course.options[course.selectedIndex].value;
+            var tBody = document.getElementById('courses_added');
+            var newRow = tBody.insertRow(tBody.rows.length);
+            var courseIdCell = newRow.insertCell(0);
+            var courseNameCell = newRow.insertCell(1);
+            var courseNameText = document.createTextNode(course_name);
+            var courseIdText = document.createTextNode(course_id);
+            courseIdCell.appendChild(courseIdText);
+            courseNameCell.appendChild(courseNameText);
+
+        }
+
+        function removeCourses() {
+            $('#courses_added').empty();
+        }
+
+        function submitCourses() {
+            var table = document.getElementById('courses_added');
+            var course_id = document.getElementById('course_id').value;
+            var courseIDs = [];
+
+            for( var j=0; j < table.rows.length; j++){
+                courseIDs.push(table.rows[j].cells[0].textContent);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/student_system/create_course/prerequisites/"+course_id,
+
+                data: {
+                    courseID: course_id,
+                    prerequisites: JSON.stringify(courseIDs)
+                },
+
+                success: function(){
+                    $('#ui-form').hide();
+                    $('#success').append("<h2>Course Prerequisite Created Successfully!</h2>")
+                }
+            })
+
+        }
+
+        document.getElementById('add_course').onClick = addCourse;
+        document.getElementById('clear_courses').onClick = removeCourses;
+        document.getElementById('submit').onClick = submitCourses;
+
+    </script>
+
+{% endblock %}
