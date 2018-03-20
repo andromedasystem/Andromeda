@@ -1,5 +1,5 @@
-import os
-from django.views.decorators.csrf import csrf_exempt
+import os, json
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from react.render import render_component
@@ -47,18 +47,31 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_prerequisite.html'
     is_admin = False
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, course_id, *args, **kwargs):
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
+
         if userprofile:
             if userprofile.has_admin():
                 self.is_admin = True
             else:
                 redirect('/student_system/')
 
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create Prerequisites'
+            },
+            to_static_markup=False,
+        )
+
         courses = Course.objects.all()
         context = {
-            'courses': courses
+            'courses': courses,
+            'rendered': rendered,
+            'value': course_id
         }
         return render(request, self.template_name, context)
 
@@ -67,9 +80,11 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
         if request.is_ajax():
             message ="Ajax"
             course_id = request.POST.get('courseID')
-            prerequisites = request.POST.get('prerequisites')
+            prerequisites = json.loads(request.POST.get('prerequisites'))
+            course = Course.objects.get(pk=int(course_id))
             for p in prerequisites:
-                Prerequisite.objects.create(course_id=course_id, course_required_id=p)
+                prerequisite_course = Course.objects.get(pk=int(p))
+                Prerequisite.objects.create(course_id=course, course_required_id=prerequisite_course)
         else:
             message ="No Ajax"
         return HttpResponse(message)
@@ -79,7 +94,7 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
 # TODO: Finish create course success view and template, figure out if the way I'm using redirect is optimal.
 class CreateCourse(LoginRequiredMixin, generic.View):
     form_class = CreateCourseForm
-    template_name ='registration_system/user_display.html'
+    template_name ='registration_system/create_course.html'
     is_admin = False
 
     def get(self, request, *args, **kwargs):
@@ -92,27 +107,23 @@ class CreateCourse(LoginRequiredMixin, generic.View):
             else:
                 redirect('/student_system/')
 
-        departments = []
-        for d in Department.objects.all():
-            departments.append({
-                'value': d.department_id,
-                'name': d.name
-            })
+        departments = Department.objects.all()
 
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
-                         'registration_system', 'js', 'create-course-form.jsx'),
+                         'registration_system', 'js', 'nav-holder.jsx'),
             {
                 'is_admin': self.is_admin,
-                'departments': departments,
-                'url': '/student_system/create_course/'
+                'header_text': 'Create Course'
             },
             to_static_markup=False,
         )
-        return render(request, self.template_name, {'rendered': rendered, 'form': form})
+        return render(request, self.template_name, {'rendered': rendered, 'form': form, 'departments': departments})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
+        print(form.is_valid())
+        print(form.errors)
         if form.is_valid():
             redirect('registration_system/success')
             name = form.cleaned_data['name']
@@ -122,7 +133,7 @@ class CreateCourse(LoginRequiredMixin, generic.View):
             course = Course.objects.create(name=name, description=description, credits=credits_value,
                                            department_id=department_id)
             return redirect('create_prerequisites',  course_id=course.course_id)
-        # return redirect('student_system/create_course/')
+        return redirect('/student_system/create_course/')
 
 
 class UserDisplay(LoginRequiredMixin, generic.View):

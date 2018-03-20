@@ -35,6 +35,7 @@
     "yargs": "^11.0.0"
   },
   "dependencies": {
+    "django-react-csrftoken": "^1.0.3",
     "semantic-ui-react": "^0.78.3"
   }
 }

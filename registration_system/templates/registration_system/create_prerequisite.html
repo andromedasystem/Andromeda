@@ -5,7 +5,11 @@
 {% endblock %}
 {% block content %}
 
-    <div class="ui container">
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
         <div class="ui form" id="ui-form">
             <div class="two fields">
                 <div class="field">
@@ -24,6 +28,7 @@
                     </select>
                 </div>
             </div>
+        {{ csrf }}
             <div class="display-inline ">
                 <button class="ui primary button" id="add_course" type="button">Add Course</button>
                 <button class="ui negative button" id="clear_courses" type="button">Clear</button>
@@ -48,6 +53,7 @@
 
     <script>
         function addCourse(){
+            console.log("here");
             var course = document.getElementById('courses_required_id');
             var course_name = course.options[course.selectedIndex].label;
             var course_id = course.options[course.selectedIndex].value;
@@ -77,11 +83,12 @@
 
             $.ajax({
                 type: "POST",
-                url: "/student_system/create_course/prerequisites/"+course_id,
+                url: "/student_system/create_course/prerequisites/"+course_id+"/",
 
                 data: {
                     courseID: course_id,
-                    prerequisites: JSON.stringify(courseIDs)
+                    prerequisites: JSON.stringify(courseIDs),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
 
                 success: function(){
@@ -92,9 +99,9 @@
 
         }
 
-        document.getElementById('add_course').onClick = addCourse;
-        document.getElementById('clear_courses').onClick = removeCourses;
-        document.getElementById('submit').onClick = submitCourses;
+        $('#add_course').click(addCourse);
+        $('#clear_courses').click(removeCourses);
+        $('#submit').click(submitCourses);
 
     </script>
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from .utils import ChoiceEnum
+from django.core.validators import MaxValueValidator, MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 import datetime
 YEAR_CHOICES = []
@@ -443,12 +444,7 @@ class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1000)
 
-    class CreditsType(ChoiceEnum):
-        TWO = 2
-        THREE = 3
-        FOUR = 4
-
-    credits = models.IntegerField(choices=CreditsType.choices())
+    credits = models.IntegerField(default=3, validators=[ MaxValueValidator(4), MinValueValidator(2)])
 
     def __str__(self):
         return '{} {} {} {} {}'.format(self.course_id, self.department_id, self.name,
