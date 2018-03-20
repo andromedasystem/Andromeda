@@ -20,28 +20,16 @@ class Nav extends Component {
 	render() {
         let menu;
         if(this.state.is_admin) {
-            menu = <Dropdown.Menu>
-                        <Dropdown.Item ><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_course/">Create Course</a></Dropdown.Item>
-                        <Dropdown.Item>Update Course</Dropdown.Item>
-                        <Dropdown.Item>Create Section</Dropdown.Item>
-                        <Dropdown.Item>Update Section</Dropdown.Item>
-                    </Dropdown.Menu>;
-        } else if(this.state.is_faculty) {
-            menu = <Dropdown.Menu>
-                    <Dropdown.Item><a href="/student_system/">Faculty Course Placeholder</a></Dropdown.Item>
-            </Dropdown.Menu>;
-        } else if(this.state.is_pt_student || this.state.is_ft_student){
-            menu= <Dropdown.Menu>
-                    <Dropdown.Item><a href="/student_system/">Register for a course</a></Dropdown.Item>
-            </Dropdown.Menu>
-        }
-
-		return (
-		    <Menu style={menuStyle} compact >
-                <Dropdown simple item text='Course Actions'>
-                    { menu }
-                </Dropdown>
-                <Dropdown simple item text='Student Actions'>
+            menu = <Menu style={menuStyle} compact>
+                    <Dropdown simple item text='Course Actions'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item ><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_course/">Create Course</a></Dropdown.Item>
+                            <Dropdown.Item>Update Course</Dropdown.Item>
+                            <Dropdown.Item>Create Section</Dropdown.Item>
+                            <Dropdown.Item>Update Section</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <Dropdown simple item text='Student Actions'>
                     <Dropdown.Menu>
                         <Dropdown.Item>View/Update Hold</Dropdown.Item>
                         <Dropdown.Item>View Student Transcript</Dropdown.Item>
@@ -56,12 +44,25 @@ class Nav extends Component {
                 </Dropdown>
                 <Dropdown simple item text='User Actions'>
                     <Dropdown.Menu>
-                        <Dropdown.Item>Create User</Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_user/">Create User</a></Dropdown.Item>
                         <Dropdown.Item>Search/Update User</Dropdown.Item>
                    </Dropdown.Menu>
                 </Dropdown>
-            </Menu>
+            </Menu>;
+        } else if(this.state.is_faculty) {
+            menu = <Dropdown.Menu>
+                    <Dropdown.Item><a href="/student_system/">Faculty Course Placeholder</a></Dropdown.Item>
+            </Dropdown.Menu>;
+        } else if(this.state.is_pt_student || this.state.is_ft_student){
+            menu= <Dropdown.Menu>
+                    <Dropdown.Item><a href="/student_system/">Register for a course</a></Dropdown.Item>
+            </Dropdown.Menu>
+        }
 
+		return (
+		    <div>
+            { menu }
+            </div>
 			);
 	}
 }

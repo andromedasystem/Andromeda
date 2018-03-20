@@ -1,0 +1,133 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container">
+        <form action="{{ url }}" method="post" class="ui form m-top2 ">
+            {% csrf_token %}
+
+            <div class="two fields">
+                <div class="required field">
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" maxlength="150" placeholder="Enter Username..." id="id_username" required/>
+                </div>
+                <div class="required field">
+                    <label for="id_email">Email</label>
+                    <input autocomplete="email" type="text" name="email" maxlength="254" placeholder="Enter Email..." id="id_email" required/>
+                </div>
+            </div>
+             <div class="two fields">
+                <div class=" required field">
+                    <label for="id_first_name">First Name</label>
+                    <input autocomplete="given-name" type="text" name="first_name" maxlength="30" placeholder="Enter First Name..." id="id_first_name" required/>
+                </div>
+                 <div class=" required field">
+                     <label for="id_last_name">Last Name</label>
+                     <input autocomplete="family-name" type="text" name="last_name" maxlength="150" placeholder="Enter Last Name..." id="id_last_name" required>
+                 </div>
+             </div>
+
+            <div class="inline fields">
+                <div class="required field">
+                    <label for="id_user_type"></label>
+                    <select class="ui fluid dropdown" name="user_type" id="id_user_type" required>
+                        <option value="true">-------</option>
+                        <option value="A">Admin</option>
+                        <option value="F">Faculty</option>
+                        <option value="S">Student</option>
+                        <option value="R">Researcher</option>
+                    </select>
+                </div>
+            </div>
+            <div id="user_type_form">
+
+            </div>
+            <div id="submit_div" class="field">
+                <button type="button" id="submit" class="ui button" role="button">Submit</button>
+            </div>
+        </form>
+    </div>
+
+   <script>
+        function getUserTypeForm(event){
+            var user_type = document.getElementById('id_user_type');
+            var user_type_value = user_type.options[user_type.selectedIndex].value;
+            switch( user_type_value){
+                case 'A':
+                    return true;
+                case 'F':
+                    event.preventDefault();
+                    displayFacultyForm();
+                    return false;
+                case 'S':
+                    event.preventDefault();
+                    displayStudentForm();
+                    return false;
+                case 'R':
+                    return true;
+            }
+        }
+
+        function displayStudentForm(){
+            $('#submit_div').find("button:first").remove();
+            $('#user_type_form').append("<div class='two fields'>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_date_of_birth'>Date of Birth</label>" +
+                                                "<input id='id_date_of_birth' type='text' name='day' value='01/01/2001' required />" +
+                                            "</div>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_student_type'>Student Type</label>" +
+                                                "<select class='ui fluid dropdown' name='student_type' id='id_student_type' required>"+
+                                                    "<option value='F'>Full Time</option>"+
+                                                    "<option value='P'>Part Time</option>"+
+                                                "</select>"+
+                                            "</div>" +
+                                        "</div> ");
+            $('#submit_div').append("<button type='submit' id='submit_student' class='ui button' role='button'>Submit</button>")
+        }
+
+        function displayFacultyForm() {
+            $('#submit_div').find("button:first").remove();
+            $('#user_type_form').append("<div class='two fields'>" +
+                                            "<div id='add_departments' class='required field'>" +
+                                                "<label for='id_department_id'>" +
+                                                "<select class='ui fluid dropdown' name='department_id' id='id_department_id' required>" +
+                                                "</select>"+
+                                            "</div>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_faculty_type'>Faculty Type</label>" +
+                                                "<select class='ui fluid dropdown' name='faculty_type' id='id_faculty_type' required>"+
+                                                    "<option value='F'>Full Time</option>"+
+                                                    "<option value='P'>Part Time</option>"+
+                                                "</select>"+
+                                            "</div>" +
+                                        "</div> ");
+            $.ajax({
+                type: "GET",
+                url: "/student_system/create_user/departments/",
+
+                success: function(data) {
+                    data.forEach(function(element){
+                        $('#id_department_id').append("<option value="+element.value+">"+element.label+"</option>");
+                    });
+                }
+            });
+
+            $('#submit_div').append("<button type='submit' id='submit_faculty' class='ui button' role='button'>Submit</button>")
+        }
+
+
+        $('#submit').click(getUserTypeForm);
+
+    </script>
+{#    {{ form }}#}
+
+{#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}
+{% endblock %}

@@ -43,6 +43,38 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+# TODO: Create Post Method and create get method for Department RESTful query
+class CreateUser(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/create_user.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create User'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+
 class CreatePrerequisite(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_prerequisite.html'
     is_admin = False
