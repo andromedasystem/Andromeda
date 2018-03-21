@@ -1,0 +1,55 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container">
+        <form action="{{ url }}" method="post" class="ui form m-top2 ">
+            {% csrf_token %}
+
+                <div class="two fields">
+                    <div class="field">
+                        <label for="id_name">Course Name</label>
+                        <input type="text" name="name" maxlength="100" placeholder="Enter Course Name" id="id_name" required/>
+                    </div>
+                    <div class="field">
+                        <label for="id_credits">Credits</label>
+                        <input type="number" name="credits" step="1" min="2" max="4" id="id_credits" required>
+                    </div>
+                </div>
+
+            <div class="field">
+                <label for="id_description">Description</label>
+                <textarea class="text-area-styled" placeholder="Enter Course Description..." name="description" maxlength="1000" id="id_description" required rows="3" style="resize: vertical;">
+                </textarea>
+            </div>
+            <div class="inline fields">
+                <div class="field">
+                    <label for="id_department_id"></label>
+                    <select class="ui fluid dropdown" name="department_id" id="id_department_id" required>
+                        <option value="true">-------</option>
+                        {% if departments %}
+                            {% for department in departments %}
+                                <option value="{{ department.department_id }}" label="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <button class="ui button" role="button">Submit</button>
+            </div>
+        </form>
+    </div>
+
+
+{#    {{ form }}#}
+
+{#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}
+{% endblock %}

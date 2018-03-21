@@ -44,6 +44,84 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+# TODO: Create Post method to create a course
+class CreateSection(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/create_section.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        departments = Department.objects.all()
+        buildings = Building.objects.all()
+        semester = Semester.objects.all()
+        days = MeetingDays.objects.all()
+        time_period = Period.objects.all()
+        faculty = []
+        for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id "
+                                     "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
+                                     "WHERE up.user_id = u.id "
+                                     "AND up.id = f.faculty_id_id"):
+            faculty.append({
+                'first_name': f.first_name,
+                'last_name': f.last_name,
+                'faculty_id': f.faculty_id
+            })
+
+        if request.is_ajax():
+            building_number = request.GET.get('building_number')
+            if building_number is not None:
+                rooms = Room.objects.filter(bulding_id=building_number)
+                rooms_array = []
+                for r in rooms:
+                    data = {
+                        'room_number': r.room_number,
+                        'room_type': r.type,
+                        'room_capacity': r.capacity
+                    }
+                    rooms_array.append(data)
+                    return HttpResponse(json.dumps(rooms_array), content_type="application/json")
+            else:
+                department_id = request.GET.get('department_id')
+                department_name = request.GET.get('department_name')
+
+                # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+                #                            Q(last_name=last_name))
+                courses = Course.objects.filter(department_id=int(department_id))
+                course_array = []
+                for c in courses:
+                    print(c)
+                    data = {
+                        'course_id': c.course_id,
+                        'department_name': department_name,
+                        'department_id': department_id,
+                        'course_name': c.name,
+                        'course_description': c.description,
+                        'course_credits': c.credits
+                    }
+                    course_array.append(data)
+                return HttpResponse(json.dumps(course_array), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create Section'
+            },
+            to_static_markup=False,
+        )
+        return render(request, self.template_name, {'rendered': rendered, 'departments': departments,
+                                                    'buildings': buildings, 'semesters': semester, 'days': days,
+                                                    'time_periods': time_period, 'faculty': faculty})
+
+
 class UpdateCourse(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/search_course.html'
     is_admin = False
