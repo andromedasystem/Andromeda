@@ -38,14 +38,13 @@ class Nav extends Component {
                 </Dropdown>
                 <Dropdown simple item text='Administrative Actions'>
                     <Dropdown.Menu>
-                        <Dropdown.Item>Edit Permissions</Dropdown.Item>
                         <Dropdown.Item>Change Semester</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown simple item text='User Actions'>
                     <Dropdown.Menu>
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_user/">Create User</a></Dropdown.Item>
-                        <Dropdown.Item>Search/Update User</Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/search_user/">Search/Update User</a></Dropdown.Item>
                    </Dropdown.Menu>
                 </Dropdown>
             </Menu>;

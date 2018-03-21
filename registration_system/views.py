@@ -10,6 +10,7 @@ from django.views import generic
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .forms import *
@@ -41,6 +42,80 @@ def home(request):
         user = False
     # print(rendered)
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
+
+
+class UpdateUser(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/search_user.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            first_name = request.GET.get('first_name')
+            last_name = request.GET.get('last_name')
+            email = request.GET.get('email')
+            username = request.GET.get('username')
+            # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+            #                            Q(last_name=last_name))
+            if username:
+                user = User.objects.filter(username=username)
+            elif email:
+                user = User.objects.filter(email=email)
+            elif first_name:
+                user = User.objects.filter(first_name=first_name)
+            elif last_name:
+                user = User.objects.filter(last_name=last_name)
+            user_array = []
+            for u in user:
+                print(u)
+                user_profile = UserProfile.objects.get(user_id=u.id)
+                data = {
+                    'user_id': u.id,
+                    'username': u.username,
+                    'email': u.email,
+                    'first_name': u.first_name,
+                    'last_name': u.last_name,
+                    'user_type': user_profile.user_type
+                }
+                user_array.append(data)
+            return HttpResponse(json.dumps(user_array), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Search User'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user_id = request.POST.get('userID')
+            user = User.objects.get(pk=int(user_id))
+            user.delete()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
 
 
 # TODO: Create Post Method and create get method for Department RESTful query
