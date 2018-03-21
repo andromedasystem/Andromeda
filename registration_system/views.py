@@ -44,6 +44,77 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class UpdateCourse(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/search_course.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            department_id = request.GET.get('department_id')
+            department_name = request.GET.get('department_name')
+            # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+            #                            Q(last_name=last_name))
+            courses = Course.objects.filter(department_id=int(department_id))
+            course_array = []
+            for c in courses:
+                print(c)
+                data = {
+                    'course_id': c.course_id,
+                    'department_name': department_name,
+                    'department_id': department_id,
+                    'course_name': c.name,
+                    'course_description': c.description,
+                    'course_credits': c.credits
+                }
+                course_array.append(data)
+            return HttpResponse(json.dumps(course_array), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Search Course'
+            },
+            to_static_markup=False,
+        )
+        departments = Department.objects.all()
+        context = {
+            'rendered': rendered,
+            'departments': departments
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            course_id = request.POST.get('courseID')
+            course_name = request.POST.get('courseName')
+            course_description = request.POST.get('course_description')
+            course_credits = request.POST.get('course_credits')
+            course = Course.objects.get(pk=int(course_id))
+            course.name = course_name
+            course.description = course_description
+            course.credits = course_credits
+            course.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class UpdateUser(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/search_user.html'
     is_admin = False

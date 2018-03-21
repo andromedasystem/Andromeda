@@ -1,0 +1,128 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <div class="ui form" id="ui-form">
+            <div class="inline fields">
+                <div class="field">
+                    <label for="id_department_id"></label>
+                    <select class="ui fluid dropdown" name="department_id" id="id_department_id" required>
+                        <option value="true">-------</option>
+                        {% if departments %}
+                            {% for department in departments %}
+                                <option value="{{ department.department_id }}" label="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Department</th>
+                        <th>Credits</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody id="courses_added">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+        function getCourses(){
+            removeCourses();
+            var department_id = $('#id_department_id').val();
+            var department_name = $('select option:selected').text();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/search_course/",
+                data : {
+                    department_id: department_id,
+                    department_name: department_name
+                },
+                success: function(data) {
+                    console.log(data);
+                    data.forEach(function(element){
+                        var tBody = document.getElementById('courses_added');
+                        var newRow = tBody.insertRow(tBody.rows.length);
+                        newRow.id = element.course_id + '_row';
+                        var courseIdCell = newRow.insertCell(0);
+                        var courseNameCell = newRow.insertCell(1);
+                        var descriptionCell = newRow.insertCell(2);
+                        var departmentCell = newRow.insertCell(3);
+                        var creditsCell = newRow.insertCell(4);
+                        var updateCell = newRow.insertCell(5);
+                        var courseIdText = document.createTextNode(element.course_id);
+                        var departmentText = document.createTextNode(element.department_name);
+                        courseIdCell.appendChild(courseIdText);
+                        departmentCell.appendChild(departmentText);
+                        courseNameCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input">' +
+                                '<input type="text" name="course_name" value="'+element.course_name+'" id="id_course_name_'+element.course_id+'" required />' +
+                            '</div>' );
+                        descriptionCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input">' +
+                                '<textarea class="text-area-styled" name="course_description" maxlength="1000" required id="id_course_description_'+element.course_id+'">'+element.course_description+'</textarea>' +
+                            '</div>' );
+                        creditsCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input">' +
+                                '<input type="number" name="course_credits" value="'+element.course_credits+'" required id="id_course_credits_'+element.course_id+'" step="1" min="2" max="4"/>' +
+                            '</div>' );
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateCourse(this.id)" class="ui info button" id="'+element.course_id+'" type="button">Update</button>')
+                    });
+                }
+            });
+
+        }
+
+        function removeCourses() {
+            $('#students_added').empty();
+        }
+
+        function updateCourse(course_id) {
+
+            var course_description = $('#id_course_description_'+course_id).val();
+            var course_name = $('#id_course_name_'+course_id).val();
+            var course_credits = $('#id_course_credits_'+course_id).val();
+            $.ajax({
+                type: "POST",
+                url: "/student_system/search_course/",
+
+                data: {
+                    courseID: course_id,
+                    courseName: course_name,
+                    course_description: course_description,
+                    course_credits: course_credits,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+                    $('#success').append("<h2>"+course_name+" Update Successfully</h2>")
+                }
+            })
+
+        }
+
+        $('#id_department_id').change(getCourses)
+
+
+    </script>
+
+{% endblock %}
