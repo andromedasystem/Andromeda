@@ -64,14 +64,14 @@ class CreateSection(LoginRequiredMixin, generic.View):
         days = MeetingDays.objects.all()
         time_period = Period.objects.all()
         faculty = []
-        for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id "
+        for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id_id "
                                      "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
                                      "WHERE up.user_id = u.id "
                                      "AND up.id = f.faculty_id_id"):
             faculty.append({
                 'first_name': f.first_name,
                 'last_name': f.last_name,
-                'faculty_id': f.faculty_id
+                'faculty_id': f.faculty_id_id
             })
 
         if request.is_ajax():

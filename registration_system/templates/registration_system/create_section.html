@@ -10,28 +10,12 @@
     </div>
 
     <div class="ui container">
-        <form action="{{ url }}" method="post" class="ui form m-top2 ">
+        <form id="user-form" action="{{ url }}" method="post" class="ui form m-top2 ">
             {% csrf_token %}
 
-                <div class="two fields">
-                    <div class="field">
-                        <label for="id_name">Course Name</label>
-                        <input type="text" name="name" maxlength="100" placeholder="Enter Course Name" id="id_name" required/>
-                    </div>
-                    <div class="field">
-                        <label for="id_credits">Credits</label>
-                        <input type="number" name="credits" step="1" min="2" max="4" id="id_credits" required>
-                    </div>
-                </div>
-
-            <div class="field">
-                <label for="id_description">Description</label>
-                <textarea class="text-area-styled" placeholder="Enter Course Description..." name="description" maxlength="1000" id="id_description" required rows="3" style="resize: vertical;">
-                </textarea>
-            </div>
-            <div class="inline fields">
-                <div class="field">
-                    <label for="id_department_id"></label>
+            <div class="two fields">
+                <div class="required field">
+                    <label for="id_department_id">Department</label>
                     <select class="ui fluid dropdown" name="department_id" id="id_department_id" required>
                         <option value="true">-------</option>
                         {% if departments %}
@@ -41,14 +25,185 @@
                         {% endif %}
                     </select>
                 </div>
+                <div class="required field">
+                    <label for="id_course_id">Course</label>
+                    <select class="ui fluid dropdown" name="course_id" id="id_course_id" required>
+                        <option value="true">--------</option>
+                        {# TODO: Department courses Ajax call                       #}
+                    </select>
+                </div>
             </div>
-            <div class="field">
-                <button class="ui button" role="button">Submit</button>
+             <div class="two fields">
+                <div class=" required field">
+                    <label for="id_faculty_id">Faculty</label>
+                    <select class="ui fluid dropdown" name="faculty_id" id="id_faculty_id" required>
+                        <option value="true">--------</option>
+                        {% if faculty %}
+                            {% for f in faculty %}
+                                <option value="{{ f.faculty_id }}" label="{{ f.first_name }} {{ f.last_name }}">{{ f.first_name }} {{ f.last_name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                 <div class=" required field">
+                     <label for="id_time_slot_id">Time Slot</label>
+                    <select class="ui fluid dropdown" name="faculty_id" id="id_time_slot_id" required>
+                        <option value="true">--------</option>
+                    {# TODO: Add Time Slot sample data#}
+                    </select>
+                 </div>
+             </div>
+            <div class="two fields">
+                <div class=" required field">
+                    <label for="id_building_id">Building</label>
+                    <select class="ui fluid dropdown" name="building_id" id="id_building_id" required>
+                        <option value="true">--------</option>
+                        {% if buildings %}
+                            {% for b in buildings %}
+                                <option value="{{ b.building_id }}" label="{{ b.name }}">{{ b.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class=" required field">
+                    <label for="id_room_id">Room</label>
+                    <select class="ui fluid dropdown" name="room_id" id="id_room_id" required>
+                        <option value="true">--------</option>
+                        {# TODO: Room Test Data and Ajax call      #}
+                    </select>
+                </div>
+            </div>
+            <div class="two fields">
+                <div class=" required field">
+                    <label for="id_semester_id">Semester</label>
+                    <select class="ui fluid dropdown" name="semester_id" id="id_semester_id" required>
+                        <option value="true">--------</option>
+                        {% if semester %}
+                            {% for s in semester %}
+                                <option value="{{ s.semester_id }}" >{{ s.season }} {{ s.year }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class=" required field">
+                    <label for="id_days_id">Days</label>
+                    <select class="ui fluid dropdown" name="days_id" id="id_days_id" required>
+                        <option value="true">--------</option>
+                        {# TODO: figure out timeslot to display days                       #}
+                    </select>
+                </div>
+            </div>
+            <div id="submit_div" class="field">
+                <button type="button" id="submit" class="ui button" role="button">Submit</button>
             </div>
         </form>
+        <div id="success"></div>
     </div>
 
+   <script>
+        function getUserTypeForm(){
+            var user_type = document.getElementById('id_user_type');
+            var user_type_value = user_type.options[user_type.selectedIndex].value;
+            switch( user_type_value){
+                case 'A':
+                case 'R':
+                    $('#user_type_form').empty();
+                    break;
+                case 'F':
+                    displayFacultyForm();
+                    break;
+                case 'S':
+                    displayStudentForm();
+                    break;
 
+            }
+        }
+
+        function displayStudentForm(){
+            $('#user_type_form').empty();
+            $('#user_type_form').append("<div class='three fields'>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_date_of_birth'>Date of Birth</label>" +
+                                                "<input id='id_date_of_birth' type='text' name='day' value='01/01/2001' required />" +
+                                            "</div>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_student_type'>Student Type</label>" +
+                                                "<select class='ui fluid dropdown' name='student_type' id='id_student_type' required>"+
+                                                    "<option value='F'>Full Time</option>"+
+                                                    "<option value='P'>Part Time</option>"+
+                                                "</select>"+
+                                            "</div>" +
+                                            "<div class='field'>"+
+                                                "<label for='id_credits'>Credits</label>"+
+                                                "<input id='id_credits' name='credits' type='number' step='1' default='0' min='0' max='120'/>"+
+                                            "</div>"+
+                                        "</div> ");
+        }
+
+        function displayFacultyForm() {
+            $('#user_type_form').empty();
+            $('#user_type_form').append("<div class='two fields'>" +
+                                            "<div id='add_departments' class='required field'>" +
+                                                "<label for='id_department_id'>Department</label>" +
+                                                "<select class='ui fluid dropdown' name='department_id' id='id_department_id' required>" +
+                                                "</select>"+
+                                            "</div>" +
+                                            "<div class='required field'>" +
+                                                "<label for='id_faculty_type'>Faculty Type</label>" +
+                                                "<select class='ui fluid dropdown' name='faculty_type' id='id_faculty_type' required>"+
+                                                    "<option value='F'>Full Time</option>"+
+                                                    "<option value='P'>Part Time</option>"+
+                                                "</select>"+
+                                            "</div>" +
+                                        "</div> ");
+            $.ajax({
+                type: "GET",
+                url: "/student_system/create_user/departments/",
+
+                success: function(data) {
+                    console.log(data);
+                    data.forEach(function(element){
+                        $('#id_department_id').append("<option value="+element.department_id+">"+element.department_name+"</option>");
+                    });
+                }
+            });
+
+        }
+
+        function submitUser(event){
+            event.preventDefault();
+            var username = $('#id_username').val();
+            var password = $('#id_password').val();
+            var first_name = $('#id_first_name').val();
+            var last_name = $('#id_last_name').val();
+            var user_type = $('#id_user_type').val();
+            var date_of_birth, student_type, credits, department_id, faculty_type = ''
+            if( user_type.trim() === 'S'){
+                date_of_birth = $('#id_date_of_birth').val();
+                student_type = $('#id_student_type').val();
+                credits = $('#id_credits').val() ? $('#id_credits').val() : false;
+            } else if( user_type.trim() === 'F'){
+                department_id = $('#id_department_id').val();
+                faculty_type = $('#id_faculty_type').val();
+            }
+            $.ajax({
+                type: "POST",
+                url: "/student_system/create_user/",
+
+                data: $('#user-form').serialize(),
+
+                success: function(){
+                    $('#user-form').hide();
+                    $('#success').append("<h2>User Created Successfully!</h2>")
+                }
+            })
+        }
+
+
+        $('#submit').click(submitUser);
+        $('#id_user_type').change(getUserTypeForm);
+
+    </script>
 {#    {{ form }}#}
 
 {#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}

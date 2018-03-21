@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^create_course/prerequisites/(?P<course_id>\d+)/', core_views.CreatePrerequisite.as_view()
         , name='create_prerequisites'),
     url(r'^search_course/$', core_views.UpdateCourse.as_view(), name="search_course"),
+    url(r'^create_section/$', core_views.CreateSection.as_view(), name="create_section"),
     url(r'^create_user/$', core_views.CreateUser.as_view(), name="create_user"),
     url(r'^create_user/departments/$', core_views.get_departments, name="create_user_get_departments"),
     url(r'^search_user/$', core_views.UpdateUser.as_view(), name="search_user")
