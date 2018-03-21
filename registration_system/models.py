@@ -14,13 +14,14 @@ for r in range(1980, (datetime.datetime.now().year+1)):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    class UserType(ChoiceEnum):
-        ADMIN = 'A'
-        STUDENT = 'S'
-        FACULTY = 'F'
-        RESEARCHER = 'R'
+    USER_CHOICES = (
+        ('A', 'A'),
+        ('S', 'S'),
+        ('F', 'F'),
+        ('R', 'R')
+    )
 
-    user_type = models.CharField(max_length=1, choices=UserType.choices(), blank=True)
+    user_type = models.CharField(max_length=1, choices=USER_CHOICES, blank=True)
 
     def has_student(self):
         has_student = False

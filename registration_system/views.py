@@ -11,7 +11,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .models import *
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .forms import *
 # Instead of using signals in views to create child models
 # Just create the Instance of the parent class and an instance of the child class
@@ -45,6 +45,10 @@ def home(request):
 
 # TODO: Create Post Method and create get method for Department RESTful query
 class CreateUser(LoginRequiredMixin, generic.View):
+    user_form_class = CreateUserParentForm
+    user_profile_form_class = CreateUserProfileForm
+    student_form_class = CreateStudentForm
+    faculty_form_class = CreateFacultyForm
     template_name = 'registration_system/create_user.html'
     is_admin = False
 
@@ -73,6 +77,74 @@ class CreateUser(LoginRequiredMixin, generic.View):
         }
 
         return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.POST:
+
+            user_form = self.user_form_class(request.POST, instance=User())
+            user_profile_form = self.user_profile_form_class(request.POST, instance=UserProfile())
+            print(user_form.errors)
+            print(user_profile_form.errors)
+            if user_form.is_valid() and user_profile_form.is_valid():
+                username = user_form.cleaned_data['username']
+                password = user_form.cleaned_data['password']
+                first_name = user_form.cleaned_data['first_name']
+                last_name = user_form.cleaned_data['last_name']
+                email = user_form.cleaned_data['email']
+                user_type = user_profile_form.cleaned_data['user_type']
+                user = User.objects.create(username=username, password=password, first_name=first_name,
+                                           last_name=last_name, email=email)
+                user_profile = user.userprofile
+                if user_type == 'A':
+                    user_profile.user_type = 'A'
+                    user_profile.save()
+                    admin = Admin.objects.create(admin_id=user_profile)
+                    data['is_successful'] = True
+                    print(admin)
+                elif user_type == 'R':
+                    user_profile.user_type = 'R'
+                    user_profile.save()
+                    researcher = Researcher.objects.create(researcher_id=user_profile)
+                    data['is_successful'] = True
+                elif user_type == 'S':
+                    student_form = self.student_form_class(request.POST, instance=Student())
+                    if student_form.is_valid():
+                        date_of_birth = student_form.cleaned_data['date_of_birth']
+                        student_type = student_form.cleaned_data['student_type']
+                        credits_variable = None
+                        if request.POST.get("credits", "") != 0:
+                            credits_variable = request.POST.get("credits", "")
+                            user_profile.user_type = 'S'
+                            user_profile.save()
+                            student = Student.objects.create(student_id=user_profile, date_of_birth=date_of_birth,
+                                                             student_type=student_type.strip(),
+                                                             credits=int(credits_variable))
+                        else:
+                            user_profile.user_type = 'S'
+                            user_profile.save()
+                            student = Student.objects.create(student_id=user_profile, date_of_birth=date_of_birth,
+                                                             student_type=student_type.strip())
+                        data['is_successful'] = True
+                elif user_type == 'F':
+                    faculty_form = self.faculty_form_class(request.POST, instance=Faculty())
+                    if faculty_form.is_valid():
+                        department_id = faculty_form.cleaned_data['department_id']
+                        faculty_type = faculty_form.cleaned_data['faculty_type']
+                        user_profile.user_type = 'F'
+                        user_profile.save()
+                        faculty = Faculty.objects.create(faculty_id=user_profile, department_id=department_id,
+                                                         faculty_type=faculty_type.strip())
+                        data['is_successful'] = True
+                        print(faculty)
+
+                # data['errors'] = self.user_form_class.errors if self.user_form_class.errors else None
+                # data['errors'] = self.user_profile_form_class.errors if self.user_profile_form_class.errors else None
+                # data['errors'] = self.faculty_form_class.errors if self.faculty_form_class.errors else None
+                # data['errors'] = self.student_form_class.errors if self.student_form_class.errors else None
+                return JsonResponse(data)
 
 
 class CreatePrerequisite(LoginRequiredMixin, generic.View):
@@ -157,7 +229,6 @@ class CreateCourse(LoginRequiredMixin, generic.View):
         print(form.is_valid())
         print(form.errors)
         if form.is_valid():
-            redirect('registration_system/success')
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
             credits_value = form.cleaned_data['credits']
@@ -214,6 +285,18 @@ class UserDisplay(LoginRequiredMixin, generic.View):
                 to_static_markup=False,
         )
         return render(request, self.template_name, {'rendered': rendered, 'user': user})
+
+
+def get_departments(request):
+    departments = Department.objects.all()
+    department_array = []
+    for d in departments:
+        data = {
+            'department_id': d.department_id,
+            'department_name': d.name
+        }
+        department_array.append(data)
+    return HttpResponse(json.dumps(department_array), content_type="application/json")
 
 
 
