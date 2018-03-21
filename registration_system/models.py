@@ -75,11 +75,12 @@ class Student(models.Model):
     )
     date_of_birth = models.DateField()
 
-    class StudentType(ChoiceEnum):
-        FULL_TIME = 'F'
-        PART_TIME = 'P'
+    STUDENT_CHOICES = (
+        ('F', 'F'),
+        ('P', 'P')
+    )
 
-    student_type = models.CharField(max_length=1, choices=StudentType.choices())
+    student_type = models.CharField(max_length=1, choices=STUDENT_CHOICES)
 
     def __str__(self):
         return '{}'.format(self.student_id, self.date_of_birth, self.student_type)
@@ -164,11 +165,12 @@ class Faculty(models.Model):
     )
     department_id = models.ForeignKey('Department', on_delete=models.CASCADE)
 
-    class FacultyType(ChoiceEnum):
-        FULL_TIME = 'F'
-        PART_TIME = 'P'
+    FACULTY_CHOICES = (
+        ('P', 'P'),
+        ('F', 'F')
+    )
 
-    faculty_type = models.CharField(max_length=1, choices=FacultyType.choices())
+    faculty_type = models.CharField(max_length=1, choices=FACULTY_CHOICES)
 
     def __str__(self):
         return '{} {} {}'.format(self.faculty_id, self.department_id, self.faculty_type)
@@ -388,7 +390,6 @@ class Section(models.Model):
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
     faculty_id = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True)
     time_slot_id = models.ForeignKey('TimeSlot', on_delete=models.CASCADE, null=True)
-    seat_capacity = models.IntegerField()
     seats_taken = models.IntegerField(default=0)
     semester_id = models.ForeignKey('Semester', on_delete=models.CASCADE, null=True)
     room_id = models.ForeignKey('Room', on_delete=models.CASCADE, null=True)
@@ -495,17 +496,19 @@ class Room(models.Model):
 class MeetingDays(models.Model):
     days_id = models.AutoField(primary_key=True)
 
-    class DayType(ChoiceEnum):
-        MONDAY = 'MONDAY'
-        TUESDAY = 'TUESDAY'
-        WEDNESDAY = 'WEDNESDAY'
-        THURSDAY = 'THURSDAY'
-        FRIDAY = 'FRIDAY'
-        SATURDAY = 'SATURDAY'
-        SUNDAY = 'SUNDAY'
+    DAY_CHOICES = (
+        ('MONDAY', 'MONDAY'),
+        ('TUESDAY', 'TUESDAY'),
+        ('WEDNESDAY', 'WEDNDESDAY'),
+        ('THURSDAY', 'THURSDAY'),
+        ('FRIDAY', 'FRIDAY'),
+        ('SATURDAY', 'SATURDAY'),
+        ('SUNDAY', 'SUNDAY')
+    )
 
-    day_1 = models.CharField(max_length=10, choices=DayType.choices())
-    day_2 = models.CharField(max_length=10, choices=DayType.choices())
+    day_1 = models.CharField(max_length=10, choices=DAY_CHOICES)
+    day_2 = models.CharField(max_length=10, choices=DAY_CHOICES, null=True)
+    day_3 = models.CharField(max_length=10, choices=DAY_CHOICES, null=True)
 
     def __str__(self):
         return '{} {} {}'.format(self.days_id, self.day_1, self.day_2)

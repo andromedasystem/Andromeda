@@ -44,7 +44,7 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
-# TODO: Create Post method to create a course
+# TODO: Test Create Section
 class CreateSection(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_section.html'
     is_admin = False
@@ -75,18 +75,19 @@ class CreateSection(LoginRequiredMixin, generic.View):
             })
 
         if request.is_ajax():
-            building_number = request.GET.get('building_number')
+            building_number = request.GET.get('building_id')
             if building_number is not None:
-                rooms = Room.objects.filter(bulding_id=building_number)
+                rooms = Room.objects.filter(building_id__building_id=int(building_number))
                 rooms_array = []
                 for r in rooms:
                     data = {
+                        'room_id': r.room_id,
                         'room_number': r.room_number,
                         'room_type': r.type,
                         'room_capacity': r.capacity
                     }
                     rooms_array.append(data)
-                    return HttpResponse(json.dumps(rooms_array), content_type="application/json")
+                return HttpResponse(json.dumps(rooms_array), content_type="application/json")
             else:
                 department_id = request.GET.get('department_id')
                 department_name = request.GET.get('department_name')
@@ -120,6 +121,34 @@ class CreateSection(LoginRequiredMixin, generic.View):
         return render(request, self.template_name, {'rendered': rendered, 'departments': departments,
                                                     'buildings': buildings, 'semesters': semester, 'days': days,
                                                     'time_periods': time_period, 'faculty': faculty})
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            department = request.POST.get('department')
+            course_id = request.POST.get('course')
+            course = Course.objects.get(pk=int(course_id))
+            faculty_id = request.POST.get('faculty')
+            faculty = Faculty.objects.get(pk=int(faculty_id))
+            building_id = request.POST.get('building')
+            building = Building.objects.get(pk=int(building_id))
+            room_id = request.POST.get('room')
+            room = Room.objects.get(pk=int(room_id))
+            semester_id = request.POST.get('semester')
+            semester = Semester.objects.get(pk=int(semester_id))
+            days_id = request.POST.get('days')
+            days = MeetingDays.objects.get(pk=int(days_id))
+            time_period_id = request.POST.get('time_period')
+            time_period = Period.objects.get(pk=int(time_period_id))
+            time_slot = TimeSlot.objects.create(days_id=days, period_id=time_period)
+            section = Section.objects.create(course_id=course, timeslot_id=time_slot,
+                                             faculty_id=faculty, semester_id=semester, room_id=room)
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
 
 
 class UpdateCourse(LoginRequiredMixin, generic.View):
@@ -339,13 +368,18 @@ class CreateUser(LoginRequiredMixin, generic.View):
                         date_of_birth = student_form.cleaned_data['date_of_birth']
                         student_type = student_form.cleaned_data['student_type']
                         credits_variable = None
-                        if request.POST.get("credits", "") != 0:
-                            credits_variable = request.POST.get("credits", "")
+                        if request.POST.get("credits") != 0:
+                            credits_variable = request.POST.get("credits")
                             user_profile.user_type = 'S'
                             user_profile.save()
                             student = Student.objects.create(student_id=user_profile, date_of_birth=date_of_birth,
-                                                             student_type=student_type.strip(),
-                                                             credits=int(credits_variable))
+                                                             student_type=student_type.strip())
+                            if student.student_type == 'F':
+                                student.fulltimestudent.credits = int(credits_variable)
+                                student.fulltimestudent.save()
+                            else:
+                                student.parttimestudent.credits = int(credits_variable)
+                                student.parttimestudent.save()
                         else:
                             user_profile.user_type = 'S'
                             user_profile.save()
@@ -363,7 +397,7 @@ class CreateUser(LoginRequiredMixin, generic.View):
                                                          faculty_type=faculty_type.strip())
                         data['is_successful'] = True
                         print(faculty)
-
+                print(student_form.errors)
                 # data['errors'] = self.user_form_class.errors if self.user_form_class.errors else None
                 # data['errors'] = self.user_profile_form_class.errors if self.user_profile_form_class.errors else None
                 # data['errors'] = self.faculty_form_class.errors if self.faculty_form_class.errors else None
@@ -521,6 +555,21 @@ def get_departments(request):
         }
         department_array.append(data)
     return HttpResponse(json.dumps(department_array), content_type="application/json")
+
+
+def create_time_slot(request):
+    data = {
+        'is_successful': False
+    }
+    if request.is_ajax():
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        Period.objects.create(start_time=start_time, end_time=end_time)
+        data['is_successful'] = True
+    else:
+        data['is_successful'] = False
+    return JsonResponse(data)
+
 
 
 
