@@ -12,6 +12,7 @@ class Nav extends Component {
             is_ft_faculty: this.props.is_ft_faculty,
             is_pt_faculty: this.props.is_pt_faculty,
             is_researcher: this.props.is_researcher,
+            is_student: this.props.is_student,
             is_faculty: this.props.is_faculty
         }
     }
@@ -50,13 +51,58 @@ class Nav extends Component {
                 </Dropdown>
             </Menu>;
         } else if(this.state.is_faculty) {
-            menu = <Dropdown.Menu>
-                    <Dropdown.Item><a href="/student_system/">Faculty Course Placeholder</a></Dropdown.Item>
-            </Dropdown.Menu>;
-        } else if(this.state.is_pt_student || this.state.is_ft_student){
-            menu= <Dropdown.Menu>
-                    <Dropdown.Item><a href="/student_system/">Register for a course</a></Dropdown.Item>
-            </Dropdown.Menu>
+            menu = <Menu style={menuStyle} compact>
+                    <Dropdown simple item text='Student Actions'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item>View Student Transcript</Dropdown.Item>
+                        <Dropdown.Item>View Student Schedule</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown simple item text='Faculty Schedule'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item>View Faculty Schedule</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown simple item text='Grading Actions'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item>Submit Grading</Dropdown.Item>
+                   </Dropdown.Menu>
+                </Dropdown>
+            </Menu>;
+        } else if(this.state.is_student){
+            menu= <Menu style={menuStyle} compact>
+                    <Dropdown simple item text='Course Actions'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item >Register Courses</Dropdown.Item>
+                            <Dropdown.Item>Update/Drop Courses</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <Dropdown simple item text='Student Actions'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item>View Student Transcript</Dropdown.Item>
+                        <Dropdown.Item>View Student Schedule</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown simple item text='Holds'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_hold/">View Holds</a></Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown simple item text='Advising'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_advising/">View Advising</a></Dropdown.Item>
+                   </Dropdown.Menu>
+                </Dropdown>
+            </Menu>
+        } else if(this.state.is_researcher){
+            menu= <Menu style={menuStyle} compact>
+                    <Dropdown simple item text='Researcher Actions'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item >Create Report</Dropdown.Item>
+                            <Dropdown.Item>Placeholder</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+            </Menu>
         }
 
 		return (

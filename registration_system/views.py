@@ -185,6 +185,87 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
         return JsonResponse(data)
 
 
+class ViewHold(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_hold.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+        hold = None
+        try:
+            student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+            hold = StudentHold.objects.get(student_id=student)
+        except StudentHold.DoesNotExist:
+            hold = None
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'View Hold'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'holds': hold
+        }
+
+        return render(request, self.template_name, context)
+
+
+class ViewAdvising(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_adviser.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+        advising = None
+        faculty_name = None
+        try:
+            student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+            advising = Advising.objects.get(student_id=student)
+            faculty_name = advising.faculty_id.faculty_id.user.first_name+' '+advising.faculty_id.faculty_id.user.last_name
+        except Advising.DoesNotExist:
+            advising = None
+            faculty_name = None
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'View Adviser'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'advising': advising,
+            'faculty_name': faculty_name
+
+        }
+
+        return render(request, self.template_name, context)
+
+
 class CreateHold(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_hold.html'
     is_admin = False

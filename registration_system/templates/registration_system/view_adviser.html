@@ -1,0 +1,31 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container">
+        <h5 class="ui top attached header">
+          Adviser
+        </h5>
+        {% if faculty_name %}
+            <div class="ui attached segment">
+              <p>{{ faculty_name }}</p>
+            </div>
+        {% else %}
+            <div class="ui attached segment">
+              <p>Currently no Adviser placed.</p>
+            </div>
+        {% endif %}
+    </div>
+
+
+{#    {{ form }}#}
+
+{#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}
+{% endblock %}

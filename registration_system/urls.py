@@ -16,7 +16,9 @@ urlpatterns = [
     url(r'^create_user/departments/$', core_views.get_departments, name="create_user_get_departments"),
     url(r'^search_user/$', core_views.UpdateUser.as_view(), name="search_user"),
     url(r'^create_hold/$', core_views.CreateHold.as_view(), name="create_hold"),
+    url(r'^view_hold/$', core_views.ViewHold.as_view(), name="view_hold"),
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
+    url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester")
 ]
 
