@@ -44,6 +44,96 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class CreateAdvising(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/create_advising.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            first_name = request.GET.get('first_name')
+            last_name = request.GET.get('last_name')
+            # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+            #                            Q(last_name=last_name))
+            user = User.objects.get(first_name=first_name, last_name=last_name)
+
+            is_advised = False
+            try:
+                advising = Advising.objects.get(student_id=user.userprofile.student.student_id)
+                is_advised = True
+            except Advising.DoesNotExist:
+                is_advised = False
+
+            faculty = []
+            for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id_id "
+                                         "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
+                                         "WHERE up.user_id = u.id "
+                                         "AND up.id = f.faculty_id_id"):
+                faculty.append({
+                    'first_name': f.first_name,
+                    'last_name': f.last_name,
+                    'full_name': f.first_name + " " + f.last_name,
+                    'faculty_id': f.faculty_id_id
+                })
+
+            data = {
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'isAdvised': is_advised,
+                'faculty_array':faculty
+                }
+
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create Advising'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user_id = request.POST.get('userID')
+            faculty_id = request.POST.get('faculty')
+            faculty = Faculty.objects.get(pk=int(faculty_id))
+             # = request.POST.get('hold')
+            is_update = request.POST.get('isUpdate')
+            student = Student.objects.get(student_id__user_id=user_id)
+            if is_update is not None:
+                # TODO: Update advising
+                data['is_successful'] = True
+                return JsonResponse(data)
+            advising = Advising.objects.create(faculty_id=faculty, student_id=student)
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class CreateHold(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_hold.html'
     is_admin = False
