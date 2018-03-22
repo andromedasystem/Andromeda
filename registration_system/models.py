@@ -395,8 +395,8 @@ class Section(models.Model):
     room_id = models.ForeignKey('Room', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return '{} {} {} {} {} {} {} {}'.format(self.section_id, self.course_id, self.faculty_id,
-                                                self.time_slot_id, self.seat_capacity, self.seats_taken,
+        return '{} {} {} {} {} {} {} '.format(self.section_id, self.course_id, self.faculty_id,
+                                                self.time_slot_id,  self.seats_taken,
                                                 self.semester_id, self.room_id)
 
     def seats_filled(self):

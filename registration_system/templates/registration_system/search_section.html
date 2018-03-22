@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="fields">
-                <div class="ten wide field">
+                <div class="eight wide field">
                     <label for="id_faculty_id">Faculty</label>
                     <select class="ui fluid dropdown" name="faculty_id" id="id_faculty_id" required>
                         {% if faculty %}
@@ -46,7 +46,7 @@
                         {% endif %}
                     </select>
                 </div>
-                <div class="six wide field">
+                <div class="four wide field">
                     <label for="id_days_id">Meeting Days</label>
                     <select class="ui fluid dropdown" name="days_id" id="id_days_id" required>
                         {% if days %}
@@ -56,11 +56,16 @@
                         {% endif %}
                     </select>
                 </div>
+                <div class="four wide field" style="padding-top: 1.7rem">
+                    <button type="button" id="search_submit" class="ui button" role="button">Submit</button>
+                </div>
             </div>
             <table class="ui celled table">
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Course Name</th>
+                        <th>Department</th>
                         <th>Professor</th>
                         <th>Credits</th>
                         <th>Seats Taken</th>
@@ -69,9 +74,10 @@
                         <th>Meeting Days</th>
                         <th>Building</th>
                         <th>Room</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
-                <tbody id="courses_added">
+                <tbody id="sections_added">
 
                 </tbody>
             </table>
@@ -82,54 +88,108 @@
     </div>
 {# TODO: Ajax call to building table and ajax post to submit update #}
     <script>
-        function getCourses(){
-            removeCourses();
+        function getSections(){
+            removeSections();
             var department_id = $('#id_department_id').val();
             var department_name = $('select option:selected').text();
+            var course_id = $('#id_course_id').val();
+            var days_id = $('#id_days_id').val();
+            var faculty_id = $('#id_faculty_id').val();
             $.ajax({
                 type: "GET",
-                url: "/student_system/search_course/",
+                url: "/student_system/search_section/",
                 data : {
                     department_id: department_id,
-                    department_name: department_name
+                    department_name: department_name,
+                    course_id: course_id,
+                    days_id: days_id,
+                    faculty_id: faculty_id
                 },
                 success: function(data) {
                     console.log(data);
                     data.forEach(function(element){
-                        var tBody = document.getElementById('courses_added');
+                        var tBody = document.getElementById('sections_added');
                         var newRow = tBody.insertRow(tBody.rows.length);
                         newRow.id = element.course_id + '_row';
-                        var courseIdCell = newRow.insertCell(0);
+                        var sectionIdCell = newRow.insertCell(0);
                         var courseNameCell = newRow.insertCell(1);
-                        var descriptionCell = newRow.insertCell(2);
-                        var departmentCell = newRow.insertCell(3);
+                        var departmentCell = newRow.insertCell(2);
+                        var facultyCell = newRow.insertCell(3);
                         var creditsCell = newRow.insertCell(4);
-                        var updateCell = newRow.insertCell(5);
-                        var courseIdText = document.createTextNode(element.course_id);
-                        var departmentText = document.createTextNode(element.department_name);
-                        courseIdCell.appendChild(courseIdText);
+                        var seatsTakenCell = newRow.insertCell(5);
+                        var seatingCapacityCell = newRow.insertCell(6);
+                        var timePeriodCell = newRow.insertCell(7);
+                        var meetingDaysCell = newRow.insertCell(8);
+                        var buildingCell = newRow.insertCell(9);
+                        var roomNumberCell = newRow.insertCell(10);
+                        var updateCell = newRow.insertCell(11);
+{# editing faculty, meeeting days, time period, building, and room number  #}
+                        var sectionIdText = document.createTextNode(element.section_id);
+                        var courseNameText = document.createTextNode(element.course_name);
+                        var departmentText = document.createTextNode(element.course_department);
+                        var creditsText = document.createTextNode(element.credits);
+                        var seatsTakenText = document.createTextNode(element.seats_taken);
+                        var seatingCapacitytText = document.createTextNode(element.seating_capacity);
+                        sectionIdCell.appendChild(sectionIdText);
+                        courseNameCell.appendChild(courseNameText);
                         departmentCell.appendChild(departmentText);
-                        courseNameCell.insertAdjacentHTML('afterbegin',
-                            '<div class="ui input">' +
-                                '<input type="text" name="course_name" value="'+element.course_name+'" id="id_course_name_'+element.course_id+'" required />' +
-                            '</div>' );
-                        descriptionCell.insertAdjacentHTML('afterbegin',
-                            '<div class="ui input">' +
-                                '<textarea class="text-area-styled" name="course_description" maxlength="1000" required id="id_course_description_'+element.course_id+'">'+element.course_description+'</textarea>' +
-                            '</div>' );
-                        creditsCell.insertAdjacentHTML('afterbegin',
-                            '<div class="ui input">' +
-                                '<input type="number" name="course_credits" value="'+element.course_credits+'" required id="id_course_credits_'+element.course_id+'" step="1" min="2" max="4"/>' +
-                            '</div>' );
-                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateCourse(this.id)" class="ui info button" id="'+element.course_id+'" type="button">Update</button>')
+                        creditsCell.appendChild(creditsText);
+                        seatsTakenCell.appendChild(seatsTakenText);
+                        seatingCapacityCell.appendChild(seatingCapacitytText);
+                        facultyCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_faculty_id_'+element.section_id+'" class="ui input" style="min-width: 9rem;">' +
+                            '</select>' );
+                        var facultySelect = facultyCell.firstChild;
+                        element.faculty_array.forEach(function(element){
+                            console.log("here");
+                            facultySelect.insertAdjacentHTML('afterbegin',
+                                '<option value="'+element.faculty_id+'" >'+element.full_name+'</option>')
+                        });
+                       timePeriodCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_time_period_id_'+element.section_id+'" class="ui input" style="min-width: 7.8rem;">' +
+                            '</select>' );
+                        var timeSelect = timePeriodCell.firstChild;
+                        element.time_periods_array.forEach(function(element){
+                            console.log("here");
+                            timeSelect.insertAdjacentHTML('afterbegin',
+                                '<option value="'+element.time_period_id+'" >'+element.time_range+'</option>')
+                        });
+                        meetingDaysCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_days_id_'+element.section_id+'" class="ui input" style="min-width: 8rem;">' +
+                            '</select>' );
+                        var daysSelect = meetingDaysCell.firstChild;
+                        element.meeting_days_array.forEach(function(element){
+                            console.log("here");
+                            daysSelect.insertAdjacentHTML('afterbegin',
+                                '<option value="'+element.days_id+'" >'+element.day_range+'</option>')
+                        });
+                        buildingCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_building_id_'+element.section_id+'" class="ui input" style="min-width: 10rem;">' +
+                            '</select>' );
+                        var buildingSelect = buildingCell.firstChild;
+                        element.buildings_array.forEach(function(element){
+                            console.log("here");
+                            buildingSelect.insertAdjacentHTML('afterbegin',
+                                '<option value="'+element.building_id+'" >'+element.building_name+'</option>')
+                        });
+                        roomNumberCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_room_id_'+element.section_id+'" class="ui input" style="min-width: 6.7rem;" >' +
+                            '</select>' );
+                        var roomSelect = roomNumberCell.firstChild;
+                        element.rooms_array.forEach(function(element){
+                            console.log("here");
+                            roomSelect.insertAdjacentHTML('afterbegin',
+                                '<option value="'+element.rooms_id+'" >'+element.room_number+'</option>')
+                        });
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateCourse(this.id)" class="ui info button" id="'+element.section_id+'" type="button">Update</button>')
                     });
                 }
             });
 
         }
 
-        function removeCourses() {
-            $('#courses_added').empty();
+        function removeSections() {
+            $('#sections_added').empty();
         }
 
         function updateCourse(course_id) {
@@ -156,7 +216,7 @@
 
         }
 
-        $('#id_department_id').change(getCourses)
+        $('#search_submit').click(getSections)
 
 
     </script>

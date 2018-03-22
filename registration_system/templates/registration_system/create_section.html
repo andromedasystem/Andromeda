@@ -83,7 +83,7 @@
                 </div>
                 <div class="four wide required field">
                      <label for="id_time_slot_id">Time Slot</label>
-                    <select class="ui fluid dropdown" name="faculty_id" id="id_time_slot_id" required>
+                    <select class="ui fluid dropdown" name="time_slot_id" id="id_time_slot_id" required>
                         {% if time_periods %}
                             {% for p in time_periods %}
                                 <option value="{{ p.period_id }}" >{{ p.start_time }}---{{ p.end_time }} </option>

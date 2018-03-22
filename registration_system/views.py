@@ -66,6 +66,7 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             days_id = request.GET.get('days_id')
             faculty_id = request.GET.get('faculty_id')
             section = None
+            print(department_id)
             if department_id is not None:
                 section = Section.objects.filter(course_id__department_id_id=int(department_id))
             elif course_id is not None:
@@ -75,26 +76,82 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             elif faculty_id is not None:
                 section = Section.objects.filter(faculty_id=int(faculty_id))
 
+            faculty = []
+            for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id_id "
+                                         "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
+                                         "WHERE up.user_id = u.id "
+                                         "AND up.id = f.faculty_id_id"):
+                faculty.append({
+                    'first_name': f.first_name,
+                    'last_name': f.last_name,
+                    'full_name': f.first_name+" "+f.last_name,
+                    'faculty_id': f.faculty_id_id
+                })
+            departments = []
+            for d in Department.objects.all():
+                departments.append({
+                    'department_id': d.department_id,
+                    'department_name': d.name
+                })
+            time_periods = []
+            for t in Period.objects.all():
+                time_periods.append({
+                    'time_period_id': t.period_id,
+                    'time_range': t.start_time.strftime('%H:%M %p')+' '+t.end_time.strftime('%H:%M %p')
+                })
+            meeting_days = []
+            for m in MeetingDays.objects.all():
+                meeting_days.append({
+                    'days_id': m.days_id,
+                    'day_1': m.day_1,
+                    'day_2': m.day_2,
+                    'day_range': m.day_1+" "+m.day_2
+                })
+            buildings = []
+            for b in Building.objects.all():
+                buildings.append({
+                    'building_id': b.building_id,
+                    'building_name': b.name
+                })
+            rooms = []
+            for arrgh in Room.objects.all():
+                rooms.append({
+                    'rooms_id': arrgh.room_id,
+                    'room_number': arrgh.room_number
+                })
+
             section_array = []
             for s in section:
                 print(s)
+                print("here\n")
                 data = {
+                    'faculty_array': faculty,
+                    'departments_array': departments,
+                    'time_periods_array': time_periods,
+                    'meeting_days_array': meeting_days,
+                    'buildings_array': buildings,
+                    'rooms_array': rooms,
                     'section_id': s.section_id,
-                    'faculty_id': s.faculty_id,
+                    'course_id': s.course_id.course_id,
+                    'course_department': s.course_id.department_id.name,
+                    'course_name': s.course_id.name,
+                    'faculty_id': s.faculty_id.faculty_id_id,
                     'faculty_name': s.faculty_id.faculty_id.user.first_name + " " + s.faculty_id.faculty_id.user.last_name,
                     'credits': s.course_id.credits,
                     'seats_taken': s.seats_taken,
                     'seating_capacity': s.room_id.capacity,
-                    'time_slot_id': s.time_slot_id,
-                    'time_period_id': s.time_slot_id.period_id,
-                    'time_period_range': s.time_slot_id.period_id.start_time + " " + s.time_slot_id.period_id.end_time,
-                    'meeting_days_id': s.time_slot_id.days_id,
+                    'time_slot_id': s.time_slot_id.time_slot_id,
+                    'time_period_id': s.time_slot_id.period_id.period_id,
+                    'time_period_range': s.time_slot_id.period_id.start_time.strftime('%H:%M %p')
+                                         + " " + s.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                    'meeting_days_id': s.time_slot_id.days_id.days_id,
                     'meeting_days': s.time_slot_id.days_id.day_1 + s.time_slot_id.days_id.day_2,
-                    'building_id': s.room_id.building_id,
+                    'building_id': s.room_id.building_id.building_id,
                     'building_name': s.room_id.building_id.name,
-                    'room_id': s.room_id,
+                    'room_id': s.room_id.room_id,
                     'room_number': s.room_id.room_number
                 }
+                section_array.append(data)
 
             return HttpResponse(json.dumps(section_array), content_type="application/json")
 
