@@ -461,7 +461,7 @@ class Semester(models.Model):
     SEMESTER_STATUS = (
         ('OPEN_GRADING', 'OPEN_GRADING'),
         ('CLOSE', 'CLOSE'),
-        ('OPEN_REGISRATION', 'OPEN_REGISTRATION')
+        ('OPEN_REGISTRATION', 'OPEN_REGISTRATION')
     )
 
     SEASON_CHOICES = (

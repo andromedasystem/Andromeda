@@ -44,6 +44,54 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class ChangeSemesterStatus(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/change_semester.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        semesters = Semester.objects.all()
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create Advising'
+            },
+            to_static_markup=False,
+        )
+        context = {
+            'rendered': rendered,
+            'semesters': semesters
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            semester_id = request.POST.get('semester_id')
+            status = request.POST.get('status')
+            semester = Semester.objects.get(pk=int(semester_id))
+            semester.status = status
+            semester.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class CreateAdvising(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_advising.html'
     is_admin = False
@@ -65,10 +113,10 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
             #                            Q(last_name=last_name))
             user = User.objects.get(first_name=first_name, last_name=last_name)
 
-            is_advised = False
+            is_advised = True
             try:
-                advising = Advising.objects.get(student_id=user.userprofile.student.student_id)
-                is_advised = True
+                student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+                advising = Advising.objects.get(student_id=student)
             except Advising.DoesNotExist:
                 is_advised = False
 
@@ -91,7 +139,7 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'isAdvised': is_advised,
-                'faculty_array':faculty
+                'faculty_array': faculty
                 }
 
             return HttpResponse(json.dumps(data), content_type="application/json")
@@ -125,6 +173,9 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
             student = Student.objects.get(student_id__user_id=user_id)
             if is_update is not None:
                 # TODO: Update advising
+                advising = Advising.objects.get(student_id=student)
+                advising.faculty_id = faculty
+                advising.save()
                 data['is_successful'] = True
                 return JsonResponse(data)
             advising = Advising.objects.create(faculty_id=faculty, student_id=student)
@@ -157,7 +208,8 @@ class CreateHold(LoginRequiredMixin, generic.View):
 
             is_held = False
             try:
-                hold = StudentHold.objects.get(student_id=user.userprofile.student.student_id)
+                student = Student. objects.get(pk=int(user.userprofile.student.student_id_id))
+                hold = StudentHold.objects.get(student_id=student)
                 is_held = True
             except StudentHold.DoesNotExist:
                 is_held = False
@@ -199,15 +251,16 @@ class CreateHold(LoginRequiredMixin, generic.View):
             is_remove = request.POST.get('isRemove')
             user = User.objects.get(pk=int(user_id))
             if is_remove is not None:
-                student_hold = StudentHold.objects.get(student_id=user.userprofile.student.student_id)
+                student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+                student_hold = StudentHold.objects.get(student_id=student)
                 student_hold.delete()
                 data['is_successful'] = True
                 return JsonResponse(data)
             hold = Hold.objects.create(name=hold)
 
-            student_id = user.userprofile.student.student_id
+            student_id = user.userprofile.student.student_id_id
             student = Student.objects.get(pk=int(student_id))
-            student_hold = StudentHold.objects.create(student_id=student_id, hold_id=hold)
+            student_hold = StudentHold.objects.create(student_id=student, hold_id=hold)
             data['is_successful'] = True
         else:
             data['is_successful'] = False

@@ -1,0 +1,74 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <div class="ui form" id="ui-form">
+        {{ csrf }}
+             <div class="two fields">
+                <div class="field">
+                    <label for="semester_id">Semesters</label>
+                    <select id="semester_id" class="ui fluid dropdown">
+                        <option value="0">--------</option>
+                        {% if semesters %}
+                            {% for s in semesters %}
+                                <option value="{{ s.semester_id }}" >{{ s.season }}--{{ s.year }}--{{ s.status }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="staus_name_id">Status</label>
+                    <select id="status_name_id" class="ui fluid dropdown">
+                        <option value="OPEN_GRADING">OPEN GRADING</option>
+                        <option value="CLOSE">CLOSE GRADING</option>
+                        <option value="OPEN_REGISTRATION">OPEN_REGISTRATION</option>
+                        <option value="CLOSE">CLOSE REGISTRATION</option>
+                    </select>
+                </div>
+            </div>
+            <div class="display-inline ">
+                <button class="ui primary button" id="submit" type="button">Submit</button>
+            </div>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+
+        function changeStatus() {
+            var semester_id = $('#semester_id').val();
+            var status = $('#status_name_id').val();
+            $.ajax({
+                type: "POST",
+                url: "/student_system/change_semester/",
+
+                data: {
+                    semester_id: semester_id,
+                    status: status,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+                    $('#success').append("<h2>Semester Status Updated Successfully!</h2>")
+                }
+            })
+
+        }
+
+        $('#submit').click(changeStatus);
+
+
+
+    </script>
+
+{% endblock %}

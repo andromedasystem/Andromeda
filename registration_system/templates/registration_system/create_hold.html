@@ -57,40 +57,38 @@
                 url: "/student_system/create_hold/",
                 data : {
                     first_name: first_name,
-                    last_name: last_name,
+                    last_name: last_name
                 },
-                success: function(data) {
-                    console.log(data);
-                    data.forEach(function(element){
-                        var tBody = document.getElementById('students_added');
-                        var newRow = tBody.insertRow(tBody.rows.length);
-                        newRow.id = element.user_id + '_row';
-                        var userIdCell = newRow.insertCell(0);
-                        var usernameCell = newRow.insertCell(1);
-                        var emailCell = newRow.insertCell(2);
-                        var firstNameCell = newRow.insertCell(3);
-                        var lastNameCell = newRow.insertCell(4);
-                        var holdTypeCell = newRow.insertCell(5);
-                        var updateCell = newRow.insertCell(6);
-                        var userIdText = document.createTextNode(element.user_id);
-                        var usernameText = document.createTextNode(element.username);
-                        var emailText = document.createTextNode(element.email);
-                        var firstNameText = document.createTextNode(element.first_name);
-                        var lastNameText = document.createTextNode(element.last_name);
-                        userIdCell.appendChild(userIdText);
-                        usernameCell.appendChild(usernameText);
-                        emailCell.appendChild(emailText);
-                        firstNameCell.appendChild(firstNameText);
-                        lastNameCell.appendChild(lastNameText);
-                        holdTypeCell.insertAdjacentHTML('afterbegin','<select class="ui fluid dropdown" name="hold_name" id="hold_name_id"><option value="ACADEMIC">ACADEMIC</option><option value="DISCIPLINARY">DISCIPLINARY</option><option value="FINANCIAL">MEDICAL</option><option value="ACADEMIC">MEDICAL</option></select> "' )
-                        if(element.isHeld){
-                            updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="deleteHold(this.id)" class="ui negative button" id="'+element.user_id+'" type="button">Remove</button>')
-                        } else {
-                            updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="createHold(this.id)" class="ui negative button" id="' + element.user_id + '" type="button">Add Hold</button>')
-                        }
-                    });
+                success: function(element) {
+                    var tBody = document.getElementById('students_added');
+                    var newRow = tBody.insertRow(tBody.rows.length);
+                    newRow.id = element.user_id + '_row';
+                    var userIdCell = newRow.insertCell(0);
+                    var usernameCell = newRow.insertCell(1);
+                    var emailCell = newRow.insertCell(2);
+                    var firstNameCell = newRow.insertCell(3);
+                    var lastNameCell = newRow.insertCell(4);
+                    var holdTypeCell = newRow.insertCell(5);
+                    var updateCell = newRow.insertCell(6);
+                    var userIdText = document.createTextNode(element.user_id);
+                    var usernameText = document.createTextNode(element.username);
+                    var emailText = document.createTextNode(element.email);
+                    var firstNameText = document.createTextNode(element.first_name);
+                    var lastNameText = document.createTextNode(element.last_name);
+                    userIdCell.appendChild(userIdText);
+                    usernameCell.appendChild(usernameText);
+                    emailCell.appendChild(emailText);
+                    firstNameCell.appendChild(firstNameText);
+                    lastNameCell.appendChild(lastNameText);
+                    holdTypeCell.insertAdjacentHTML('afterbegin','<select class="ui fluid dropdown" name="hold_name" id="hold_name_id"><option value="ACADEMIC">ACADEMIC</option><option value="DISCIPLINARY">DISCIPLINARY</option><option value="FINANCIAL">MEDICAL</option><option value="ACADEMIC">MEDICAL</option></select> ' )
+                    if(element.isHeld){
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="deleteHold(this.id)" class="ui negative button" id="'+element.user_id+'" type="button">Remove</button>')
+                    } else {
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="createHold(this.id)" class="ui positive button" id="' + element.user_id + '" type="button">Add Hold</button>')
+                    }
+
                 }
-            });
+            })
 
         }
 
@@ -106,7 +104,6 @@
                 data: {
                     userID: user_id,
                     hold: $('#hold_name_id').val(),
-                    isRemove: false,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
 
