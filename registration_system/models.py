@@ -458,13 +458,20 @@ class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
 
-    class SeasonType(ChoiceEnum):
-        WINTER = 'WINTER'
-        SPRING = 'SPRING'
-        FALL = 'FALL'
-        SUMMER = 'SUMMER'
+    SEMESTER_STATUS = (
+        ('OPEN_GRADING', 'OPEN_GRADING'),
+        ('CLOSE', 'CLOSE'),
+        ('OPEN_REGISRATION', 'OPEN_REGISTRATION')
+    )
 
-    season = models.CharField(max_length=7, choices=SeasonType.choices())
+    SEASON_CHOICES = (
+        ('WINTER', 'WINTER'),
+        ('SPRING', 'SPRING'),
+        ('FALL', 'FALL'),
+        ('SUMMER', 'SUMMER')
+    )
+    status = models.CharField(max_length=35, default='CLOSE', choices=SEMESTER_STATUS)
+    season = models.CharField(max_length=7, choices=SEASON_CHOICES)
 
     def __str__(self):
         return '{} {} {}'.format(self.semester_id, self.season, self.year)
