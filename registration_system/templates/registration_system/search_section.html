@@ -68,10 +68,8 @@
                         <th>Department</th>
                         <th>Professor</th>
                         <th>Credits</th>
-                        <th>Seats Taken</th>
-                        <th>Seating Capacity</th>
-                        <th>Time Period</th>
-                        <th>Meeting Days</th>
+                        <th>Seats </th>
+                        <th>Time Slot</th>
                         <th>Building</th>
                         <th>Room</th>
                         <th>Update</th>
@@ -116,26 +114,22 @@
                         var departmentCell = newRow.insertCell(2);
                         var facultyCell = newRow.insertCell(3);
                         var creditsCell = newRow.insertCell(4);
-                        var seatsTakenCell = newRow.insertCell(5);
-                        var seatingCapacityCell = newRow.insertCell(6);
-                        var timePeriodCell = newRow.insertCell(7);
-                        var meetingDaysCell = newRow.insertCell(8);
-                        var buildingCell = newRow.insertCell(9);
-                        var roomNumberCell = newRow.insertCell(10);
-                        var updateCell = newRow.insertCell(11);
+                        var seatsCell = newRow.insertCell(5);
+                        var timeSlotCell = newRow.insertCell(6);
+                        var buildingCell = newRow.insertCell(7);
+                        var roomNumberCell = newRow.insertCell(8);
+                        var updateCell = newRow.insertCell(9);
 {# editing faculty, meeeting days, time period, building, and room number  #}
                         var sectionIdText = document.createTextNode(element.section_id);
                         var courseNameText = document.createTextNode(element.course_name);
                         var departmentText = document.createTextNode(element.course_department);
                         var creditsText = document.createTextNode(element.credits);
-                        var seatsTakenText = document.createTextNode(element.seats_taken);
-                        var seatingCapacitytText = document.createTextNode(element.seating_capacity);
+                        var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>"+element.seats_taken+"</li><li><span style='font-weight:bold;'>Capacity:</span>"+element.seating_capacity+"</li></span>")
                         sectionIdCell.appendChild(sectionIdText);
                         courseNameCell.appendChild(courseNameText);
                         departmentCell.appendChild(departmentText);
                         creditsCell.appendChild(creditsText);
-                        seatsTakenCell.appendChild(seatsTakenText);
-                        seatingCapacityCell.appendChild(seatingCapacitytText);
+                        $('#'+element.course_id + '_row').find('td:eq(5)').append(seatsText);
                         facultyCell.insertAdjacentHTML('afterbegin',
                             '<select id="id_faculty_id_'+element.section_id+'" class="ui input" style="min-width: 9rem;">' +
                             '</select>' );
@@ -145,19 +139,19 @@
                             facultySelect.insertAdjacentHTML('afterbegin',
                                 '<option value="'+element.faculty_id+'" >'+element.full_name+'</option>')
                         });
-                       timePeriodCell.insertAdjacentHTML('afterbegin',
-                            '<select id="id_time_period_id_'+element.section_id+'" class="ui input" style="min-width: 7.8rem;">' +
+                       timeSlotCell.insertAdjacentHTML('afterbegin',
+                            '<select id="id_time_period_id_'+element.section_id+'" class="ui input" style="min-width: 12rem;">' +
                             '</select>' );
-                        var timeSelect = timePeriodCell.firstChild;
+                        var timeSelect = timeSlotCell.firstChild;
                         element.time_periods_array.forEach(function(element){
                             console.log("here");
                             timeSelect.insertAdjacentHTML('afterbegin',
                                 '<option value="'+element.time_period_id+'" >'+element.time_range+'</option>')
                         });
-                        meetingDaysCell.insertAdjacentHTML('afterbegin',
-                            '<select id="id_days_id_'+element.section_id+'" class="ui input" style="min-width: 8rem;">' +
+                        timeSlotCell.insertAdjacentHTML('beforeend',
+                            '<select id="id_days_id_'+element.section_id+'" class="ui input" style="min-width: 12rem;">' +
                             '</select>' );
-                        var daysSelect = meetingDaysCell.firstChild;
+                        var daysSelect = timeSlotCell.firstChild.nextSibling;
                         element.meeting_days_array.forEach(function(element){
                             console.log("here");
                             daysSelect.insertAdjacentHTML('afterbegin',
@@ -181,7 +175,7 @@
                             roomSelect.insertAdjacentHTML('afterbegin',
                                 '<option value="'+element.rooms_id+'" >'+element.room_number+'</option>')
                         });
-                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateCourse(this.id)" class="ui info button" id="'+element.section_id+'" type="button">Update</button>')
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateSection(this.id)" class="ui info button" id="'+element.section_id+'" type="button">Update</button>')
                     });
                 }
             });
@@ -192,25 +186,29 @@
             $('#sections_added').empty();
         }
 
-        function updateCourse(course_id) {
+        function updateSection(section_id) {
 
-            var course_description = $('#id_course_description_'+course_id).val();
-            var course_name = $('#id_course_name_'+course_id).val();
-            var course_credits = $('#id_course_credits_'+course_id).val();
+            var faculty = $('#id_faculty_id_'+section_id).val();
+            var time_period = $('#id_time_period_id_'+section_id).val();
+            var days = $('#id_days_id_'+section_id).val();
+            var building = $('#id_building_id_'+section_id).val();
+            var room = $('#id_room_id_'+section_id).val();
             $.ajax({
                 type: "POST",
-                url: "/student_system/search_course/",
+                url: "/student_system/search_section/",
 
                 data: {
-                    courseID: course_id,
-                    courseName: course_name,
-                    course_description: course_description,
-                    course_credits: course_credits,
+                    faculty: faculty,
+                    time_period: time_period,
+                    days: days,
+                    building: building,
+                    section_id: section_id,
+                    room: room,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
 
                 success: function(){
-                    $('#success').append("<h2>"+course_name+" Update Successfully</h2>")
+                    $('#success').append("<h2>Section Update Successfully</h2>")
                 }
             })
 

@@ -187,6 +187,32 @@ class UpdateSection(LoginRequiredMixin, generic.View):
         }
         return render(request, self.template_name, context)
 
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            faculty_id = request.POST.get('faculty')
+            faculty = Faculty.objects.get(pk=int(faculty_id))
+            time_period = request.POST.get('time_period')
+            days = request.POST.get('days')
+            time_slot = TimeSlot.objects.get(days_id=int(days), period_id=int(time_period))
+            building_id = request.POST.get('building')
+            building = Building.objects.get(pk=int(building_id))
+            room_id = request.POST.get('room')
+            room = Room.objects.get(pk=int(room_id))
+            section_id = request.POST.get('section_id')
+            section = Section.objects.get(pk=int(section_id))
+            section.faculty_id = faculty
+            section.time_slot_id = time_slot
+            section.building_id = building
+            section.room_id = room
+            section.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
 
 class CreateSection(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_section.html'

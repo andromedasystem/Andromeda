@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5f2bd7db-577c-4430-9ec6-c93f0a14de32" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registration_system/models.py" afterPath="$PROJECT_DIR$/registration_system/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/create_section.html" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/create_section.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/search_section.html" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/search_section.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registration_system/views.py" afterPath="$PROJECT_DIR$/registration_system/views.py" />
     </list>
@@ -34,10 +32,10 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+            <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/registration_system/models.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="499">
+                  <state relative-caret-position="448">
                     <caret line="404" column="43" lean-forward="true" selection-start-line="404" selection-start-column="43" selection-end-line="404" selection-end-column="43" />
                     <folding>
                       <element signature="e#0#28#0" expanded="true" />
@@ -46,7 +44,7 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="search_course.html" pinned="false" current-in-tab="true">
+            <file leaf-file-name="search_course.html" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/search_course.html">
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="199">
@@ -67,15 +65,15 @@
             <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/registration_system/views.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-9">
-                    <caret line="108" column="18" lean-forward="true" selection-start-line="108" selection-start-column="18" selection-end-line="108" selection-end-column="18" />
+                  <state relative-caret-position="1283">
+                    <caret line="216" column="54" lean-forward="true" selection-start-line="216" selection-start-column="54" selection-end-line="216" selection-end-column="54" />
                     <folding>
                       <element signature="e#0#15#0" expanded="true" />
-                      <marker date="1521688315666" expanded="true" signature="3040:3366" ph="SELECT u.fir... registration_system_faculty" />
-                      <marker date="1521688315666" expanded="true" signature="7355:7669" ph="SELECT u.fir... registration_system_faculty" />
-                      <marker date="1521688315666" expanded="true" signature="8813:8956" ph="SELECT u.fir... registration_system_faculty" />
-                      <marker date="1521688315666" expanded="true" signature="8813:9059" ph="SELECT u.fir... registration_system_faculty" />
-                      <marker date="1521688315666" expanded="true" signature="8813:9127" ph="SELECT u.fir... registration_system_faculty" />
+                      <marker date="1521696053972" expanded="true" signature="3040:3366" ph="SELECT u.fir... registration_system_faculty" />
+                      <marker date="1521696053972" expanded="true" signature="7355:7669" ph="SELECT u.fir... registration_system_faculty" />
+                      <marker date="1521696053972" expanded="true" signature="9921:10064" ph="SELECT u.fir... registration_system_faculty" />
+                      <marker date="1521696053972" expanded="true" signature="9921:10167" ph="SELECT u.fir... registration_system_faculty" />
+                      <marker date="1521696053972" expanded="true" signature="9921:10235" ph="SELECT u.fir... registration_system_faculty" />
                     </folding>
                   </state>
                 </provider>
@@ -187,8 +185,8 @@
       <file leaf-file-name="search_section.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/search_section.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="175" column="114" lean-forward="false" selection-start-line="175" selection-start-column="114" selection-end-line="175" selection-end-column="114" />
+            <state relative-caret-position="377">
+              <caret line="205" column="31" lean-forward="false" selection-start-line="205" selection-start-column="31" selection-end-line="205" selection-end-column="31" />
               <folding>
                 <element signature="e#2812#2839#0#HTML" expanded="true" />
               </folding>
@@ -317,8 +315,8 @@
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/search_course.html" />
         <option value="$PROJECT_DIR$/registration_system/models.py" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/create_section.html" />
-        <option value="$PROJECT_DIR$/registration_system/views.py" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/search_section.html" />
+        <option value="$PROJECT_DIR$/registration_system/views.py" />
       </list>
     </option>
   </component>
@@ -332,10 +330,10 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-165" />
-    <option name="y" value="20" />
+    <option name="x" value="-72" />
+    <option name="y" value="820" />
     <option name="width" value="1342" />
-    <option name="height" value="1068" />
+    <option name="height" value="1100" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -603,7 +601,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-165" y="20" width="1342" height="1068" extended-state="0" />
+    <frame x="-72" y="820" width="1342" height="1100" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19656786" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -614,7 +612,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41847825" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34012875" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32883817" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1031,16 +1029,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="404" column="43" lean-forward="true" selection-start-line="404" selection-start-column="43" selection-end-line="404" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/search_course.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="199">
@@ -1057,27 +1045,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/views.py">
+    <entry file="file://$PROJECT_DIR$/registration_system/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="108" column="18" lean-forward="true" selection-start-line="108" selection-start-column="18" selection-end-line="108" selection-end-column="18" />
+        <state relative-caret-position="448">
+          <caret line="404" column="43" lean-forward="true" selection-start-line="404" selection-start-column="43" selection-end-line="404" selection-end-column="43" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
-            <marker date="1521688315666" expanded="true" signature="3040:3366" ph="SELECT u.fir... registration_system_faculty" />
-            <marker date="1521688315666" expanded="true" signature="7355:7669" ph="SELECT u.fir... registration_system_faculty" />
-            <marker date="1521688315666" expanded="true" signature="8813:8956" ph="SELECT u.fir... registration_system_faculty" />
-            <marker date="1521688315666" expanded="true" signature="8813:9059" ph="SELECT u.fir... registration_system_faculty" />
-            <marker date="1521688315666" expanded="true" signature="8813:9127" ph="SELECT u.fir... registration_system_faculty" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/search_section.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="175" column="114" lean-forward="false" selection-start-line="175" selection-start-column="114" selection-end-line="175" selection-end-column="114" />
+        <state relative-caret-position="377">
+          <caret line="205" column="31" lean-forward="false" selection-start-line="205" selection-start-column="31" selection-end-line="205" selection-end-column="31" />
           <folding>
             <element signature="e#2812#2839#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1283">
+          <caret line="216" column="54" lean-forward="true" selection-start-line="216" selection-start-column="54" selection-end-line="216" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <marker date="1521696053972" expanded="true" signature="3040:3366" ph="SELECT u.fir... registration_system_faculty" />
+            <marker date="1521696053972" expanded="true" signature="7355:7669" ph="SELECT u.fir... registration_system_faculty" />
+            <marker date="1521696053972" expanded="true" signature="9921:10064" ph="SELECT u.fir... registration_system_faculty" />
+            <marker date="1521696053972" expanded="true" signature="9921:10167" ph="SELECT u.fir... registration_system_faculty" />
+            <marker date="1521696053972" expanded="true" signature="9921:10235" ph="SELECT u.fir... registration_system_faculty" />
           </folding>
         </state>
       </provider>
