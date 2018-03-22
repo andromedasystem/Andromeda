@@ -44,7 +44,86 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
-# TODO: Create Post Method
+class CreateHold(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/create_hold.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            first_name = request.GET.get('first_name')
+            last_name = request.GET.get('last_name')
+            # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+            #                            Q(last_name=last_name))
+            user = User.objects.get(first_name=first_name, last_name=last_name)
+
+            is_held = False
+            try:
+                hold = StudentHold.objects.get(student_id=user.userprofile.student.student_id)
+                is_held = True
+            except StudentHold.DoesNotExist:
+                is_held = False
+
+            data = {
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'isHeld': is_held
+                }
+
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Create Hold'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user_id = request.POST.get('userID')
+            hold = request.POST.get('hold')
+            is_remove = request.POST.get('isRemove')
+            user = User.objects.get(pk=int(user_id))
+            if is_remove is not None:
+                student_hold = StudentHold.objects.get(student_id=user.userprofile.student.student_id)
+                student_hold.delete()
+                data['is_successful'] = True
+                return JsonResponse(data)
+            hold = Hold.objects.create(name=hold)
+
+            student_id = user.userprofile.student.student_id
+            student = Student.objects.get(pk=int(student_id))
+            student_hold = StudentHold.objects.create(student_id=student_id, hold_id=hold)
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class UpdateSection(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/search_section.html'
     is_admin = False

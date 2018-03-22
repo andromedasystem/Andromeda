@@ -240,13 +240,14 @@ class Advising(models.Model):
 class Hold(models.Model):
     hold_id = models.AutoField(primary_key=True)
 
-    class HoldType(ChoiceEnum):
-        ACADEMIC = 'ACADEMIC'
-        DISCIPLINARY = 'DISCIPLINARY'
-        FINANCIAL = 'FINANCIAL'
-        MEDICAL = 'MEDICAL'
+    HOLD_CHOICES = (
+        ('ACADEMIC', 'ACADEMIC'),
+        ('DISCIPLINARY', 'DISCIPLINARY'),
+        ('FINANCIAL', 'FINANCIAL'),
+        ('MEDICAL', 'MEDICAL')
+    )
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, choices=HOLD_CHOICES)
 
     def __str__(self):
         return '{} {}'.format(self.hold_id, self.name)
