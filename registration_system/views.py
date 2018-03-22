@@ -14,6 +14,8 @@ from django.db.models import Q
 from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .forms import *
+
+
 # Instead of using signals in views to create child models
 # Just create the Instance of the parent class and an instance of the child class
 # point the child's foreign key reference to the parent class. have to fo for Faculty and Student models
@@ -140,7 +142,7 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
                 'last_name': user.last_name,
                 'isAdvised': is_advised,
                 'faculty_array': faculty
-                }
+            }
 
             return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -168,7 +170,7 @@ class CreateAdvising(LoginRequiredMixin, generic.View):
             user_id = request.POST.get('userID')
             faculty_id = request.POST.get('faculty')
             faculty = Faculty.objects.get(pk=int(faculty_id))
-             # = request.POST.get('hold')
+            # = request.POST.get('hold')
             is_update = request.POST.get('isUpdate')
             student = Student.objects.get(student_id__user_id=user_id)
             if is_update is not None:
@@ -241,7 +243,7 @@ class ViewAdvising(LoginRequiredMixin, generic.View):
         try:
             student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
             advising = Advising.objects.get(student_id=student)
-            faculty_name = advising.faculty_id.faculty_id.user.first_name+' '+advising.faculty_id.faculty_id.user.last_name
+            faculty_name = advising.faculty_id.faculty_id.user.first_name + ' ' + advising.faculty_id.faculty_id.user.last_name
         except Advising.DoesNotExist:
             advising = None
             faculty_name = None
@@ -289,7 +291,7 @@ class CreateHold(LoginRequiredMixin, generic.View):
 
             is_held = False
             try:
-                student = Student. objects.get(pk=int(user.userprofile.student.student_id_id))
+                student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
                 hold = StudentHold.objects.get(student_id=student)
                 is_held = True
             except StudentHold.DoesNotExist:
@@ -302,7 +304,7 @@ class CreateHold(LoginRequiredMixin, generic.View):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'isHeld': is_held
-                }
+            }
 
             return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -387,7 +389,7 @@ class UpdateSection(LoginRequiredMixin, generic.View):
                 faculty.append({
                     'first_name': f.first_name,
                     'last_name': f.last_name,
-                    'full_name': f.first_name+" "+f.last_name,
+                    'full_name': f.first_name + " " + f.last_name,
                     'faculty_id': f.faculty_id_id
                 })
             departments = []
@@ -400,7 +402,7 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             for t in Period.objects.all():
                 time_periods.append({
                     'time_period_id': t.period_id,
-                    'time_range': t.start_time.strftime('%H:%M %p')+' '+t.end_time.strftime('%H:%M %p')
+                    'time_range': t.start_time.strftime('%H:%M %p') + ' ' + t.end_time.strftime('%H:%M %p')
                 })
             meeting_days = []
             for m in MeetingDays.objects.all():
@@ -408,7 +410,7 @@ class UpdateSection(LoginRequiredMixin, generic.View):
                     'days_id': m.days_id,
                     'day_1': m.day_1,
                     'day_2': m.day_2,
-                    'day_range': m.day_1+" "+m.day_2
+                    'day_range': m.day_1 + " " + m.day_2
                 })
             buildings = []
             for b in Building.objects.all():
@@ -824,8 +826,8 @@ class CreateUser(LoginRequiredMixin, generic.View):
                 last_name = user_form.cleaned_data['last_name']
                 email = user_form.cleaned_data['email']
                 user_type = user_profile_form.cleaned_data['user_type']
-                user = User.objects.create(username=username, password=password, first_name=first_name,
-                                           last_name=last_name, email=email)
+                user = User.objects.create_user(username=username, password=password, first_name=first_name,
+                                                last_name=last_name, email=email)
                 user_profile = user.userprofile
                 if user_type == 'A':
                     user_profile.user_type = 'A'
@@ -873,7 +875,6 @@ class CreateUser(LoginRequiredMixin, generic.View):
                                                          faculty_type=faculty_type.strip())
                         data['is_successful'] = True
                         print(faculty)
-                print(student_form.errors)
                 # data['errors'] = self.user_form_class.errors if self.user_form_class.errors else None
                 # data['errors'] = self.user_profile_form_class.errors if self.user_profile_form_class.errors else None
                 # data['errors'] = self.faculty_form_class.errors if self.faculty_form_class.errors else None
@@ -916,7 +917,7 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            message ="Ajax"
+            message = "Ajax"
             course_id = request.POST.get('courseID')
             prerequisites = json.loads(request.POST.get('prerequisites'))
             course = Course.objects.get(pk=int(course_id))
@@ -924,7 +925,7 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
                 prerequisite_course = Course.objects.get(pk=int(p))
                 Prerequisite.objects.create(course_id=course, course_required_id=prerequisite_course)
         else:
-            message ="No Ajax"
+            message = "No Ajax"
         return HttpResponse(message)
 
 
@@ -932,7 +933,7 @@ class CreatePrerequisite(LoginRequiredMixin, generic.View):
 # TODO: Finish create course success view and template, figure out if the way I'm using redirect is optimal.
 class CreateCourse(LoginRequiredMixin, generic.View):
     form_class = CreateCourseForm
-    template_name ='registration_system/create_course.html'
+    template_name = 'registration_system/create_course.html'
     is_admin = False
 
     def get(self, request, *args, **kwargs):
@@ -969,12 +970,12 @@ class CreateCourse(LoginRequiredMixin, generic.View):
             department_id = form.cleaned_data['department_id']
             course = Course.objects.create(name=name, description=description, credits=credits_value,
                                            department_id=department_id)
-            return redirect('create_prerequisites',  course_id=course.course_id)
+            return redirect('create_prerequisites', course_id=course.course_id)
         return redirect('/student_system/create_course/')
 
 
 class UserDisplay(LoginRequiredMixin, generic.View):
-    template_name ='registration_system/user_display.html'
+    template_name = 'registration_system/user_display.html'
     is_part_time_student = False
     is_full_time_student = False
     is_part_time_faculty = False
@@ -1001,22 +1002,24 @@ class UserDisplay(LoginRequiredMixin, generic.View):
                 faculty = Faculty.objects.get(faculty_id=userprofile)
                 print(faculty)
                 self.is_faculty = True
+        is_student = self.is_full_time_student or self.is_part_time_student
 
         rendered = render_component(
-                os.path.join(os.getcwd(), 'registration_system', 'static',
-                             'registration_system', 'js', 'user-display.jsx'),
-                {
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email,
-                    'is_admin': self.is_admin,
-                    'is_full_time_student': self.is_full_time_student,
-                    'is_part_time_student': self.is_part_time_student,
-                    'is_faculty': self.is_faculty,
-                    'is_researcher': self.is_researcher
-                },
-                to_static_markup=False,
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'user-display.jsx'),
+            {
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'is_admin': self.is_admin,
+                'is_full_time_student': self.is_full_time_student,
+                'is_part_time_student': self.is_part_time_student,
+                'is_faculty': self.is_faculty,
+                'is_researcher': self.is_researcher,
+                'is_student': is_student,
+            },
+            to_static_markup=False,
         )
         return render(request, self.template_name, {'rendered': rendered, 'user': user})
 
@@ -1045,7 +1048,3 @@ def create_time_slot(request):
     else:
         data['is_successful'] = False
     return JsonResponse(data)
-
-
-
-

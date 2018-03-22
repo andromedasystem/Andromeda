@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "django-react-csrftoken": "^1.0.3",
+    "react-icons": "^2.2.7",
     "semantic-ui-react": "^0.78.3"
   }
 }

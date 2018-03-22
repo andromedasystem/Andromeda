@@ -1,5 +1,10 @@
 import React from 'react';
 import Nav from './components/container/Nav.jsx';
+import { Card, Icon } from 'semantic-ui-react';
+import FaGraduationCap from 'react-icons/lib/fa/graduation-cap';
+import FaBriefcase from 'react-icons/lib/fa/briefcase';
+import FaAdn from 'react-icons/lib/fa/adn';
+import FaBarChart from 'react-icons/lib/fa/bar-chart';
 
 class Index extends React.Component {
 
@@ -8,6 +13,17 @@ class Index extends React.Component {
     }
 
     render() {
+        var user_type = '';
+        if(this.props.is_admin){
+            user_type='Admin';
+        } else if (this.props.is_student){
+            user_type='Student'
+        } else if (this.props.is_faculty){
+            user_type='Faculty'
+        } else {
+            user_type='Researcher'
+        }
+
         return <div className="m-top8">
                 <Nav
                     is_admin={this.props.is_admin}
@@ -16,20 +32,32 @@ class Index extends React.Component {
                     is_researcher={this.props.is_researcher}
                     is_ft_faculty={this.props.is_full_time_faculty}
                     is_pt_faculty={this.props.is_part_time_faculty}
-                    is_faculty={this.props.is_faculty}/>
+                    is_faculty={this.props.is_faculty}
+                    is_student={this.props.is_student}
+                />
 
                 {/*<DropdownExampleSelection/>*/}
-                <h3 className="ui center aligned header"> Welcome {this.props.first_name} {this.props.last_name}</h3>
-                <p><strong>UserName: </strong>{this.props.username}</p>
-                <p><strong>First Name: </strong>{this.props.first_name}</p>
-                <p><strong>Last Name: </strong>{this.props.last_name}</p>
-                <p><strong>Email: </strong>{this.props.email}</p>
-                <p>{this.props.is_admin && 'ia admin'}</p>
-                <p>{this.props.is_full_time_student && 'is ft student'}</p>
-                <p>{this.props.is_part_time_student && 'is pt student'}</p>
-                <p>{this.props.is_full_time_faculty && 'is ft faculty'}</p>
-                <p>{this.props.is_part_time_faculty && 'is pt faculty'}</p>
-                <p>{this.props.is_researcher && 'is researcher'}</p>
+                <Card fluid  color='black' >
+                    <Card.Content extra>
+                        { this.props.is_student &&
+                            (<FaGraduationCap size='50' />)
+                        }
+                        { this.props.is_faculty &&
+                            (<FaBriefcase size='50'/>)
+                        }
+                        { this.props.is_admin &&
+                            (<FaAdn size='50'/>)
+                        }
+                        { this.props.is_researcher &&
+                            (<FaBarChart size='50'/>)
+                        }
+                        <h1 style={{display: 'inline', marginLeft: '2rem'}}>{'Welcome ' + this.props.first_name + ' ' + this.props.last_name +'!'}</h1>
+                    </Card.Content>
+                    <Card.Content header='User Type: ' description={user_type}/>
+                    <Card.Content header='Username: ' description={this.props.username}/>
+                    <Card.Content header='Name: ' description={this.props.first_name + ' ' + this.props.last_name}/>
+                    <Card.Content header='Emaill: ' description={this.props.email}/>
+                </Card>
             </div>
     }
 }
