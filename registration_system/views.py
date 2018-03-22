@@ -44,7 +44,93 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
-# TODO: Test Create Section
+# TODO: Create Post Method
+class UpdateSection(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/search_section.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            department_id = request.GET.get('department_id')
+            department_name = request.GET.get('department_name')
+            course_id = request.GET.get('course_id')
+            days_id = request.GET.get('days_id')
+            faculty_id = request.GET.get('faculty_id')
+            section = None
+            if department_id is not None:
+                section = Section.objects.filter(course_id__department_id_id=int(department_id))
+            elif course_id is not None:
+                section = Section.objects.filter(course_id=int(course_id))
+            elif days_id is not None:
+                section = Section.objects.filter(time_slot_id__days_id=int(days_id))
+            elif faculty_id is not None:
+                section = Section.objects.filter(faculty_id=int(faculty_id))
+
+            section_array = []
+            for s in section:
+                print(s)
+                data = {
+                    'section_id': s.section_id,
+                    'faculty_id': s.faculty_id,
+                    'faculty_name': s.faculty_id.faculty_id.user.first_name + " " + s.faculty_id.faculty_id.user.last_name,
+                    'credits': s.course_id.credits,
+                    'seats_taken': s.seats_taken,
+                    'seating_capacity': s.room_id.capacity,
+                    'time_slot_id': s.time_slot_id,
+                    'time_period_id': s.time_slot_id.period_id,
+                    'time_period_range': s.time_slot_id.period_id.start_time + " " + s.time_slot_id.period_id.end_time,
+                    'meeting_days_id': s.time_slot_id.days_id,
+                    'meeting_days': s.time_slot_id.days_id.day_1 + s.time_slot_id.days_id.day_2,
+                    'building_id': s.room_id.building_id,
+                    'building_name': s.room_id.building_id.name,
+                    'room_id': s.room_id,
+                    'room_number': s.room_id.room_number
+                }
+
+            return HttpResponse(json.dumps(section_array), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Update Section'
+            },
+            to_static_markup=False,
+        )
+        departments = Department.objects.all()
+        days = MeetingDays.objects.all()
+        course = Course.objects.all()
+        faculty = []
+        for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id_id "
+                                     "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
+                                     "WHERE up.user_id = u.id "
+                                     "AND up.id = f.faculty_id_id"):
+            faculty.append({
+                'first_name': f.first_name,
+                'last_name': f.last_name,
+                'faculty_id': f.faculty_id_id
+            })
+
+        context = {
+            'rendered': rendered,
+            'departments': departments,
+            'days': days,
+            'faculty': faculty,
+            'courses': course
+        }
+        return render(request, self.template_name, context)
+
+
 class CreateSection(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/create_section.html'
     is_admin = False
@@ -142,8 +228,12 @@ class CreateSection(LoginRequiredMixin, generic.View):
             days = MeetingDays.objects.get(pk=int(days_id))
             time_period_id = request.POST.get('time_period')
             time_period = Period.objects.get(pk=int(time_period_id))
-            time_slot = TimeSlot.objects.create(days_id=days, period_id=time_period)
-            section = Section.objects.create(course_id=course, timeslot_id=time_slot,
+            time_slot = None
+            try:
+                time_slot = TimeSlot.objects.get(days_id=days, period_id=time_period)
+            except TimeSlot.DoesNotExist:
+                time_slot = TimeSlot.objects.create(days_id=days, period_id=time_period)
+            section = Section.objects.create(course_id=course, time_slot_id=time_slot,
                                              faculty_id=faculty, semester_id=semester, room_id=room)
             data['is_successful'] = True
         else:

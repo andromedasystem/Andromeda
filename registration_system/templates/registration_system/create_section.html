@@ -47,7 +47,6 @@
                 <div class="seven wide required field">
                     <label for="id_building_id">Building</label>
                     <select class="ui fluid dropdown" name="building_id" id="id_building_id" required>
-                        <option value="true">--------</option>
                         {% if buildings %}
                             {% for b in buildings %}
                                 <option value="{{ b.building_id }}" label="{{ b.name }}">{{ b.name }}</option>
@@ -58,7 +57,6 @@
                 <div class="nine wide required field">
                     <label for="id_room_id">Room</label>
                     <select class="ui fluid dropdown" name="room_id" id="id_room_id" required>
-                        <option value="true">--------</option>
                     </select>
                 </div>
             </div>
@@ -86,8 +84,11 @@
                 <div class="four wide required field">
                      <label for="id_time_slot_id">Time Slot</label>
                     <select class="ui fluid dropdown" name="faculty_id" id="id_time_slot_id" required>
-                        <option value="true">--------</option>
-                    {# TODO: Add Time Slot sample data#}
+                        {% if time_periods %}
+                            {% for p in time_periods %}
+                                <option value="{{ p.period_id }}" >{{ p.start_time }}---{{ p.end_time }} </option>
+                            {% endfor %}
+                        {% endif %}
                     </select>
                  </div>
             </div>
@@ -221,7 +222,7 @@
             var time_period = $('#id_time_slot_id').val();
             $.ajax({
                 type: "POST",
-                url: "/student_system/create_user/",
+                url: "/student_system/create_section/",
 
                 data: {
                     department: department,
@@ -231,7 +232,8 @@
                     room: room,
                     semester: semester,
                     days: days,
-                    time_period: time_period
+                    time_period: time_period,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
 
                 success: function(){
