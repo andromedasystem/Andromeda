@@ -1,0 +1,11 @@
+{% extends "registration_system/partials/base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="m-top6" id="container"></div>
+    {% render_bundle 'main' %}
+{% endblock %}

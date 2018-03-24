@@ -14,6 +14,7 @@ from django.db.models import Q
 from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .forms import *
+from django.views import generic
 
 
 # Instead of using signals in views to create child models
@@ -1048,3 +1049,8 @@ def create_time_slot(request):
     else:
         data['is_successful'] = False
     return JsonResponse(data)
+
+
+class TestWebpackView(generic.TemplateView):
+    template_name = 'registration_system/master_schedule.html'
+

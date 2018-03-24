@@ -19,7 +19,8 @@ urlpatterns = [
     url(r'^view_hold/$', core_views.ViewHold.as_view(), name="view_hold"),
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
-    url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester")
+    url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
+    url(r'^master_schedule/$', core_views.TestWebpackView.as_view(), name="master_schedule")
 ]
 
 
