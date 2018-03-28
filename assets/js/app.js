@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Divider, Header, Table, Form } from 'semantic-ui-react';
+import { Container, Divider, Header, Table, Form, Segment, Dimmer, Loader } from 'semantic-ui-react';
 import MasterTable from './table';
 
 
@@ -113,9 +113,11 @@ class App extends React.Component {
         })
     }
 
-    handleSelectChange(event){
+    handleSelectChange(value, id){
+        console.log(value);
+        console.log(id);
         let attribute_flag;
-        switch(event.target.id){
+        switch(id){
             case 'department_select':
                 attribute_flag = 'department';
                 break;
@@ -135,8 +137,9 @@ class App extends React.Component {
                 attribute_flag = 'rooms';
                 break;
         }
+        console.log(value);
         this.setState({
-            submittedValue: event.target.value,
+            submittedValue: value,
             attributeFlag: attribute_flag
         });
     }
@@ -145,24 +148,28 @@ class App extends React.Component {
 
         if( this.state.isLoading){
             return(
-                <div>Loading</div>
+                <Segment>
+                  <Dimmer active>
+                    <Loader size='massive'>Loading</Loader>
+                  </Dimmer>
+                </Segment>
             );
         }
         return (
             <Container >
                 <Form>
                     <Form.Group widths='equal'>
-                        <Form.Select id='department_select' onChange={this.handleSelectChange} fluid label='Department Name'  options={this.state.departments} placeholder='Department Name'/>
+                        <Form.Select id='department_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Department Name'  options={this.state.departments} placeholder='Department Name'/>
                         <Form.Input id='course_name_input' onBlur={this.onBlur} onChange={this.handleInputChange} fluid label='Course Name' placeholder='Course Name'/>
                     </Form.Group>
-                    <Form.Select id='faculty_select' onChange={this.handleSelectChange} fluid label='Faculty' options={this.state.faculty} placeholder='Faculty'/>
+                    <Form.Select id='faculty_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Faculty' options={this.state.faculty} placeholder='Faculty'/>
                     <Form.Group widths='equal'>
-                        <Form.Select id='days_select' onChange={this.handleSelectChange} fluid label='Meeting Days' options={this.state.meeting_days} placeholder='Meeting Days'/>
-                        <Form.Select id='time_period_select' onChange={this.handleSelectChange} fluid label='Time Periods' options={this.state.time_periods} placeholder='Time Periods'/>
+                        <Form.Select id='days_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Meeting Days' options={this.state.meeting_days} placeholder='Meeting Days'/>
+                        <Form.Select id='time_period_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Time Periods' options={this.state.time_periods} placeholder='Time Periods'/>
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Select id='building_select' onChange={this.handleSelectChange} fluid label='Buldings' options={this.state.building} placeholder='Buildings'/>
-                        <Form.Select id='room_select' onChange={this.handleSelectChange} fluid label='Rooms' options={this.state.rooms} placeholder='Rooms'/>
+                        <Form.Select id='building_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Buldings' options={this.state.building} placeholder='Buildings'/>
+                        <Form.Select id='room_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Rooms' options={this.state.rooms} placeholder='Rooms'/>
                     </Form.Group>
 
                 </Form>
@@ -175,5 +182,7 @@ class App extends React.Component {
     }
 
 }
+
+
 
 export default App;

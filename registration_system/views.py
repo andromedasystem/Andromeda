@@ -1050,9 +1050,51 @@ def create_time_slot(request):
         data['is_successful'] = False
     return JsonResponse(data)
 
-# TODO: Finish Master Schedule Get query
-# def get_master_schedule_search_data(request, attribute_flag, search_value):
-#     return HttpResponse(json.dumps(schedule_data), content_type="application/json")
+
+def get_master_schedule_search_data(request, attribute_flag, search_value):
+    section = None
+    schedule_data = []
+    if attribute_flag == 'department':
+        section = Section.objects.filter(course_id__department_id_id=int(search_value))
+    elif attribute_flag == 'faculty':
+        section = Section.objects.filter(faculty_id__faculty_id_id=int(search_value))
+    elif attribute_flag == 'days':
+        section = Section.objects.filter(time_slot_id__days_id_id=int(search_value))
+    elif attribute_flag == 'time_period':
+        section = Section.objects.filter(time_slot_id__period_id_id=int(search_value))
+    elif attribute_flag == 'building':
+        section = Section.objects.filter(course_id__department_id__building_id_id=int(search_value))
+    elif attribute_flag == 'rooms':
+        section = Section.objects.filter(room_id_id=int(search_value))
+    elif attribute_flag == 'course_name':
+        section = Section.objects.filter(course_id__name__contains=search_value)
+
+    for s in section:
+        faculty = Faculty.objects.get(pk=int(s.faculty_id_id))
+        faculty_name = faculty.faculty_id.user.first_name + ' ' + faculty.faculty_id.user.last_name
+        prerequisites = Prerequisite.objects.filter(course_id=s.course_id)
+        prereq_array = []
+        for p in prerequisites:
+            prereq_array.append({
+                'name': p.course_required_id.name
+            })
+        data = {
+            'faculty': faculty_name,
+            'course_name': s.course_id.name,
+            'section_id': s.section_id,
+            'credits' : s.course_id.credits,
+            'seats_taken': s.seats_taken,
+            'capacity': s.room_id.capacity,
+            'meeting_days': s.time_slot_id.days_id.day_1 + ' ' + s.time_slot_id.days_id.day_2,
+            'time_period': s.time_slot_id.period_id.start_time.strftime('%H:%M %p') + '-'
+                           + s.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+            'room': s.room_id.room_number,
+            'building': s.room_id.building_id.name,
+            'prerequisites': prereq_array
+        }
+        schedule_data.append(data)
+
+    return HttpResponse(json.dumps(schedule_data), content_type="application/json")
 
 
 def get_master_schedule_input_data(request):
