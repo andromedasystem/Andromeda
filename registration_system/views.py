@@ -1050,7 +1050,69 @@ def create_time_slot(request):
         data['is_successful'] = False
     return JsonResponse(data)
 
+# TODO: Finish Master Schedule Get query
+# def get_master_schedule_search_data(request, attribute_flag, search_value):
+#     return HttpResponse(json.dumps(schedule_data), content_type="application/json")
 
-class TestWebpackView(generic.TemplateView):
+
+def get_master_schedule_input_data(request):
+    departments = Department.objects.all()
+    general_data = {}
+    department_array = []
+    for d in departments:
+        data = {
+            'department_id': d.department_id,
+            'department_name': d.name
+        }
+        department_array.append(data)
+    faculty = []
+    for f in Faculty.objects.raw("SELECT u.first_name, u.last_name, f.faculty_id_id "
+                                 "FROM registration_system_faculty AS f, auth_user as u, registration_system_userprofile as up "
+                                 "WHERE up.user_id = u.id "
+                                 "AND up.id = f.faculty_id_id"):
+        faculty.append({
+            'first_name': f.first_name,
+            'last_name': f.last_name,
+            'full_name': f.first_name + " " + f.last_name,
+            'faculty_id': f.faculty_id_id
+        })
+    time_periods = []
+    for t in Period.objects.all():
+        time_periods.append({
+            'time_period_id': t.period_id,
+            'time_range': t.start_time.strftime('%H:%M %p') + ' ' + t.end_time.strftime('%H:%M %p')
+        })
+    meeting_days = []
+    for m in MeetingDays.objects.all():
+        meeting_days.append({
+            'days_id': m.days_id,
+            'day_1': m.day_1,
+            'day_2': m.day_2,
+            'day_range': m.day_1 + " " + m.day_2
+        })
+    buildings = []
+    for b in Building.objects.all():
+        buildings.append({
+            'building_id': b.building_id,
+            'building_name': b.name
+        })
+    rooms = []
+    for arrgh in Room.objects.all():
+        rooms.append({
+            'rooms_id': arrgh.room_id,
+            'room_number': arrgh.room_number
+        })
+
+    general_data['time_periods'] = time_periods
+    general_data['meeting_days'] = meeting_days
+    general_data['buildings'] = buildings
+    general_data['rooms'] = rooms
+    general_data['faculty'] = faculty
+    general_data['departments'] = department_array
+
+    return HttpResponse(json.dumps(general_data), content_type="application/json")
+
+
+class MasterScheduleView(generic.TemplateView):
     template_name = 'registration_system/master_schedule.html'
 

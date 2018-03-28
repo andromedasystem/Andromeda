@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from registration_system import views as core_views
-
+# TODO: Create url route for getting schedule data with approriate query params.
 urlpatterns = [
     url(r'^$', core_views.home, name='home'),
     url(r'^user_display/$', core_views.UserDisplay.as_view(), name='display'),
@@ -20,7 +20,8 @@ urlpatterns = [
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
-    url(r'^master_schedule/$', core_views.TestWebpackView.as_view(), name="master_schedule")
+    url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),
+    url(r'^student_system_api/get_general_data/$', core_views.get_master_schedule_input_data, name="ms_get_general_data")
 ]
 
 

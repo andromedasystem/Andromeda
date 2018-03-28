@@ -67,6 +67,10 @@ body {
     margin-top: 16rem;
 }
 
+.p-top1{
+    padding-top: 1rem;
+}
+
 .tsize-2 {
     font-size: 3em !important;
 }
