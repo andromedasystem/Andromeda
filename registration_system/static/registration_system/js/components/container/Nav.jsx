@@ -74,7 +74,7 @@ class Nav extends Component {
                     <Dropdown simple item text='Course Actions'>
                         <Dropdown.Menu>
                             <Dropdown.Item ><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/register_course/">Register Course</a></Dropdown.Item>
-                            <Dropdown.Item>Update/Drop Courses</Dropdown.Item>
+                            <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/drop_course/">Update/Drop Course</a></Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                     <Dropdown simple item text='Student Actions'>

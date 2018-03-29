@@ -47,6 +47,80 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class DropCourse(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/update_course.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+
+        student = userprofile.student
+        enrollment = Enrollment.objects.filter(student_id=student)
+        sections_array = []
+        for e in enrollment:
+            prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+            prereq_array = []
+            for p in prerequisites:
+                prereq_array.append({
+                    'name': p.course_required_id.name
+                })
+            faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+            sections_array.append({
+                'section_id': e.section_id,
+                'course_name': e.section_id.course_id.name,
+                'professor': faculty_name,
+                'credits': e.section_id.course_id.credits,
+                'room_number': e.section_id.room_id.room_number,
+                'building': e.section_id.room_id.building_id.name,
+                'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                               + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                'seats_taken': e.section_id.seats_taken,
+                'seating_capacity': e.section_id.room_id.capacity,
+                'prerequisites': prereq_array
+            })
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'Update/Drop Courses'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'sections': sections_array
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user = request.user
+            userprofile = UserProfile.objects.get(user=user)
+            student = Student.objects.get(pk=userprofile.student.student_id_id)
+            section_id = request.POST.get('section_id')
+            section = Section.objects.get(pk=int(section_id))
+            enrollment = Enrollment.objects.create(student_id=student, section_id=section)
+            enrollment.delete()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class RegisterCourse(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/register_course.html'
     is_student = False

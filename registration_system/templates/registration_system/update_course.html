@@ -1,0 +1,103 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        {% if sections %}
+            {% for s in sections %}
+                <div id="{{ s.section_id }}_segment">
+                    <h5 class="ui top attached header">
+                      Course Name  <span class="ui right aligned"><i id="{{ s.section_id }}" onclick="dropCourse(this.id)" class="far fa-times-circle"></i></span>
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.course_name }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                      Professor
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.professor }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                      Credits
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.credits }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                        Location
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.building }} -- {{ s.room_number }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                        Time Slot
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.meeting_days }}</p><br/>
+                        <p>{{ s.time_period }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                        Seating
+                    </h5>
+                    <div class="ui attached segment">
+                      <p>{{ s.seats_taken }}/{{ s.seating_capacity }}</p>
+                    </div>
+                    <h5 class="ui attached header">
+                        Prerequisites
+                    </h5>
+                    <div class="ui attached segment">
+                        <div class="ui celled list">
+                        {% for p in s.prerequisites %}
+                            <div class="item">
+                                <div class="content">
+                                    <div class="header">{{ p.name }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div id="success">
+
+        </div>
+    </div>
+{# TODO: Ajax call to building table and ajax post to submit update #}
+    <script>
+
+        function dropCourse(section_id) {
+
+            $.ajax({
+                type: "POST",
+                url: "/student_system/drop_course/",
+
+                data: {
+                    section_id: section_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+
+                    $('#success').append("<h2>Course Dropped!</h2>")
+                    $('#'+section_id+"_segment").empty();
+                }
+            })
+
+        }
+
+        $('#search_submit').click(getSections)
+
+
+    </script>
+
+{% endblock %}

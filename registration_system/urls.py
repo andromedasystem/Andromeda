@@ -10,6 +10,7 @@ urlpatterns = [
         , name='create_prerequisites'),
     url(r'^search_course/$', core_views.UpdateCourse.as_view(), name="search_course"),
     url(r'^register_course/$', core_views.RegisterCourse.as_view(), name='register_course'),
+    url(r'^drop_course/$', core_views.DropCourse.as_view(), name='drop_course'),
     url(r'^create_section/$', core_views.CreateSection.as_view(), name="create_section"),
     url(r'^create_section/time_slot/$', core_views.create_time_slot, name='create_time_slot'),
     url(r'^search_section/$', core_views.UpdateSection.as_view(), name="search_section"),
