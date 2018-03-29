@@ -368,15 +368,16 @@ class StudentHistory(models.Model):
         null=True
     )
 
-    class StatusType(ChoiceEnum):
-        FRESHMAN = 'FRESHMAN'
-        SOPHOMORE = 'SOPHOMORE'
-        JUNIOR = 'JUNIOR'
-        SENIOR = 'SENIOR'
-        GRADUATED = 'GRADUATE'
-        GRADUATE_STUDENT = 'GRADUATE_STUDENT'
+    STATUS_CHOICES = (
+        ('FRESHMAN', 'FRESHMAN'),
+        ('SOPHOMORE', 'SOPHOMORE'),
+        ('JUNIOR', 'JUNIOR'),
+        ('SENIOR', 'SENIOR'),
+        ('GRADUATE', 'GRADUATE'),
+        ('GRADUATE_STUDENT', 'GRADUATE_STUDENT')
+    )
 
-    status = models.CharField(max_length=35, choices=StatusType.choices())
+    status = models.CharField(max_length=35, choices=STATUS_CHOICES)
 
     def __str__(self):
         return '{} {} {} {} {}'.format(self.student_id, self.student_hist_id, self.enrollment_id,
@@ -415,21 +416,22 @@ class Enrollment(models.Model):
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     section_id = models.ForeignKey(Section, on_delete=models.CASCADE)
 
-    class GradeType(ChoiceEnum):
-        A = 'A'
-        A_minus = 'A-'
-        B = 'B'
-        B_minus = 'B-'
-        C = 'C'
-        C_minus = 'C-'
-        D = 'D'
-        D_minus = 'D-'
-        F = 'F'
-        Incomplete = 'I'
-        Withdraw = 'W'
-        NA = 'NA'
+    GRADE_CHOICES = (
+        ('A', 'A'),
+        ('A-', 'A-'),
+        ('B', 'B'),
+        ('B-', 'B-'),
+        ('C', 'C'),
+        ('C-', 'C-'),
+        ('D', 'D'),
+        ('D-', 'D-'),
+        ('F', 'F'),
+        ('W', 'W'),
+        ('I', 'I'),
+        ('NA', 'NA')
+    )
 
-    grade = models.CharField(max_length=2, default='NA', choices=GradeType.choices())
+    grade = models.CharField(max_length=2, default='NA', choices=GRADE_CHOICES)
 
     def __str__(self):
         return '{} {} {} {}'.format(self.student_id, self.section_id, self.enrollment_id, self.grade)
