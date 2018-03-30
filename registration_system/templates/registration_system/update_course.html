@@ -13,9 +13,9 @@
         {% if sections %}
             {% for s in sections %}
                 <div id="{{ s.section_id }}_segment">
-                    <h5 class="ui top attached header">
-                      Course Name  <span class="ui right aligned"><i id="{{ s.section_id }}" onclick="dropCourse(this.id)" class="far fa-times-circle"></i></span>
-                    </h5>
+                    <div class="ui top attached header">
+                      Course Name  <span class="ui right aligned float-right course-close" style="float: right;"><i id="{{ s.section_id }}" onclick="dropCourse(this.id)" class="far fa-times-circle " style="font-size: 2rem"></i></span>
+                    </div>
                     <div class="ui attached segment">
                       <p>{{ s.course_name }}</p>
                     </div>
@@ -95,7 +95,6 @@
 
         }
 
-        $('#search_submit').click(getSections)
 
 
     </script>

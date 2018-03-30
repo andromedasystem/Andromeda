@@ -73,7 +73,7 @@ class DropCourse(LoginRequiredMixin, generic.View):
                 })
             faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
             sections_array.append({
-                'section_id': e.section_id,
+                'section_id': e.section_id_id,
                 'course_name': e.section_id.course_id.name,
                 'professor': faculty_name,
                 'credits': e.section_id.course_id.credits,
@@ -113,7 +113,7 @@ class DropCourse(LoginRequiredMixin, generic.View):
             student = Student.objects.get(pk=userprofile.student.student_id_id)
             section_id = request.POST.get('section_id')
             section = Section.objects.get(pk=int(section_id))
-            enrollment = Enrollment.objects.create(student_id=student, section_id=section)
+            enrollment = Enrollment.objects.get(student_id=student, section_id=section)
             enrollment.delete()
             data['is_successful'] = True
         else:
