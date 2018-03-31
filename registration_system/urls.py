@@ -5,6 +5,8 @@ urlpatterns = [
     url(r'^$', core_views.home, name='home'),
     url(r'^user_display/$', core_views.UserDisplay.as_view(), name='display'),
     url(r'^logout/$', core_views.logout_view, name='registration_system_logout'),
+    url(r'^declare_major/$', core_views.DeclareMajor.as_view(), name='declare_major'),
+    url(r'^declare_minor/$', core_views.DeclareMinor.as_view(), name='declare_minor'),
     url(r'^create_course/$', core_views.CreateCourse.as_view(), name='create_course'),
     url(r'^create_course/prerequisites/(?P<course_id>\d+)/', core_views.CreatePrerequisite.as_view()
         , name='create_prerequisites'),

@@ -47,6 +47,128 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+#TODO: TEST
+class DeclareMajor(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/declare_major.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+
+        majors = Major.objects.all()
+        has_major = True
+        try:
+            student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+            student_major = StudentMajor.objects.get(student_id=student).major_id.name
+        except StudentMajor.DoesNotExist:
+            has_major = False
+            student_major = False
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'Declare Major'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'majors': majors,
+            'student_major': student_major
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user = request.user
+            userprofile = UserProfile.objects.get(user=user)
+            student = Student.objects.get(pk=userprofile.student.student_id_id)
+            major_id = request.POST.get('major_id')
+            major = Major.objects.get(pk=int(major_id))
+            StudentMajor.objects.create(student_id=student, major_id=major)
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
+# TODO: TEST
+class DeclareMinor(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/declare_minor.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+
+        minors = Minor.objects.all()
+
+        try:
+            student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
+            student_minor = StudentMinor.objects.filter(student_id=student)
+            student_minors = []
+            for sm in student_minor:
+                student_minors.append({
+                    'name': sm.minor_id.name
+                })
+        except StudentMinor.DoesNotExist:
+            student_minor = False
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'Declare Minor'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'minors': minors,
+            'student_minors': student_minors
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            user = request.user
+            userprofile = UserProfile.objects.get(user=user)
+            student = Student.objects.get(pk=userprofile.student.student_id_id)
+            minor_id = request.POST.get('minor_id')
+            minor = Minor.objects.get(pk=int(minor_id))
+            StudentMinor.objects.create(student_id=student, minor_id=minor)
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class DropCourse(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/update_course.html'
     is_student = False

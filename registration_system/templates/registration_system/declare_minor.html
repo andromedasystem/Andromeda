@@ -1,0 +1,80 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+
+        {% if student_minors %}
+            {% for sm in student_minors %}
+                <div class="ui feed">
+                  <div class="event">
+                    <div class="label">
+                      <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="content">
+                        {{ sm.name }} minor.
+                    </div>
+                  </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if student_minors|length < 2 %}
+            <div class="ui form" id="ui-form">
+            {{ csrf }}
+                    <div class="field">
+                        <label for="minor_id">Minors</label>
+                        <select id="minor_id" class="ui fluid dropdown">
+                            <option value="0">--------</option>
+                            {% if minors %}
+                                {% for m in minors %}
+                                    <option value="{{ m.minor_id }}" >{{ m.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+
+                <div class="display-inline ">
+                    <button class="ui primary button" id="submit" type="button">Submit</button>
+                </div>
+            </div>
+            <div id="success">
+
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+
+        function changeStatus() {
+            var minor = $('#minor_id').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/student_system/declare_minor/",
+
+                data: {
+                    minor_id: minor,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+                    $('#success').append("<h2>Minor Declared Successfully!</h2>")
+                }
+            })
+
+        }
+
+        $('#submit').click(changeStatus);
+
+
+
+    </script>
+
+{% endblock %}

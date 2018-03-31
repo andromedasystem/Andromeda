@@ -14,8 +14,10 @@ class Nav extends Component {
             is_researcher: this.props.is_researcher,
             is_student: this.props.is_student,
             is_faculty: this.props.is_faculty
-        }
+        };
+
     }
+
 
 
 	render() {
@@ -91,6 +93,12 @@ class Nav extends Component {
                 <Dropdown simple item text='Advising'>
                     <Dropdown.Menu>
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_advising/">View Advising</a></Dropdown.Item>
+                   </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown simple item text='Major/Minor'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/declare_major/">Declare Major</a></Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/declare_minor/">Declare Minor</a></Dropdown.Item>
                    </Dropdown.Menu>
                 </Dropdown>
             </Menu>

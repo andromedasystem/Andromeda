@@ -1,0 +1,77 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+
+        {% if student_major %}
+            <div class="ui feed">
+              <div class="event">
+                <div class="label">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="content">
+                    You are currently a {{ student_major }} major.
+                </div>
+              </div>
+            </div>
+        {% else %}
+            <div class="ui form" id="ui-form">
+            {{ csrf }}
+                    <div class="field">
+                        <label for="major_id">Majors</label>
+                        <select id="major_id" class="ui fluid dropdown">
+                            <option value="0">--------</option>
+                            {% if majors %}
+                                {% for m in majors %}
+                                    <option value="{{ m.major_id }}" >{{ m.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+
+                <div class="display-inline ">
+                    <button class="ui primary button" id="submit" type="button">Submit</button>
+                </div>
+            </div>
+            <div id="success">
+
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+
+        function changeStatus() {
+            var major = $('#major_id').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/student_system/declare_major/",
+
+                data: {
+                    major_id: major,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+                    $('#success').append("<h2>Major Declared Successfully!</h2>")
+                }
+            })
+
+        }
+
+        $('#submit').click(changeStatus);
+
+
+
+    </script>
+
+{% endblock %}
