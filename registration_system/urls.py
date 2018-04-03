@@ -7,6 +7,9 @@ urlpatterns = [
     url(r'^logout/$', core_views.logout_view, name='registration_system_logout'),
     url(r'^declare_major/$', core_views.DeclareMajor.as_view(), name='declare_major'),
     url(r'^declare_minor/$', core_views.DeclareMinor.as_view(), name='declare_minor'),
+    url(r'^student/view_student_schedule/$', core_views.StudentViewSchedule.as_view(),
+        name='student_view_student_schedule'),
+    url(r'^view_student_schedule/$', core_views.ViewStudentSchedule.as_view(), name='view_student_schedule'),
     url(r'^create_course/$', core_views.CreateCourse.as_view(), name='create_course'),
     url(r'^create_course/prerequisites/(?P<course_id>\d+)/', core_views.CreatePrerequisite.as_view()
         , name='create_prerequisites'),

@@ -1,0 +1,137 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <div class="ui form" id="ui-form">
+            <div class="two fields">
+                <div class="field">
+                    <label for="username_id">Username</label>
+                    <input id="username_id"   placeholder="Search by username..." type="text" />
+                </div>
+                <div class="field">
+                    <label for="email_id">Email</label>
+                    <input id="email_id" autocomplete="email" placeholder="Search by email..." type="text"/>
+                </div>
+            </div>
+        {{ csrf }}
+             <div class="two fields">
+                <div class="field">
+                    <label for="first_name_id">First Name</label>
+                    <input id="first_name_id"   placeholder="Search by first name..." type="text" />
+                </div>
+                <div class="field">
+                    <label for="last_name_id">Last Name</label>
+                    <input id="last_name_id" placeholder="Search by last name..." type="text"/>
+                </div>
+            </div>
+            <div class="display-inline ">
+                <button class="ui primary button" id="search" type="button">Search</button>
+                <button class="ui negative button" id="clear" type="button">Clear</button>
+            </div>
+            <div id="full_name_id">
+
+            </div>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>Section ID</th>
+                        <th>Department</th>
+                        <th>Course Name</th>
+                        <th>Professor</th>
+                        <th>Credits</th>
+                        <th>Seating</th>
+                        <th>Time Slot</th>
+                        <th>Location</th>
+                        <th>Prerequisites</th>
+                    </tr>
+                </thead>
+                <tbody id="sections_added">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+        function addStudentSections(){
+            console.log("here");
+            var first_name = $('#first_name_id').val();
+            var last_name = $('#last_name_id').val();
+            var username = $('#username_id').val();
+            var email = $('#email_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/view_student_schedule",
+                data : {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    email: email
+                },
+                success: function(data) {
+                    console.log(data);
+                    data.sections_array.forEach(function(element){
+                        var tBody = document.getElementById('sections_added');
+                        var newRow = tBody.insertRow(tBody.rows.length);
+                        newRow.id = element.course_id + '_row';
+                        var sectionIdCell = newRow.insertCell(0);
+                        var courseNameCell = newRow.insertCell(1);
+                        var departmentCell = newRow.insertCell(2);
+                        var facultyCell = newRow.insertCell(3);
+                        var creditsCell = newRow.insertCell(4);
+                        var seatsCell = newRow.insertCell(5);
+                        var timeSlotCell = newRow.insertCell(6);
+                        var locationCell = newRow.insertCell(7);
+                        var prerequisitesCell = newRow.insertCell(8);
+{# editing faculty, meeeting days, time period, building, and room number  #}
+                        var sectionIdText = document.createTextNode(element.section_id);
+                        var courseNameText = document.createTextNode(element.course_name);
+                        var departmentText = document.createTextNode(element.course_department);
+                        var creditsText = document.createTextNode(element.credits);
+                        var facultyText = document.createTextNode(element.professor);
+                        var prerequisitesText = $("<div id='"+element.section_id+"_prerequisites' class='ui celled ordered list' ></div>");
+                        var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>"+element.seats_taken+"</li><li><span style='font-weight:bold;'>Capacity:</span>"+element.seating_capacity+"</li></span>");
+                        sectionIdCell.appendChild(sectionIdText);
+                        courseNameCell.appendChild(courseNameText);
+                        departmentCell.appendChild(departmentText);
+                        creditsCell.appendChild(creditsText);
+                        facultyCell.appendChild(facultyText);
+                        prerequisitesCell.appendChild(prerequisitesText);
+                        locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>"+element.building+"</li><li><span style=\'font-weight:bold;\'>Room Number:</span>"+element.room_number+"</li></span>");
+                        timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>"+element.meeting_days+"</li><li><span style=\'font-weight:bold;\'>Period:</span>"+element.time_period+"</li></span>");
+                        $('#'+element.course_id + '_row').find('td:eq(5)').append(seatsText);
+                        element.prerequisites.forEach(function(el){
+                            $('#'+element.section_id+"_prerequisites").append("<div class='item'>"+el.name+"</div>");
+                        });
+
+
+                    });
+                    $('#full_name_id').append("<h1 class='ui header' >"+data.student_name+"'s Schedule</h1>")
+                }
+            });
+
+        }
+
+        function removeSections() {
+            $('#students_added').empty();
+        }
+
+
+        $('#search').click(addStudentSections);
+        $('#clear').click(removeSections);
+
+
+    </script>
+
+{% endblock %}

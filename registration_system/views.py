@@ -47,7 +47,144 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
-#TODO: TEST
+class ViewStudentSchedule(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_Student_Schedule.html'
+    is_faculty = False
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile and userprofile.has_faculty():
+            self.is_faculty = True
+        elif userprofile and userprofile.has_admin():
+            self.is_admin = True
+        else:
+            redirect('/student_system/')
+
+        current_user = userprofile.admin if self.is_admin else userprofile.faculty
+
+        first_name = request.GET.get('first_name')
+        last_name = request.GET.get('last_name')
+        email = request.GET.get('email')
+        username = request.GET.get('username')
+        # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
+        #                            Q(last_name=last_name))
+        if request.is_ajax():
+            if username:
+                user = User.objects.get(username=username)
+            elif email:
+                user = User.objects.get(email=email)
+            elif first_name or last_name:
+                user = User.objects.get(first_name=first_name, last_name=last_name)
+
+            enrollment = Enrollment.objects.filter(student_id=user.userprofile.student.student_id)
+            sections_array = []
+            for e in enrollment:
+                prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+                prereq_array = []
+                for p in prerequisites:
+                    prereq_array.append({
+                        'name': p.course_required_id.name
+                    })
+                faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+                sections_array.append({
+                    'section_id': e.section_id_id,
+                    'course_name': e.section_id.course_id.name,
+                    'professor': faculty_name,
+                    'credits': e.section_id.course_id.credits,
+                    'room_number': e.section_id.room_id.room_number,
+                    'building': e.section_id.room_id.building_id.name,
+                    'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                    'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                                   + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                    'seats_taken': e.section_id.seats_taken,
+                    'seating_capacity': e.section_id.room_id.capacity,
+                    'prerequisites': prereq_array
+                })
+            data = {
+                'sections_array': sections_array,
+                'student_name': user.first_name + " " + user.last_name
+            }
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                             'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'is_faculty': self.is_faculty,
+                'header_text': 'View Student Schedule'
+            },
+            to_static_markup=False,
+            )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+
+class StudentViewSchedule(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/student_view_student_schedule.html'
+    is_student = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+
+        student = userprofile.student
+        enrollment = Enrollment.objects.filter(student_id=student)
+        sections_array = []
+        for e in enrollment:
+            prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+            prereq_array = []
+            for p in prerequisites:
+                prereq_array.append({
+                    'name': p.course_required_id.name
+                })
+            faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+            sections_array.append({
+                'section_id': e.section_id_id,
+                'course_name': e.section_id.course_id.name,
+                'professor': faculty_name,
+                'credits': e.section_id.course_id.credits,
+                'room_number': e.section_id.room_id.room_number,
+                'building': e.section_id.room_id.building_id.name,
+                'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                               + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                'seats_taken': e.section_id.seats_taken,
+                'seating_capacity': e.section_id.room_id.capacity,
+                'prerequisites': prereq_array
+            })
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'Student Schedule'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'sections': sections_array
+        }
+        return render(request, self.template_name, context)
+
+
+# TODO: TEST
 class DeclareMajor(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/declare_major.html'
     is_student = False
