@@ -1,0 +1,37 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container">
+        <table class="ui celled padded table">
+            <thead>
+                <th>Student Name</th>
+                <th>Student Email</th>
+                <th>Student Username</th>
+            </thead>
+            <tbody>
+                {% if students %}
+                    {% for s in students %}
+                        <tr>
+                            <td><h2 class="ui center aligned header">{{ s.student_name }}</h2></td>
+                            <td class="single line">{{ e.student_email }}</td>
+                            <td class="single line">{{ e.student_username }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+
+{#    {{ form }}#}
+
+{#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}
+{% endblock %}

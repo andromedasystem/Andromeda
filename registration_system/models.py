@@ -147,7 +147,7 @@ class Department(models.Model):
     )
     name = models.CharField(max_length=100)
     phone_number = PhoneNumberField()
-    building_id = models.OneToOneField(
+    building_id = models.ForeignKey(
         'Building',
         on_delete=models.CASCADE,
     )

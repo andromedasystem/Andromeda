@@ -37,7 +37,7 @@ class Nav extends Component {
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_hold/">Create Hold</a></Dropdown.Item>
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_advising/">Create Advising</a></Dropdown.Item>
                         <Dropdown.Item>View Student Transcript</Dropdown.Item>
-                        <Dropdown.Item>View Student Schedule</Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_student_schedule/">View Student Schedule</a></Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown simple item text='Administrative Actions'>

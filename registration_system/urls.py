@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^view_hold/$', core_views.ViewHold.as_view(), name="view_hold"),
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
+    url(r'^submit_grades/$', core_views.SubmitGrades.as_view(), name="submit_grades"),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
     url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),
     url(r'^student_system_api/get_general_data/$', core_views.get_master_schedule_input_data, name="ms_get_general_data"),

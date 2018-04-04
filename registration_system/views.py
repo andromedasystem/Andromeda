@@ -47,6 +47,74 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class SubmitGrades(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/submit_grades.html'
+    is_faculty = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_faculty():
+                self.is_faculty = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            section_id = request.GET.get('section_id')
+            enrollments = Enrollment.objects.filter(section_id=section_id)
+            students_array = []
+            for e in enrollments:
+                students_array.append({
+                    # 'section_id': e.section_id_id,
+                    'student_id': e.student_id_id,
+                    'first_name': e.student_id.student_id.user.first_name,
+                    'last_name': e.student_id.student_id.user.last_name
+                })
+            data = {
+                'students_array': students_array,
+                'section_id': section_id,
+                'semester_status': Section.objects.get(pk=int(section_id)).semester_id.status
+            }
+
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        sections = Section.objects.filter(faculty_id=user_profile.faculty.faculty_id)
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                             'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_faculty': self.is_faculty,
+                'header_text': 'Grading'
+            },
+            to_static_markup=False,
+            )
+
+        context = {
+            'rendered': rendered,
+            'sections': sections
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            student_id = request.POST.get('student_id')
+            section_id = request.POST.get('section_id')
+            letter_grade = request.POST.get('letter_grade')
+            enrollment = Enrollment.objects.get(section_id=section_id, student_id=student_id)
+            enrollment.grade = letter_grade
+            enrollment.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class ViewStudentSchedule(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/view_Student_Schedule.html'
     is_faculty = False
@@ -79,35 +147,39 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
             elif first_name or last_name:
                 user = User.objects.get(first_name=first_name, last_name=last_name)
 
-            enrollment = Enrollment.objects.filter(student_id=user.userprofile.student.student_id)
-            sections_array = []
-            for e in enrollment:
-                prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
-                prereq_array = []
-                for p in prerequisites:
-                    prereq_array.append({
-                        'name': p.course_required_id.name
+            if user.userprofile.has_student():
+                enrollment = Enrollment.objects.filter(student_id=user.userprofile.student.student_id)
+                sections_array = []
+                for e in enrollment:
+                    prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+                    prereq_array = []
+                    for p in prerequisites:
+                        prereq_array.append({
+                            'name': p.course_required_id.name
+                        })
+                    faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+                    sections_array.append({
+                        'section_id': e.section_id_id,
+                        'course_name': e.section_id.course_id.name,
+                        'professor': faculty_name,
+                        'credits': e.section_id.course_id.credits,
+                        'room_number': e.section_id.room_id.room_number,
+                        'building': e.section_id.room_id.building_id.name,
+                        'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                        'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                                       + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                        'seats_taken': e.section_id.seats_taken,
+                        'seating_capacity': e.section_id.room_id.capacity,
+                        'prerequisites': prereq_array
                     })
-                faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
-                sections_array.append({
-                    'section_id': e.section_id_id,
-                    'course_name': e.section_id.course_id.name,
-                    'professor': faculty_name,
-                    'credits': e.section_id.course_id.credits,
-                    'room_number': e.section_id.room_id.room_number,
-                    'building': e.section_id.room_id.building_id.name,
-                    'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
-                    'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
-                                   + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
-                    'seats_taken': e.section_id.seats_taken,
-                    'seating_capacity': e.section_id.room_id.capacity,
-                    'prerequisites': prereq_array
-                })
-            data = {
-                'sections_array': sections_array,
-                'student_name': user.first_name + " " + user.last_name
-            }
-            return HttpResponse(json.dumps(data), content_type="application/json")
+                data = {
+                    'sections_array': sections_array,
+                    'student_name': user.first_name + " " + user.last_name,
+                    'is_successful': True
+                }
+                return HttpResponse(json.dumps(data), content_type="application/json")
+            else:
+                return HttpResponse(json.dumps({'is_successful': False}))
 
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -681,6 +753,56 @@ class ViewHold(LoginRequiredMixin, generic.View):
         context = {
             'rendered': rendered,
             'holds': hold
+        }
+
+        return render(request, self.template_name, context)
+
+
+class ViewAdvisees(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_advisees.html'
+    is_faculty = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_faculty():
+                self.is_faculty = True
+            else:
+                redirect('/student_system/')
+
+        try:
+            faculty = Faculty.objects.get(pk=int(user.userprofile.faculty.faculty_id_id))
+            advising = Advising.objects.filter(faculty_id=faculty)
+            faculty_name = advising.faculty_id.faculty_id.user.first_name + ' ' + advising.faculty_id.faculty_id.user.last_name
+            students = []
+            for a in advising:
+                students.append({
+                    'student_name': a.student_id.student_id.user.first_name+" "+a.student_id.student_id.user.last_name,
+                    'student_email': a.student_id.student_id.user.email,
+                    'student_username': a.student_id.student_id.user.username
+                })
+        except Advising.DoesNotExist:
+            advising = None
+            faculty_name = None
+            students = None
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'View Adviser'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'advising': advising,
+            'faculty_name': faculty_name,
+            'students': students
         }
 
         return render(request, self.template_name, context)
