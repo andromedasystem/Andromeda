@@ -293,6 +293,17 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/view_student_transcript_result.html'
     is_faculty = False
     is_admin = False
+    grading_key = {
+        'A': 4.0,
+        'A-': 3.5,
+        'B': 3.0,
+        'B-': 2.5,
+        'C': 2.0,
+        'C-': 1.5,
+        'D': 1.0,
+        'D-': 0.5,
+        'F': 0
+    }
 
     def get(self, request, student_id, *args, **kwargs):
         user = request.user
@@ -304,19 +315,40 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
         else:
             redirect('/student_system/')
         student = Student.objects.get(pk=int(student_id))
+        enrollments = Enrollment.objects.filter(student_id=student)
+        enrollments_array = []
+        grades = 0.0
+        counter = 0
+        for e in enrollments:
+            if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
+                grades += self.grading_key[e.grade]
+
+            counter = counter + 1
+            enrollments_array.append({
+                'course_name': e.section_id.course_id.name,
+                'credits': e.section_id.course_id.credits,
+                'semester_status': e.section_id.semester_id.status,
+                'season': e.section_id.semester_id.season,
+                'year': e.section_id.semester_id.year,
+                'grade': e.grade
+            })
+
+        cumulative_gpa = float(grades / counter)
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
                          'registration_system', 'js', 'nav-holder.jsx'),
             {
                 'is_admin': self.is_admin,
                 'is_faculty': self.is_faculty,
-                'header_text': student. 'Transcript'
+                'header_text': student.student_id.user.first_name+' '+student.student_id.user.last_name+'Transcript'
             },
             to_static_markup=False,
         )
 
         context = {
-            'rendered': rendered
+            'rendered': rendered,
+            'enrollment_array': enrollments_array,
+            'cumulative_gpa': cumulative_gpa
         }
 
         return render(request, self.template_name, context)

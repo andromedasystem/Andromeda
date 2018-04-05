@@ -1,0 +1,41 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+    <div class="ui icon message">
+        <i class=""></i>
+        <div class="content">
+            <div class="header">Cumulative GPA : {{ cumulative_gpa }}</div>
+        </div>
+    </div>
+    <table class="ui single line striped table">
+        <thead>
+            <th>Course Name</th>
+            <th>Credits</th>
+            <th>Status</th>
+            <th>Season</th>
+            <th>Year</th>
+            <th>Grade</th>
+        </thead>
+        <tbody>
+            {% for e in enrollments_array  %}
+                <tr>
+                    <td>{{ e.course_name }}</td>
+                    <td>{{ e.credits }}</td>
+                    <td>{{ e.semester_status }}</td>
+                    <td>{{ e.season }}</td>
+                    <td>{{ e.year }}</td>
+                    <td>{{ e.grade }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+{% endblock %}
