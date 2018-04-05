@@ -64,6 +64,7 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
         if request.is_ajax():
             section_id = request.GET.get('section_id')
             enrollments = Enrollment.objects.filter(section_id=section_id)
+            section_name = Section.objects.get(pk=int(section_id)).course_id.name
             students_array = []
             for e in enrollments:
 
@@ -75,6 +76,7 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
                 })
             data = {
                 'students_array': students_array,
+                'section_name': section_name,
                 'section_id': section_id,
                 'semester_status': Section.objects.get(pk=int(section_id)).semester_id.status
             }

@@ -1,4 +1,3 @@
-{# TODO: Submit_Grades template#}
 
 {% extends "registration_system/partials/base.html" %}
 {% load staticfiles %}
@@ -32,15 +31,81 @@
                 </div>
               </div>
                 <div class="ui segment">
-                    <button onclick="giveGrades(this.id)" class="ui primary button" id="{{ s.section_id }}_grading" type="button">Grading</button>
+                    <button onclick="getSectionStudents({{ s.section_id }})" class="ui primary button"  type="button">Grading</button>
                 </div>
 
             </div>
         {% endfor %}
+        <div class="ui modal">
+          <div id="id_modal_section" class="header"></div>
+          <div  class="scrolling content">
+              <div id="id_modal_content" class="ui celled list"></div>
+          </div>
+            <div id="id_modal_success"></div>
+        </div>
     </div>
 
     <script>
 
+        function getSectionStudents(section_id) {
+            $('#id_modal_content').empty();
+            $('#id_modal_section').empty();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/submit_grades/",
+                data: {
+                    section_id: section_id
+                },
+                success: function (data) {
+                    console.log(data);
+                    $('#id_modal_section').append("<h1>"+data.section_name+"</h1>");
+                    {# hidden input for section_id #}
+                     data.students_array.forEach(function(e) {
+                         $('#id_modal_content').append("<div class='item'><div class=\"ui form\">\n" +
+                             "  <div class=\"fields\">\n" +
+                             "    <div class=\"field\">\n" +
+                             "      <label>First name</label>\n" +
+                             "      <input type=\"text\" name='first_name' value='" + e.first_name + "'>\n" +
+                             "    </div>\n" +
+                             "    <div class=\"field\">\n" +
+                             "      <label>Last name</label>\n" +
+                             "      <input type=\"text\" name='last_name' value='" + e.last_name + "'>\n" +
+                             "    </div>\n" +
+                             "    <div class=\"field\">\n" +
+                             "      <label>Semester Status</label>\n" +
+                             "      <input type=\"text\" name='semester_status' value='" + data.semester_status + "'>\n" +
+                             "    </div>\n" +
+                             "    <div class=\"field\">\n" +
+                             "      <label>Grade</label>\n" +
+                             "      <input type=\"text\" name='grade' id='" + e.student_id + "__grade' maxlength='2' >\n" +
+                             "    </div>\n" +
+                             "    <div class=\"field\">\n" +
+                             "      <label>Submit</label>\n" +
+                             "      <button type='button' onclick='submitGrade(this.id," + e.student_id + ")' class='ui button' id='" + data.section_id + "'>\n" +
+                             "    </div>\n" +
+                             "  </div>\n" +
+                             "</div> </div>")
+                     });
+                     $('.ui.longer.modal').modal('show');
+                }
+            });
+        }
+
+        function submitGrade(section_id, student_id) {
+            $.ajax({
+                type: "POST",
+                url: "/student_system/submit_grades/",
+                data: {
+                    section_id: section_id,
+                    student_id: student_id,
+                    letter_grade: $('#'+student_id+'__grade').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    $('#id_modal_success').append("<h2>Grade Submitted Sucessfully!</h2>");
+                }
+            });
+        }
 
     </script>
 {% endblock %}

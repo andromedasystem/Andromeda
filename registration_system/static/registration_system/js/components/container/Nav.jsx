@@ -67,7 +67,7 @@ class Nav extends Component {
                 </Dropdown>
                 <Dropdown simple item text='Grading Actions'>
                     <Dropdown.Menu>
-                        <Dropdown.Item>Submit Grading</Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/submit_grades/">Submit Grading</a></Dropdown.Item>
                    </Dropdown.Menu>
                 </Dropdown>
             </Menu>;
