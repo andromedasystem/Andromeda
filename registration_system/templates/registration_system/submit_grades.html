@@ -11,31 +11,35 @@
     </div>
 
     <div class="ui container m-top2">
-        {% for s in sections %}
-            <div class="ui segments">
-              <div class="ui segment">
-                <h1>{{ s.course_id.name }}</h1>
-              </div>
-              <div class="ui segments">
-                <div class="ui segment">
-                  <strong>Building Name: </strong><p>{{ s.room_id.building_id.name }}</p>
-                </div>
-                <div class="ui segment">
-                  <strong>Room Number: </strong><p>{{ s.room_id.room_number }}</p>
-                </div>
-                <div class="ui segment">
-                  <strong>Time Slot: </strong><p>{{ s.time_slot_id.days_id.day_1 }} {{ s.time_slot_id.days_id.day_2 }} ---- {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</p>
-                </div>
-                <div class="ui segment">
-                    <strong>Season/Semester</strong><p>{{ s.semester_id.season }} -  {{ s.semester_id.year }}</p>
-                </div>
-              </div>
-                <div class="ui segment">
-                    <button onclick="getSectionStudents({{ s.section_id }})" class="ui primary button"  type="button">Grading</button>
-                </div>
+        {% if sections %}
+            {% for s in sections %}
+                <div class="ui segments">
+                  <div class="ui segment">
+                    <h1>{{ s.course_id.name }}</h1>
+                  </div>
+                  <div class="ui segments">
+                    <div class="ui segment">
+                      <strong>Building Name: </strong><p>{{ s.room_id.building_id.name }}</p>
+                    </div>
+                    <div class="ui segment">
+                      <strong>Room Number: </strong><p>{{ s.room_id.room_number }}</p>
+                    </div>
+                    <div class="ui segment">
+                      <strong>Time Slot: </strong><p>{{ s.time_slot_id.days_id.day_1 }} {{ s.time_slot_id.days_id.day_2 }} ---- {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</p>
+                    </div>
+                    <div class="ui segment">
+                        <strong>Season/Semester</strong><p>{{ s.semester_id.season }} -  {{ s.semester_id.year }}</p>
+                    </div>
+                  </div>
+                    <div class="ui segment">
+                        <button onclick="getSectionStudents({{ s.section_id }})" class="ui primary button"  type="button">Grading</button>
+                    </div>
 
-            </div>
-        {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <h1><i class="fas fa-exclamation-triangle"></i> No Courses Taught</h1>
+        {% endif %}
         <div class="ui modal">
           <div id="id_modal_section" class="header"></div>
           <div  class="scrolling content">

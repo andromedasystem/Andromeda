@@ -82,8 +82,7 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
             }
 
             return HttpResponse(json.dumps(data), content_type="application/json")
-
-        sections = Section.objects.filter(faculty_id=user_profile.faculty.faculty_id)
+        sections = Section.objects.filter(faculty_id=user_profile.faculty)
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
                              'registration_system', 'js', 'nav-holder.jsx'),
@@ -118,6 +117,37 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
         return JsonResponse(data)
 
 
+class ViewFacultySchedule(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_faculty_schedule.html'
+    is_faculty = True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile and userprofile.has_faculty():
+            self.is_faculty = True
+        else:
+            redirect('/student_system/')
+
+        sections = Section.objects.filter(faculty_id=userprofile.faculty)
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_faculty': self.is_faculty,
+                'header_text': 'View Student Schedule'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'sections': sections
+        }
+
+        return render(request, self.template_name, context)
+
+
 class ViewStudentSchedule(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/view_Student_Schedule.html'
     is_faculty = False
@@ -126,7 +156,6 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
-
         if userprofile and userprofile.has_faculty():
             self.is_faculty = True
         elif userprofile and userprofile.has_admin():
@@ -134,6 +163,7 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
         else:
             redirect('/student_system/')
 
+        # print(self.is_faculty)
         current_user = userprofile.admin if self.is_admin else userprofile.faculty
 
         first_name = request.GET.get('first_name')
@@ -193,7 +223,7 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
                 'header_text': 'View Student Schedule'
             },
             to_static_markup=False,
-            )
+        )
 
         context = {
             'rendered': rendered
@@ -257,6 +287,10 @@ class StudentViewSchedule(LoginRequiredMixin, generic.View):
             'sections': sections_array
         }
         return render(request, self.template_name, context)
+
+
+class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/student_view_student_transcript.html'
 
 
 # TODO: TEST
@@ -579,7 +613,6 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
         else:
             data['is_successful'] = False
         return JsonResponse(data)
-
 
 
 class ChangeSemesterStatus(LoginRequiredMixin, generic.View):

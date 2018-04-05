@@ -16,7 +16,9 @@ class Index extends React.Component {
         return <div className="m-top8">
                 <Nav
                     is_admin={this.props.is_admin}
-                    is_student={this.props.is_student}/>
+                    is_student={this.props.is_student}
+                    is_faculty={this.props.is_faculty}
+                    is_researcher={this.props.is_researcher}/>
                 <h2>{this.props.header_text}</h2>
                 </div>
     }

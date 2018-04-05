@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^student/view_student_schedule/$', core_views.StudentViewSchedule.as_view(),
         name='student_view_student_schedule'),
     url(r'^view_student_schedule/$', core_views.ViewStudentSchedule.as_view(), name='view_student_schedule'),
+    url(r'^view_faculty_schedule/$', core_views.ViewFacultySchedule.as_view(), name='view_faculty_schedule'),
     url(r'^create_course/$', core_views.CreateCourse.as_view(), name='create_course'),
     url(r'^create_course/prerequisites/(?P<course_id>\d+)/', core_views.CreatePrerequisite.as_view()
         , name='create_prerequisites'),
@@ -26,6 +27,7 @@ urlpatterns = [
     url(r'^view_hold/$', core_views.ViewHold.as_view(), name="view_hold"),
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
+    url(r'^view_advisees/$', core_views.ViewAdvisees.as_view(), name="view_advisees"),
     url(r'^submit_grades/$', core_views.SubmitGrades.as_view(), name="submit_grades"),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
     url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),

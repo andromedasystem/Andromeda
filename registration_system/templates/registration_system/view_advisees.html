@@ -25,6 +25,10 @@
                             <td class="single line">{{ e.student_username }}</td>
                         </tr>
                     {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3"><h1>No Sections Taught.</h1></td>
+                    </tr>
                 {% endif %}
             </tbody>
         </table>
