@@ -291,6 +291,66 @@ class StudentViewSchedule(LoginRequiredMixin, generic.View):
 
 class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/student_view_student_transcript.html'
+    is_student = False
+    grading_key = {
+        'A': 4.0,
+        'A-': 3.5,
+        'B': 3.0,
+        'B-': 2.5,
+        'C': 2.0,
+        'C-': 1.5,
+        'D': 1.0,
+        'D-': 0.5,
+        'F': 0
+    }
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+
+        if userprofile:
+            if userprofile.has_student():
+                self.is_student = True
+            else:
+                redirect('/student_system/')
+
+        enrollments = Enrollment.objects.filter(student_id=userprofile.student)
+        enrollments_array = []
+        grades = 0.0
+        counter = 0
+        for e in enrollments:
+            if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
+                grades += self.grading_key[e.grade]
+
+            counter = counter + 1
+            enrollments_array.append({
+                'course_name': e.section_id.course_id.name,
+                'credits': e.section_id.course_id.credits,
+                'semester_status': e.section_id.semester_id.status,
+                'season': e.section_id.semester_id.season,
+                'year': e.section_id.semester_id.year,
+                'grade': e.grade
+            })
+
+        cumulative_gpa = float(grades/counter)
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_student': self.is_student,
+                'header_text': 'View Transcript'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'enrollment_array': enrollments_array,
+            'cumulative_gpa': cumulative_gpa
+        }
+
+        return render(request, self.template_name, context)
 
 
 # TODO: TEST
