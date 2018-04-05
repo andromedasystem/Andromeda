@@ -13,6 +13,9 @@ urlpatterns = [
     url(r'^view_faculty_schedule/$', core_views.ViewFacultySchedule.as_view(), name='view_faculty_schedule'),
     url(r'^student/view_student_transcript/$', core_views.StudentViewStudentTranscript.as_view(),
         name='student_view_student_transcript'),
+    url(r'^view_student_transcript/$', core_views.ViewStudentTranscript.as_view(), name='view_student_transcript'),
+    url(r'^view_student_transcript/(?P<student_id>\d+)/', core_views.ViewStudentTranscriptResult.as_view(),
+        name='view_student_transcript_result'),
     url(r'^create_course/$', core_views.CreateCourse.as_view(), name='create_course'),
     url(r'^create_course/prerequisites/(?P<course_id>\d+)/', core_views.CreatePrerequisite.as_view()
         , name='create_prerequisites'),

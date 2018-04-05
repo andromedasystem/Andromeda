@@ -1,0 +1,34 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <form action="{{ url }}" method="post" class="ui form" id="ui-form">
+            {% csrf_token %}
+            <div class="two fields">
+                <div class="field">
+                    <label for="username_id">Username</label>
+                    <input id="username_id"   placeholder="Search by username..." type="text" />
+                </div>
+                <div class="field">
+                    <label for="email_id">Email</label>
+                    <input id="email_id" autocomplete="email" placeholder="Search by email..." type="text"/>
+                </div>
+            </div>
+        {{ csrf }}
+            <div class="display-inline ">
+                <button class="ui primary button" id="search" type="submit">Search</button>
+            </div>
+
+        </form>
+
+    </div>
+
+{% endblock %}

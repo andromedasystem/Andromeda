@@ -289,6 +289,88 @@ class StudentViewSchedule(LoginRequiredMixin, generic.View):
         return render(request, self.template_name, context)
 
 
+class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_student_transcript_result.html'
+    is_faculty = False
+    is_admin = False
+
+    def get(self, request, student_id, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile and userprofile.has_faculty():
+            self.is_faculty = True
+        elif userprofile and userprofile.has_admin():
+            self.is_admin = True
+        else:
+            redirect('/student_system/')
+        student = Student.objects.get(pk=int(student_id))
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'is_faculty': self.is_faculty,
+                'header_text': student. 'Transcript'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+
+class ViewStudentTranscript(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_student_transcript.html'
+    is_faculty = False
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile and userprofile.has_faculty():
+            self.is_faculty = True
+        elif userprofile and userprofile.has_admin():
+            self.is_admin = True
+        else:
+            redirect('/student_system/')
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'is_faculty': self.is_faculty,
+                'header_text': 'View Transcript'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get('username_id')
+        email = request.POST.get('email_id')
+
+        if username:
+            user = User.objects.get(username=username)
+        elif email:
+            user = User.objects.get(email=email)
+        else:
+            user = False
+
+        if user.userprofile.has_student():
+            student = user.userprofile.student
+            return redirect('view_student_transcript_result', student_id=student.student_id_id)
+        return redirect('/student_system/view_student_transcript/')
+
+
 class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/student_view_student_transcript.html'
     is_student = False
