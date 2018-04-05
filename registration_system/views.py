@@ -66,6 +66,7 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
             enrollments = Enrollment.objects.filter(section_id=section_id)
             students_array = []
             for e in enrollments:
+
                 students_array.append({
                     # 'section_id': e.section_id_id,
                     'student_id': e.student_id_id,
