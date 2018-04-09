@@ -1,0 +1,19 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+    <div class="ui icon message">
+        <i class=""></i>
+        <div class="content">
+            <div class="header">{{ section.course_id.name }} attendance for {{ todays_date }} submitted successfully</div>
+        </div>
+    </div>
+
+
+{% endblock %}

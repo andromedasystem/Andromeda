@@ -335,8 +335,9 @@ class Meetings(models.Model):
     meeting_id = models.AutoField(primary_key=True)
     enrollment_id = models.ForeignKey('Enrollment', on_delete=models.CASCADE)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
-    meeting_date = models.DateTimeField('meeting date', null=True)
+    meeting_date = models.DateField('meeting date', null=True)
     present_or_absent = models.BooleanField(default=False)
+    submitted = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} {} {} {} {}'.format(self.meeting_id, self.enrollment_id, self.student_id, self.meeting_date,

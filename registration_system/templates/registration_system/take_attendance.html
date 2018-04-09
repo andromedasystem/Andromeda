@@ -29,6 +29,9 @@
                 <button class="ui primary button" id="submit" type="button">Submit</button>
             </div>
         </div>
+        <div id="course_name_id">
+
+        </div>
         <table class="ui celled table">
             <thead>
                 <tr>
@@ -43,6 +46,9 @@
 
             </tbody>
         </table>
+        <div id="searched">
+
+        </div>
         <div id="success">
 
         </div>
@@ -52,6 +58,7 @@
 
         function addStudents(){
             {#console.log("here");#}
+            removeStudents();
             var section_id = $('#section_id').val();
             $.ajax({
                 type: "GET",
@@ -79,32 +86,29 @@
                                 var meetingDateText = document.createTextNode(element.meeting_date);
                                 meetingDateCell.appendChild(meetingDateText);
                             } else {
-
+                                meetingDateCell.appendChild(document.createTextNode(" "));
                             }
                             if( element.present_or_absent){
-                                var presentOrAbsentText = document.createTextNode(element.present_or_absent);
-                                presentOrAbsentsCell.appendChild(presentOrAbsentText);
+                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<i class=\"large green checkmark icon\"></i>");
                             } else {
-
+                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<button type='button' onclick='takeAttendance(this.id, "+element.student_id+")'  id='"+element.enrollment_id+"'> <i id='"+element.student_id+"__present_or_absent' style='display: none;' class='large green checkmark icon'></i></button>");
                             }
-                            var prerequisitesText = $("<div id='" + element.section_id + "_prerequisites' class='ui celled ordered list' ></div>");
-                            var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>" + element.seats_taken + "</li><li><span style='font-weight:bold;'>Capacity:</span>" + element.seating_capacity + "</li></span>");
-                            studentIdCell.appendChild(studentIdText);
-                            firstNameCell.appendChild(firstNameText);
-                            lastNameCell.appendChild(lastNameText);
-
-                            locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>" + element.building + "</li><li><span style=\'font-weight:bold;\'>Room Number:</span>" + element.room_number + "</li></span>");
-                            timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>" + element.meeting_days + "</li><li><span style=\'font-weight:bold;\'>Period:</span>" + element.time_period + "</li></span>");
-                            $('#' + element.course_id + '_row').find('td:eq(5)').append(seatsText);
-                            element.prerequisites.forEach(function (el) {
-                                $('#' + element.section_id + "_prerequisites").append("<div class='item'>" + el.name + "</div>");
-                            });
-
 
                         });
-                        $('#full_name_id').append("<h1 class='ui header' >"+data.student_name+"'s Schedule</h1>")
+                        $('#course_name_id').append("<h1 class='ui header' >"+data.section_name+" Attendance</h1>");
+                        var today = new Date();
+                        var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();
+                        var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();
+                        var year = today.getFullYear();
+                        $('#searched').append("<form action="+window.location.href+" method=\"post\" class=\"ui form m-top2 \">\n" +
+                            "            <div class=\"field\">\n" +
+                            "                <button class=\"ui button\" role=\"button\">Submit Attendance</button>\n" +
+                            "            </div>\n" +
+                            "            <input id=\"meeting_date_id\" name=\"meeting_date\" type=\"hidden\" value="+year+"-"+month+"-"+day+"/>\n" +
+                            "            <input id=\"hidden_section_id\" name=\"section\" type=\"hidden\" value="+data.section_id+"/>\n" +
+                            "        </form>")
                     } else {
-                      $('#full_name_id').append("<h1 class='ui header red' >No Students connected to your search query.</h1>")
+                      $('#course_name_id').append("<h1 class='ui header red' >No Students enrolled in this section.</h1>")
                     }
 
                 }
@@ -112,11 +116,44 @@
 
         }
 
+
+        function takeAttendance(enrollment_id, student_id){
+            if($("#"+student_id+"__present_or_absent").is(':hidden')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/student_system/taken_attendance/",
+                    data: {
+                        enrollment_id: enrollment_id,
+                        student_id: student_id,
+                        present_or_absent_id: 'P'
+                    },
+                    success: function (data) {
+                        $("#" + student_id + "__present_or_absent").show();
+                    }
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/student_system/taken_attendance/",
+                    data: {
+                        enrollment_id: enrollment_id,
+                        student_id: student_id,
+                        present_or_absent_id: 'A'
+                    },
+                    success: function (data) {
+                        $("#" + student_id + "__present_or_absent").hide();
+                    }
+                });
+            }
+
+
+        }
+
         function removeStudents() {
             $('#students_added').empty();
         }
 
-
+        $('#submit').click(addStudents);
     {# TODO: Ajax GET & POST Calls for Django Data #}
 
 

@@ -48,9 +48,42 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class AttendanceSubmitted(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/attendance_submitted.html'
+    is_faculty = False
+
+    def get(self, request, section_id, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_faculty():
+                self.is_faculty = True
+            else:
+                redirect('/student_system/')
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_faculty': self.is_faculty,
+                'header_text': 'Attendance Submitted: '
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'section': Section.objects.get(pk=int(section_id)),
+            'todays_date': datetime.today
+        }
+
+        return render(request, self.template_name, context)
+
+
 class TakeAttendance(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/take_attendance.html'
-    is_faculty = True
+    is_faculty = False
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -100,7 +133,8 @@ class TakeAttendance(LoginRequiredMixin, generic.View):
 
         context = {
             'rendered': rendered,
-            'sections': sections
+            'sections': sections,
+            'todays_date': datetime.today
         }
 
         return render(request, self.template_name, context)
@@ -118,12 +152,19 @@ class TakeAttendance(LoginRequiredMixin, generic.View):
                 meetings.present_or_absent = True
             else:
                 meetings.present_or_absent = False
-            meetings.meeting_date = datetime.now()
+            meetings.meeting_date = datetime.today
             meetings.save()
             data['is_successful'] = True
+            return JsonResponse(data)
         else:
-            data['is_successful'] = False
-        return JsonResponse(data)
+            meeting_date_str = request.POST.get("meeting_date_id")
+            section_id = request.POST.get("hidden_section_id")
+            meeting_date = datetime.datetime.strptime(meeting_date_str, '%Y-%m-%d').date()
+            meetings = Meetings.objects.filter(meeting_date=meeting_date)
+            for m in meetings:
+                m.submitted = True
+                m.save()
+            return redirect('take_attendance', section_id=section_id)
 
 
 class SubmitGrades(LoginRequiredMixin, generic.View):
