@@ -29,12 +29,92 @@
                 <button class="ui primary button" id="submit" type="button">Submit</button>
             </div>
         </div>
+        <table class="ui celled table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Meeting Date</th>
+                    <th>Present or Absent</th>
+                </tr>
+            </thead>
+            <tbody id="students_added">
+
+            </tbody>
+        </table>
         <div id="success">
 
         </div>
     </div>
 
     <script>
+
+        function addStudents(){
+            {#console.log("here");#}
+            var section_id = $('#section_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/take_attendance/",
+                data : {
+                    section_id: section_id
+                },
+                success: function(data) {
+                    console.log(data);
+                    if(data.is_successful) {
+                        data.students_array.forEach(function (element) {
+                            var tBody = document.getElementById('sections_added');
+                            var newRow = tBody.insertRow(tBody.rows.length);
+                            newRow.id = element.course_id + '_row';
+                            var studentIdCell = newRow.insertCell(0);
+                            var firstNameCell = newRow.insertCell(1);
+                            var lastNameCell = newRow.insertCell(2);
+                            var meetingDateCell = newRow.insertCell(3);
+                            var presentOrAbsentsCell = newRow.insertCell(4);
+                            {# editing faculty, meeeting days, time period, building, and room number  #}
+                            var studentIdText = document.createTextNode(element.student_id);
+                            var firstNameText = document.createTextNode(element.first_name);
+                            var lastNameText = document.createTextNode(element.last_name);
+                            if( element.meeting_date){
+                                var meetingDateText = document.createTextNode(element.meeting_date);
+                                meetingDateCell.appendChild(meetingDateText);
+                            } else {
+
+                            }
+                            if( element.present_or_absent){
+                                var presentOrAbsentText = document.createTextNode(element.present_or_absent);
+                                presentOrAbsentsCell.appendChild(presentOrAbsentText);
+                            } else {
+
+                            }
+                            var prerequisitesText = $("<div id='" + element.section_id + "_prerequisites' class='ui celled ordered list' ></div>");
+                            var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>" + element.seats_taken + "</li><li><span style='font-weight:bold;'>Capacity:</span>" + element.seating_capacity + "</li></span>");
+                            studentIdCell.appendChild(studentIdText);
+                            firstNameCell.appendChild(firstNameText);
+                            lastNameCell.appendChild(lastNameText);
+
+                            locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>" + element.building + "</li><li><span style=\'font-weight:bold;\'>Room Number:</span>" + element.room_number + "</li></span>");
+                            timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>" + element.meeting_days + "</li><li><span style=\'font-weight:bold;\'>Period:</span>" + element.time_period + "</li></span>");
+                            $('#' + element.course_id + '_row').find('td:eq(5)').append(seatsText);
+                            element.prerequisites.forEach(function (el) {
+                                $('#' + element.section_id + "_prerequisites").append("<div class='item'>" + el.name + "</div>");
+                            });
+
+
+                        });
+                        $('#full_name_id').append("<h1 class='ui header' >"+data.student_name+"'s Schedule</h1>")
+                    } else {
+                      $('#full_name_id').append("<h1 class='ui header red' >No Students connected to your search query.</h1>")
+                    }
+
+                }
+            });
+
+        }
+
+        function removeStudents() {
+            $('#students_added').empty();
+        }
 
 
     {# TODO: Ajax GET & POST Calls for Django Data #}

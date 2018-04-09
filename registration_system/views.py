@@ -76,7 +76,7 @@ class TakeAttendance(LoginRequiredMixin, generic.View):
                     'meeting_date': m.meeting_date,
                     'first_name': m.student_id.student_id.user.first_name,
                     'last_name': m.student_id.student_id.user.last_name,
-                    'present_or_abesnt': m.present_or_absent
+                    'present_or_absent': m.present_or_absent
                 })
             data = {
                 'students_array': students_array,
