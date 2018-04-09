@@ -1,0 +1,46 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <div class="ui form" id="ui-form">
+        {{ csrf }}
+             <div class="two fields">
+                <div class="field">
+                    <label for="section_id"></label>
+                    <select id="section_id" class="ui fluid dropdown">
+                        <option value="0">--------</option>
+                        {% if sections %}
+                            {% for s in sections %}
+                                <option value="{{ s.section_id }}" ><strong>{{ s.section_id }}.</strong> {{ s.course_id.name }}--{{ s.time_slot_id.days_id.day_1 }}--{{ s.time_slot_id.days_id.day_2 }} {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="display-inline ">
+                <button class="ui primary button" id="submit" type="button">Submit</button>
+            </div>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+
+
+    {# TODO: Ajax GET & POST Calls for Django Data #}
+
+
+
+    </script>
+
+{% endblock %}

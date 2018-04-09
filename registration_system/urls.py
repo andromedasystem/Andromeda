@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
     url(r'^view_advisees/$', core_views.ViewAdvisees.as_view(), name="view_advisees"),
+    url(r'^take_attendance/$', core_views.TakeAttendance.as_view(), name='take_attendance'),
     url(r'^submit_grades/$', core_views.SubmitGrades.as_view(), name="submit_grades"),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
     url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),

@@ -15,6 +15,7 @@ from .models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .forms import *
 from django.views import generic
+from datetime import datetime
 
 
 # Instead of using signals in views to create child models
@@ -45,6 +46,84 @@ def home(request):
         user = False
     # print(rendered)
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
+
+
+class TakeAttendance(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/take_attendance.html'
+    is_faculty = True
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_faculty():
+                self.is_faculty = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            section_id = request.GET.get('section_id')
+            meetings = Meetings.objects.filter(student_id__enrollment__section_id_id=int(section_id))
+            # enrollments = Enrollment.objects.filter(section_id=section_id)
+            section_name = Section.objects.get(pk=int(section_id)).course_id.name
+            students_array = []
+            for m in meetings:
+                students_array.append({
+                    # 'section_id': e.section_id_id,
+                    'enrollment_id': m.enrollment_id_id,
+                    'student_id': m.student_id_id,
+                    'meeting_date': m.meeting_date,
+                    'first_name': m.student_id.student_id.user.first_name,
+                    'last_name': m.student_id.student_id.user.last_name,
+                    'present_or_abesnt': m.present_or_absent
+                })
+            data = {
+                'students_array': students_array,
+                'section_name': section_name,
+                'section_id': section_id,
+                'semester_status': Section.objects.get(pk=int(section_id)).semester_id.status
+            }
+
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        sections = Section.objects.filter(faculty_id=user_profile.faculty)
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_faculty': self.is_faculty,
+                'header_text': 'Take Section Attendance'
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+            'sections': sections
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            student_id = request.POST.get('student_id')
+            enrollment_id = request.POST.get('enrollment_id')
+            present_or_absent = request.POST.get('present_or_absent_id')
+            meetings = Meetings.objects.get(enrollment_id=enrollment_id, student_id=student_id)
+            if present_or_absent == 'P':
+                meetings.present_or_absent = True
+            else:
+                meetings.present_or_absent = False
+            meetings.meeting_date = datetime.now()
+            meetings.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
 
 
 class SubmitGrades(LoginRequiredMixin, generic.View):
@@ -135,7 +214,7 @@ class ViewFacultySchedule(LoginRequiredMixin, generic.View):
                          'registration_system', 'js', 'nav-holder.jsx'),
             {
                 'is_faculty': self.is_faculty,
-                'header_text': 'View Student Schedule'
+                'header_text': 'View Faculty Schedule'
             },
             to_static_markup=False,
         )
@@ -782,6 +861,7 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
             section_id = request.POST.get('section_id')
             section = Section.objects.get(pk=int(section_id))
             enrollment = Enrollment.objects.create(student_id=student, section_id=section)
+            meeting = Meetings.objects.create(enrollment_id=enrollment, student_id=student)
             student_history = StudentHistory.objects.create(student_id=student, enrollment_id=enrollment)
             data['is_successful'] = True
         else:
@@ -985,7 +1065,7 @@ class ViewAdvisees(LoginRequiredMixin, generic.View):
         try:
             faculty = Faculty.objects.get(pk=int(user.userprofile.faculty.faculty_id_id))
             advising = Advising.objects.filter(faculty_id=faculty)
-            faculty_name = advising.faculty_id.faculty_id.user.first_name + ' ' + advising.faculty_id.faculty_id.user.last_name
+            faculty_name = faculty.faculty_id.user.first_name + ' ' + faculty.faculty_id.user.last_name
             students = []
             for a in advising:
                 students.append({
@@ -1002,7 +1082,7 @@ class ViewAdvisees(LoginRequiredMixin, generic.View):
             os.path.join(os.getcwd(), 'registration_system', 'static',
                          'registration_system', 'js', 'nav-holder.jsx'),
             {
-                'is_student': self.is_student,
+                'is_faculty': self.is_faculty,
                 'header_text': 'View Adviser'
             },
             to_static_markup=False,
