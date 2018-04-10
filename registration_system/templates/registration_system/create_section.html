@@ -35,12 +35,12 @@
             <div class=" required field">
                 <label for="id_faculty_id">Faculty</label>
                 <select class="ui fluid dropdown" name="faculty_id" id="id_faculty_id" required>
-                    <option value="true">-------</option>
-                    {% if faculty %}
-                        {% for f in faculty %}
-                            <option value="{{ f.faculty_id }}" label="{{ f.first_name }} {{ f.last_name }}">{{ f.first_name }} {{ f.last_name }}</option>
-                        {% endfor %}
-                    {% endif %}
+{#                    <option value="true">-------</option>#}
+{#                    {% if faculty %}#}
+{#                        {% for f in faculty %}#}
+{#                            <option value="{{ f.faculty_id }}" label="{{ f.first_name }} {{ f.last_name }}">{{ f.first_name }} {{ f.last_name }}</option>#}
+{#                        {% endfor %}#}
+{#                    {% endif %}#}
                 </select>
             </div>
 
@@ -125,9 +125,12 @@
                 },
                 success: function(data) {
                     console.log(data);
-                    data.forEach(function(element){
+                    data.course_array.forEach(function(element){
                         $('#id_course_id').append("<option value='"+element.course_id+"'>"+element.course_name+"</option>" );
                     });
+                    data.faculty_array.forEach(function(e){
+                        $('#id_faculty_id').append("<option value='"+e.faculty_id+"'>"+e.faculty_name+"</option>" );
+                    })
                 }
             });
 

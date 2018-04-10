@@ -1559,7 +1559,19 @@ class CreateSection(LoginRequiredMixin, generic.View):
                         'course_credits': c.credits
                     }
                     course_array.append(data)
-                return HttpResponse(json.dumps(course_array), content_type="application/json")
+                faculty_array = []
+                for f in Faculty.objects.filter(department_id=int(department_id)):
+                    data = {
+                        'faculty_name': f.faculty_id.user.first_name + ' ' + f.faculty_id.user.last_name,
+                        'faculty_id': f.faculty_id_id
+
+                    }
+                    faculty_array.append(data)
+                data_obj = {
+                    'faculty_array': faculty_array,
+                    'course_array': course_array
+                }
+                return HttpResponse(json.dumps(data_obj), content_type="application/json")
 
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -2105,12 +2117,27 @@ def get_master_schedule_input_data(request):
         })
     meeting_days = []
     for m in MeetingDays.objects.all():
-        meeting_days.append({
-            'days_id': m.days_id,
-            'day_1': m.day_1,
-            'day_2': m.day_2,
-            'day_range': m.day_1 + " " + m.day_2
-        })
+        if m.day_3:
+            meeting_days.append({
+                'days_id': m.days_id,
+                'day_1': m.day_1,
+                'day_2': m.day_2,
+                'day_3': m.day_3,
+                'day_range': m.day_1 + " " + m.day_2 + " " + m.day_3
+            })
+        elif m.day_2 and m.day_3 is None:
+            meeting_days.append({
+                'days_id': m.days_id,
+                'day_1': m.day_1,
+                'day_2': m.day_2,
+                'day_range': m.day_1 + " " + m.day_2
+            })
+        elif m.day_1 and m.day_2 is None:
+            meeting_days.append({
+                'days_id': m.days_id,
+                'day_1': m.day_1,
+                'day_range': m.day_1
+            })
     buildings = []
     for b in Building.objects.all():
         buildings.append({
