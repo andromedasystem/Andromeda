@@ -1,0 +1,30 @@
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+{#    {% csrf_token %}#}
+    <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+    <h1>Student Grades Graph:</h1>
+    <div id="student_plot" style="width: 600px; height:250px;" class="ui container">
+
+    </div>
+
+    <script>
+        var PLOT = document.getElementById('student_plot');
+        Plotly.plot(PLOT, [{
+            type: 'bar',
+            x: {{ x_axis|safe }},
+            y: {{ y_axis|safe }}
+        }], {
+            margin: { t: 0}
+        });
+    </script>
+{#    {{ form }}#}
+
+{#    <script>document.getElementsByClassName('ui dropdown').dropdown()</script>#}
+{% endblock %}

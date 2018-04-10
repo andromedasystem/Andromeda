@@ -48,6 +48,70 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class ViewGraphs(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_graphs.html'
+    is_researcher = False
+    grading_key = {
+        'A': 4.0,
+        'A-': 3.5,
+        'B': 3.0,
+        'B-': 2.5,
+        'C': 2.0,
+        'C-': 1.5,
+        'D': 1.0,
+        'D-': 0.5,
+        'F': 0
+    }
+
+    def get(self, request, *args, **kwargw):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_researcher():
+                self.is_researcher = True
+            else:
+                redirect('/student_system/')
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_researcher': self.is_researcher,
+                'header_text': 'View Graphs '
+            },
+            to_static_markup=False,
+        )
+        grades_tally = [0] * 9
+        grades = [4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5, 0]
+        for e in Enrollment.objects.all():
+            if e.grade == 'A':
+                grades_tally[0] = grades_tally[0] + 1
+            elif e.grade == 'A-':
+                grades_tally[1] = grades_tally[1] + 1
+            elif e.grade == 'B':
+                grades_tally[2] = grades_tally[2] + 1
+            elif e.grade == 'B-':
+                grades_tally[3] = grades_tally[3] + 1
+            elif e.grade == 'C':
+                grades_tally[4] = grades_tally[4] + 1
+            elif e.grade == 'C-':
+                grades_tally[5] = grades_tally[5] + 1
+            elif e.grade == 'D':
+                grades_tally[6] = grades_tally[6] + 1
+            elif e.grade == 'D-':
+                grades_tally[7] = grades_tally[7] + 1
+            elif e.grade == 'F':
+                grades_tally[8] = grades_tally[8] + 1
+        context = {
+            'rendered': rendered,
+            'x_axis': grades,
+            'y_axis': grades_tally
+        }
+
+        return render(request, self.template_name, context)
+
+
 class AttendanceSubmitted(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/attendance_submitted.html'
     is_faculty = False
@@ -1994,6 +2058,8 @@ def get_master_schedule_search_data(request, attribute_flag, search_value):
         data = {
             'faculty': faculty_name,
             'course_name': s.course_id.name,
+            'course_description': s.course_id.description,
+            'department': s.course_id.department_id.name,
             'section_id': s.section_id,
             'credits' : s.course_id.credits,
             'seats_taken': s.seats_taken,

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Container, Divider, Header, Table, List, Segment, Dimmer, Loader } from 'semantic-ui-react';
+import ScheduleRow from './row';
+
 
 // TODO: Create table and implement data fetching
 class MasterTable extends React.Component {
@@ -62,7 +64,6 @@ class MasterTable extends React.Component {
 
     }
 
-
     render() {
          if( this.state.isLoading){
             return(
@@ -79,6 +80,7 @@ class MasterTable extends React.Component {
                 return <ScheduleRow
                         key={ i }
                         data={ item }
+                        // onClick={() => this.handleClick(item.section_id)}
                         />
             })
         }
@@ -110,45 +112,5 @@ class MasterTable extends React.Component {
 
 }
 
-
-const ScheduleRow = (props) => {
-
-    const prereqs = props.data.prerequisites.map((item, i) => {
-                return <List.Item>
-                            <List.Content>
-                                <List.Description as='h5'>{item.name}</List.Description>
-                            </List.Content>
-                       </List.Item>
-            });
-    return(
-        <Table.Row>
-            <Table.Cell>
-                <Header as='h2' textAlign='center'>{props.data.section_id}</Header>
-            </Table.Cell>
-            <Table.Cell singleLine>
-                <Header as='h4' textAlign='center'>{props.data.course_name}</Header>
-            </Table.Cell>
-            <Table.Cell singleLine>{props.data.faculty}</Table.Cell>
-            <Table.Cell>{props.data.credits}</Table.Cell>
-            <Table.Cell textAlign='left'>
-                <strong>Seats Taken: </strong>{props.data.seats_taken}<br />
-                <strong>Seating Capacity: </strong>{props.data.capacity}
-            </Table.Cell>
-            <Table.Cell textAlign='center'>
-                <strong>{props.data.meeting_days}</strong><br/>
-                {props.data.time_period}
-            </Table.Cell>
-            <Table.Cell textAlign='center'>
-                <strong>Building: </strong>{props.data.building}<br/>
-                <strong>Room: </strong>{props.data.room}
-            </Table.Cell>
-            <Table.Cell textAlign='center'>
-                <List divided relaxed>
-                    {prereqs}
-                </List>
-            </Table.Cell>
-       </Table.Row>
-    )
-}
 
 export default MasterTable;
