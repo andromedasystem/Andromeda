@@ -35,6 +35,10 @@ body {
     box-shadow: none;
 }
 
+.m-bottom4{
+    margin-bottom: 4rem !important;
+}
+
 .m-right1{
     margin-right: 1rem !important;
 }

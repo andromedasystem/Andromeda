@@ -30,10 +30,27 @@ class App extends React.Component {
                 let department_options = [];
                 let time_period_options = [];
                 let meeting_day_options = [];
+                let semester_options = [];
                 let building_options = [];
                 let room_options = [];
                 let faculty_options = [];
-                let d, f, b, t, m, r;
+                let default_option = { key: 0, text: '------', value: true};
+                semester_options.push(default_option);
+                department_options.push(default_option);
+                time_period_options.push(default_option);
+                meeting_day_options.push(default_option);
+                building_options.push(default_option);
+                room_options.push(default_option);
+                faculty_options.push(default_option);
+                let d, f, b, t, m, r, s;
+                for( let s of data.semesters){
+                    let semester_data = {
+                        key: s.semester_id,
+                        text: s.semester_season + '-' + s.semester_year + "---"+ s.semester_status,
+                        value: s.semester_id
+                    };
+                    semester_options.push(semester_data);
+                }
                 for( let d of data.departments){
                    let department_data = {
                         key:  d.department_id,
@@ -83,17 +100,19 @@ class App extends React.Component {
                     };
                    faculty_options.push(faculty_data);
                 }
-
-
-                this.setState({
+                this.baseState = {
                     departments: department_options,
                     time_periods: time_period_options,
                     meeting_days: meeting_day_options,
+                    semester: semester_options,
                     building: building_options,
+                    submittedValue: false,
                     rooms: room_options,
                     faculty: faculty_options,
                     isLoading: false
-                });
+                };
+
+                this.setState(this.baseState);
             })
             .catch((error) => {
                 console.error(error);
@@ -116,32 +135,40 @@ class App extends React.Component {
     handleSelectChange(value, id){
         console.log(value);
         console.log(id);
-        let attribute_flag;
-        switch(id){
-            case 'department_select':
-                attribute_flag = 'department';
-                break;
-            case 'faculty_select':
-                attribute_flag = 'faculty';
-                break;
-            case 'days_select':
-                attribute_flag = 'days';
-                break;
-            case 'time_period_select':
-                attribute_flag = 'time_period';
-                break;
-            case 'building_select':
-                attribute_flag = 'building';
-                break;
-            case 'room_select':
-                attribute_flag = 'rooms';
-                break;
+        if( value === true){
+            console.log(this.state);
+            this.setState(this.baseState);
+        } else {
+            let attribute_flag;
+            switch (id) {
+                case 'semester_select':
+                    attribute_flag = 'semester';
+                    break;
+                case 'department_select':
+                    attribute_flag = 'department';
+                    break;
+                case 'faculty_select':
+                    attribute_flag = 'faculty';
+                    break;
+                case 'days_select':
+                    attribute_flag = 'days';
+                    break;
+                case 'time_period_select':
+                    attribute_flag = 'time_period';
+                    break;
+                case 'building_select':
+                    attribute_flag = 'building';
+                    break;
+                case 'room_select':
+                    attribute_flag = 'rooms';
+                    break;
+            }
+            console.log(value);
+            this.setState({
+                submittedValue: value,
+                attributeFlag: attribute_flag
+            });
         }
-        console.log(value);
-        this.setState({
-            submittedValue: value,
-            attributeFlag: attribute_flag
-        });
     }
 
     render() {
@@ -166,6 +193,7 @@ class App extends React.Component {
                     <Form.Group widths='equal'>
                         <Form.Select id='days_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Meeting Days' options={this.state.meeting_days} placeholder='Meeting Days'/>
                         <Form.Select id='time_period_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Time Periods' options={this.state.time_periods} placeholder='Time Periods'/>
+                        <Form.Select id='semester_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Semester' options={this.state.semester} placeholder='Semesters'/>
                     </Form.Group>
                     <Form.Group widths='equal'>
                         <Form.Select id='building_select' onChange={(e, {value, id}) => this.handleSelectChange(value, id)} fluid label='Buldings' options={this.state.building} placeholder='Buildings'/>

@@ -3,7 +3,7 @@ import React from 'react';
 class Index extends React.Component {
     render() {
         return <div>
-                <h3 className="ui center aligned header"> First Header</h3>
+                <h3 className="ui center aligned header"> Admissions</h3>
                 <p>This is a {this.props.test} using react-django serve-rendering</p>
                 <p>Who's brave enough to fly into something we all keep calling a death sphere? Oh, how I wish I could believe or understand that! There's only one reasonable course of action now: kill Flexo! Soothe us with sweet lies.</p>
                 <p>When I was first asked to make a film about my nephew, Hubert Farnsworth, I thought "Why should I?" Then later, Leela made the film. But if I did make it, you can bet there would have been more topless women on motorcycles. Roll film! Hi, I'm a naughty nurse, and I really need someone to talk to. $9.95 a minute.</p>
@@ -14,7 +14,11 @@ class Index extends React.Component {
                 <p>A true inspiration for the children. Hey, guess what you're accessories to. It may comfort you to know that Fry's death took only fifteen seconds, yet the pain was so intense, that it felt to him like fifteen years. And it goes without saying, it caused him to empty his bowels.</p>
                 <p>Or a guy who burns down a bar for the insurance money! I'm a thing. Belligerent and numerous. No, just a regular mistake.</p>
                 <p>OK, if everyone's finished being stupid. Oh, how I wish I could believe or understand that! There's only one reasonable course of action now: kill Flexo! No argument here. You are the last hope of the universe.</p>
+                <h3 className='ui center aligned header'> Student Life</h3>
 
+                <h3 className='ui center aligned header'> About Us</h3>
+
+                <h3 className='ui center aligned header'>Alumni</h3>
             </div>
     }
 }

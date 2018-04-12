@@ -21,8 +21,8 @@
                     {% for s in students %}
                         <tr>
                             <td><h2 class="ui center aligned header">{{ s.student_name }}</h2></td>
-                            <td class="single line">{{ e.student_email }}</td>
-                            <td class="single line">{{ e.student_username }}</td>
+                            <td class="single line">{{ s.student_email }}</td>
+                            <td class="single line">{{ s.student_username }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}

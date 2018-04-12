@@ -26,6 +26,12 @@ class ScheduleRow extends React.Component {
 		});
 	}
 
+	 componentWillReceiveProps(nextProps){
+        this.setState({
+            data: nextProps.data
+        })
+     }
+
     render(){
         const prereqs = this.state.data.prerequisites.map((item, i) => {
                 return <List.Item>
@@ -53,6 +59,10 @@ class ScheduleRow extends React.Component {
                 {this.state.data.time_period}
             </Table.Cell>
             <Table.Cell textAlign='center'>
+                <strong>{this.state.data.semester_season} - {this.state.data.semester_year}</strong><br/>
+                {this.state.data.semester_status}
+            </Table.Cell>
+            <Table.Cell textAlign='center'>
                 <strong>Building: </strong>{this.state.data.building}<br/>
                 <strong>Room: </strong>{this.state.data.room}
             </Table.Cell>
@@ -61,7 +71,7 @@ class ScheduleRow extends React.Component {
                     {prereqs}
                 </List>
             </Table.Cell>
-            <Modal open={this.state.isShowingModal} onClose={this.handleClose} >
+            <Modal open={this.state.isShowingModal} onClose={this.handleClose} little >
 				<h1>{this.state.data.course_name}</h1>
 				<h4>Course Description</h4>
                 <p>{this.state.data.course_description}</p>

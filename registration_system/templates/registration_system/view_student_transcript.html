@@ -10,19 +10,18 @@
     </div>
 
     <div class="ui container m-top2">
-        <form action="{{ url }}" method="post" class="ui form" id="ui-form">
+        <form action="{{ action }}" method="POST" class="ui form" id="ui-form">
             {% csrf_token %}
             <div class="two fields">
                 <div class="field">
-                    <label for="username_id">Username</label>
-                    <input id="username_id"   placeholder="Search by username..." type="text" />
+                    <label for="id_username">Username</label>
+                    <input id="id_username" name="username"  placeholder="Search by username..." type="text" required/>
                 </div>
                 <div class="field">
-                    <label for="email_id">Email</label>
-                    <input id="email_id" autocomplete="email" placeholder="Search by email..." type="text"/>
+                    <label for="id_email">Email</label>
+                    <input id="id_email" name="email" autocomplete="email" placeholder="Search by email..." type="text" required/>
                 </div>
             </div>
-        {{ csrf }}
             <div class="display-inline ">
                 <button class="ui primary button" id="search" type="submit">Search</button>
             </div>

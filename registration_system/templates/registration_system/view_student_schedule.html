@@ -66,6 +66,7 @@
     <script>
         function addStudentSections(){
             {#console.log("here");#}
+            removeSections();
             var first_name = $('#first_name_id').val();
             var last_name = $('#last_name_id').val();
             var username = $('#username_id').val();
@@ -85,7 +86,7 @@
                         data.sections_array.forEach(function (element) {
                             var tBody = document.getElementById('sections_added');
                             var newRow = tBody.insertRow(tBody.rows.length);
-                            newRow.id = element.course_id + '_row';
+                            newRow.id = element.section_id + '_row';
                             var sectionIdCell = newRow.insertCell(0);
                             var courseNameCell = newRow.insertCell(1);
                             var departmentCell = newRow.insertCell(2);
@@ -108,10 +109,11 @@
                             departmentCell.appendChild(departmentText);
                             creditsCell.appendChild(creditsText);
                             facultyCell.appendChild(facultyText);
-                            prerequisitesCell.appendChild(prerequisitesText);
+                            {#prerequisitesCell.appendChild(prerequisitesText);#}
+                            $('#' + element.section_id + '_row').find('td:eq(8)').append(prerequisitesText);
                             locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>" + element.building + "</li><li><span style=\'font-weight:bold;\'>Room Number:</span>" + element.room_number + "</li></span>");
                             timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>" + element.meeting_days + "</li><li><span style=\'font-weight:bold;\'>Period:</span>" + element.time_period + "</li></span>");
-                            $('#' + element.course_id + '_row').find('td:eq(5)').append(seatsText);
+                            $('#' + element.section_id + '_row').find('td:eq(5)').append(seatsText);
                             element.prerequisites.forEach(function (el) {
                                 $('#' + element.section_id + "_prerequisites").append("<div class='item'>" + el.name + "</div>");
                             });
@@ -129,7 +131,8 @@
         }
 
         function removeSections() {
-            $('#students_added').empty();
+            $('#sections_added').empty();
+            $('#full_name_id').empty();
         }
 
 

@@ -9,7 +9,7 @@
         {{ rendered|safe }}
     </div>
 
-    <div class="ui container m-top2">
+    <div class="ui container m-top2" style="padding-top: 5rem; margin-bottom: 4rem;">
         <div class="ui form" id="ui-form">
             <div class="inline fields">
                 <div class="field">
@@ -125,7 +125,7 @@
                     data.forEach(function(element){
                         var tBody = document.getElementById('sections_added');
                         var newRow = tBody.insertRow(tBody.rows.length);
-                        newRow.id = element.course_id + '_row';
+                        newRow.id = element.section_id + '_row';
                         var sectionIdCell = newRow.insertCell(0);
                         var courseNameCell = newRow.insertCell(1);
                         var departmentCell = newRow.insertCell(2);
@@ -140,7 +140,7 @@
                         var courseNameText = document.createTextNode(element.course_name);
                         var departmentText = document.createTextNode(element.course_department);
                         var creditsText = document.createTextNode(element.credits);
-                        var facultyText = document.createTextNode(element.faculty_name)
+                        var facultyText = document.createTextNode(element.faculty_name);
                         var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>"+element.seats_taken+"</li><li><span style='font-weight:bold;'>Capacity:</span>"+element.seating_capacity+"</li></span>");
                         sectionIdCell.appendChild(sectionIdText);
                         courseNameCell.appendChild(courseNameText);
@@ -149,7 +149,7 @@
                         facultyCell.appendChild(facultyText);
                         locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>"+element.building_name+"</li><li><span style=\'font-weight:bold;\'>Room Number:</span>"+element.room_number+"</li></span>");
                         timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>"+element.meeting_days+"</li><li><span style=\'font-weight:bold;\'>Period:</span>"+element.time_period_range+"</li></span>");
-                        $('#'+element.course_id + '_row').find('td:eq(5)').append(seatsText);
+                        $('#'+element.section_id + '_row').find('td:eq(5)').append(seatsText);
                         if(element.can_register)
                             registerCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="registerCourse(this.id)" class="ui info button" id="'+element.section_id+'" type="button">Register</button>');
                         else

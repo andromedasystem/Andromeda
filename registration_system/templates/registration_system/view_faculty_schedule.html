@@ -9,40 +9,40 @@
         {{ rendered|safe }}
     </div>
 
-    <div class="ui container m-top2">
+    <div class="ui container m-top2" style="margin-bottom: 3em;">
         {% if sections %}
             {% for s in sections %}
-                <div id="{{ s.section_id }}_segment">
+                <div id="{{ s.section_id }}_segment" style="margin-bottom: 2em;">
                     <div class="ui top attached header">
                       Course Name
                     </div>
                     <div class="ui attached segment">
-                      <p>{{ s.course_name }}</p>
+                      <p>{{ s.course_id.name }}</p>
                     </div>
                     <h5 class="ui attached header">
                       Credits
                     </h5>
                     <div class="ui attached segment">
-                      <p>{{ s.credits }}</p>
+                      <p>{{ s.course_id.credits }}</p>
                     </div>
                     <h5 class="ui attached header">
                         Location
                     </h5>
                     <div class="ui attached segment">
-                      <p>{{ s.building }} -- {{ s.room_number }}</p>
+                      <p>{{ s.room_id.building_id.name }} -- {{ s.room_id.room_number }}</p>
                     </div>
                     <h5 class="ui attached header">
                         Time Slot
                     </h5>
                     <div class="ui attached segment">
-                      <p>{{ s.meeting_days }}</p><br/>
-                        <p>{{ s.time_period }}</p>
+                      <p>{{ s.time_slot_id.days_id.day_1 }} -- {{ s.time_slot_id.days_id.day_2 }}</p><br/>
+                        <p>{{ s.time_slot_id.period_id.start_time }} -- {{ s.time_slot_id.period_id.end_time }}</p>
                     </div>
                     <h5 class="ui attached header">
                         Seating
                     </h5>
                     <div class="ui attached segment">
-                      <p>{{ s.seats_taken }}/{{ s.seating_capacity }}</p>
+                      <p>{{ s.seats_taken }}/{{ s.room_id.capacity }}</p>
                     </div>
                     <h5 class="ui attached header">
                         Prerequisites
@@ -59,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-                
+                <br/>
             {% endfor %}
         {% endif %}
 

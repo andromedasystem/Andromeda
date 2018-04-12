@@ -365,7 +365,7 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
                 user = User.objects.get(first_name=first_name, last_name=last_name)
 
             if user.userprofile.has_student():
-                enrollment = Enrollment.objects.filter(student_id=user.userprofile.student.student_id)
+                enrollment = Enrollment.objects.filter(student_id_id=user.userprofile.student.student_id_id)
                 sections_array = []
                 for e in enrollment:
                     prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
@@ -516,8 +516,10 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
                 'year': e.section_id.semester_id.year,
                 'grade': e.grade
             })
-
-        cumulative_gpa = float(grades / counter)
+        if counter == 0 and grades == 0.0:
+            cumulative_gpa = 0.0
+        else:
+            cumulative_gpa = float(grades / counter)
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
                          'registration_system', 'js', 'nav-holder.jsx'),
@@ -571,8 +573,9 @@ class ViewStudentTranscript(LoginRequiredMixin, generic.View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        username = request.POST.get('username_id')
-        email = request.POST.get('email_id')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        print(request.POST)
 
         if username:
             user = User.objects.get(username=username)
@@ -581,8 +584,9 @@ class ViewStudentTranscript(LoginRequiredMixin, generic.View):
         else:
             user = False
 
-        if user.userprofile.has_student():
-            student = user.userprofile.student
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile.has_student():
+            student = userprofile.student
             return redirect('view_student_transcript_result', student_id=student.student_id_id)
         return redirect('/student_system/view_student_transcript/')
 
@@ -629,8 +633,10 @@ class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
                 'year': e.section_id.semester_id.year,
                 'grade': e.grade
             })
-
-        cumulative_gpa = float(grades/counter)
+        if grades == 0.0 and counter == 0:
+            cumulative_gpa = 0.0
+        else:
+            cumulative_gpa = float(grades/counter)
 
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -1132,6 +1138,8 @@ class ViewHold(LoginRequiredMixin, generic.View):
         try:
             student = Student.objects.get(pk=int(user.userprofile.student.student_id_id))
             hold = StudentHold.objects.get(student_id=student)
+            # hold.hold_id.name
+            # print(hold)
         except StudentHold.DoesNotExist:
             hold = None
 
@@ -1188,7 +1196,7 @@ class ViewAdvisees(LoginRequiredMixin, generic.View):
                          'registration_system', 'js', 'nav-holder.jsx'),
             {
                 'is_faculty': self.is_faculty,
-                'header_text': 'View Adviser'
+                'header_text': 'View Advisee'
             },
             to_static_markup=False,
         )
@@ -1350,13 +1358,32 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             faculty_id = request.GET.get('faculty_id')
             section = None
             print(department_id)
-            if department_id is not None:
+
+            if (course_id is not None and int(course_id) != 0) and (faculty_id is not None and int(faculty_id) != 0) and (days_id is not None and int(days_id) !=0):
+                section = Section.objects.filter(faculty_id=int(faculty_id), time_slot_id__days_id=days_id,
+                                                 course_id=int(course_id))
+            if (department_id is not None and int(department_id) != 0) and (course_id is not None and int(course_id) != 0):
+                section = Section.objects.filter(course_id__department_id_id=int(department_id),
+                                                 course_id=int(course_id))
+            elif (department_id is not None and int(department_id) != 0) and (faculty_id is not None and int(faculty_id) != 0):
+                section = Section.objects.filter(course_id__department_id_id=int(department_id),
+                                                 faculty_id=int(faculty_id))
+            elif (department_id is not None and int(department_id) != 0) and (days_id is not None and int(days_id) != 0):
+                section = Section.objects.filter(course_id__department_id_id=int(department_id),
+                                                 time_slot_id__days_id=int(days_id))
+            elif (course_id is not None and int(course_id) != 0) and (faculty_id is not None and int(faculty_id) != 0):
+                section = Section.objects.filter(course_id=int(course_id),
+                                                 faculty_id=int(faculty_id))
+            elif (course_id is not None and int(course_id) != 0) and (days_id is not None and int(days_id) != 0):
+                section = Section.objects.filter(course_id=int(course_id),
+                                                 time_slot_id__days_id=int(days_id))
+            elif department_id is not None and int(department_id) != 0:
                 section = Section.objects.filter(course_id__department_id_id=int(department_id))
-            elif course_id is not None:
+            elif course_id is not None and int(course_id) != 0:
                 section = Section.objects.filter(course_id=int(course_id))
-            elif days_id is not None:
+            elif days_id is not None and int(days_id) != 0:
                 section = Section.objects.filter(time_slot_id__days_id=int(days_id))
-            elif faculty_id is not None:
+            elif faculty_id is not None and int(faculty_id) != 0:
                 section = Section.objects.filter(faculty_id=int(faculty_id))
 
             faculty = []
@@ -1384,12 +1411,27 @@ class UpdateSection(LoginRequiredMixin, generic.View):
                 })
             meeting_days = []
             for m in MeetingDays.objects.all():
-                meeting_days.append({
-                    'days_id': m.days_id,
-                    'day_1': m.day_1,
-                    'day_2': m.day_2,
-                    'day_range': m.day_1 + " " + m.day_2
-                })
+                if m.day_3:
+                    meeting_days.append({
+                        'days_id': m.days_id,
+                        'day_1': m.day_1,
+                        'day_2': m.day_2,
+                        'day_3': m.day_3,
+                        'day_range': m.day_1 + " " + m.day_2 + " " + m.day_3
+                    })
+                elif m.day_2 and m.day_3 is None:
+                    meeting_days.append({
+                        'days_id': m.days_id,
+                        'day_1': m.day_1,
+                        'day_2': m.day_2,
+                        'day_range': m.day_1 + " " + m.day_2
+                    })
+                elif m.day_1 and m.day_2 is None:
+                    meeting_days.append({
+                        'days_id': m.days_id,
+                        'day_1': m.day_1,
+                        'day_range': m.day_1
+                    })
             buildings = []
             for b in Building.objects.all():
                 buildings.append({
@@ -1413,6 +1455,10 @@ class UpdateSection(LoginRequiredMixin, generic.View):
                     'time_periods_array': time_periods,
                     'meeting_days_array': meeting_days,
                     'buildings_array': buildings,
+                    'semester_id': s.semester_id_id,
+                    'semester_year': s.semester_id.year,
+                    'semester_season': s.semester_id.season,
+                    'semester_status': s.semester_id.status,
                     'rooms_array': rooms,
                     'section_id': s.section_id,
                     'course_id': s.course_id.course_id,
@@ -1479,7 +1525,12 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             faculty = Faculty.objects.get(pk=int(faculty_id))
             time_period = request.POST.get('time_period')
             days = request.POST.get('days')
-            time_slot = TimeSlot.objects.get(days_id=int(days), period_id=int(time_period))
+            print(time_period)
+            print(days)
+            try:
+                time_slot = TimeSlot.objects.get(days_id=int(days), period_id=int(time_period))
+            except TimeSlot.DoesNotExist:
+                time_slot = TimeSlot.objects.create(days_id_id=int(days), period_id=Period.objects.get(pk=int(time_period)))
             building_id = request.POST.get('building')
             building = Building.objects.get(pk=int(building_id))
             room_id = request.POST.get('room')
@@ -1709,12 +1760,24 @@ class UpdateUser(LoginRequiredMixin, generic.View):
             last_name = request.GET.get('last_name')
             email = request.GET.get('email')
             username = request.GET.get('username')
+            user_type = request.GET.get('user_type')
             # user = User.objects.filter(Q(username=username) | Q(email=email) | Q(first_name=first_name) |
             #                            Q(last_name=last_name))
+            if first_name and last_name:
+                user = User.objects.filter(first_name=first_name, last_name=last_name)
             if username:
                 user = User.objects.filter(username=username)
             elif email:
                 user = User.objects.filter(email=email)
+            elif user_type and user_type != '0':
+                if user_type == 'faculty':
+                    user = User.objects.filter(userprofile__user_type='F')
+                elif user_type == 'admin':
+                    user = User.objects.filter(userprofile__user_type='A')
+                elif user_type == 'student':
+                    user = User.objects.filter(userprofile__user_type='S')
+                elif user_type == 'researcher':
+                    user = User.objects.filter(userprofile__user_type='R')
             elif first_name:
                 user = User.objects.filter(first_name=first_name)
             elif last_name:
@@ -1731,6 +1794,8 @@ class UpdateUser(LoginRequiredMixin, generic.View):
                     'last_name': u.last_name,
                     'user_type': user_profile.user_type
                 }
+                if user_profile.has_faculty():
+                    data['department_name'] = user_profile.faculty.department_id.name
                 user_array.append(data)
             return HttpResponse(json.dumps(user_array), content_type="application/json")
 
@@ -2057,6 +2122,8 @@ def get_master_schedule_search_data(request, attribute_flag, search_value):
         section = Section.objects.filter(room_id_id=int(search_value))
     elif attribute_flag == 'course_name':
         section = Section.objects.filter(course_id__name__contains=search_value)
+    elif attribute_flag == 'semester':
+        section = Section.objects.filter(semester_id=int(search_value))
 
     for s in section:
         faculty = Faculty.objects.get(pk=int(s.faculty_id_id))
@@ -2072,6 +2139,9 @@ def get_master_schedule_search_data(request, attribute_flag, search_value):
             'course_name': s.course_id.name,
             'course_description': s.course_id.description,
             'department': s.course_id.department_id.name,
+            'semester_year': s.semester_id.year,
+            'semester_season': s.semester_id.season,
+            'semester_status': s.semester_id.status,
             'section_id': s.section_id,
             'credits' : s.course_id.credits,
             'seats_taken': s.seats_taken,
@@ -2150,7 +2220,16 @@ def get_master_schedule_input_data(request):
             'rooms_id': arrgh.room_id,
             'room_number': arrgh.room_number
         })
-
+    semester = []
+    for s in Semester.objects.all():
+        semester.append({
+            'semester_id': s.semester_id,
+            'semester_year': s.year,
+            'semester_season': s.season,
+            'semester_status': s.status
+        })
+    # print(semester)
+    general_data['semesters'] = semester
     general_data['time_periods'] = time_periods
     general_data['meeting_days'] = meeting_days
     general_data['buildings'] = buildings

@@ -9,7 +9,7 @@
         {{ rendered|safe }}
     </div>
 
-    <div class="ui container m-top2">
+    <div class="ui container m-top2" style="padding-top: 5rem; margin-bottom: 4rem;">
         <div class="ui form" id="ui-form">
             <div class="inline fields">
                 <div class="field">
@@ -78,7 +78,7 @@
                                 '<input type="text" name="course_name" value="'+element.course_name+'" id="id_course_name_'+element.course_id+'" required />' +
                             '</div>' );
                         descriptionCell.insertAdjacentHTML('afterbegin',
-                            '<div class="ui input">' +
+                            '<div class="ui input" style="width: 100%;">' +
                                 '<textarea class="text-area-styled" name="course_description" maxlength="1000" required id="id_course_description_'+element.course_id+'">'+element.course_description+'</textarea>' +
                             '</div>' );
                         creditsCell.insertAdjacentHTML('afterbegin',

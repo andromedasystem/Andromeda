@@ -11,7 +11,7 @@
 
     <div class="ui container m-top2">
         <div class="ui form" id="ui-form">
-            <div class="two fields">
+            <div class="three fields">
                 <div class="field">
                     <label for="username_id">Username</label>
                     <input id="username_id"   placeholder="Search by username..." type="text" />
@@ -19,6 +19,16 @@
                 <div class="field">
                     <label for="email_id">Email</label>
                     <input id="email_id" autocomplete="email" placeholder="Search by email..." type="text"/>
+                </div>
+                <div class="field">
+                    <label for="user_type_id">User Type</label>
+                    <select class="ui fluid dropdown" name="user_type_id" id="user_type_id" required>
+                        <option value="0">-------</option>
+                        <option value="faculty" label="Faculty">Faculty</option>
+                        <option value="student" label="Student">Student</option>
+                        <option value="admin" label="Admin">Admin</option>
+                        <option value="researcher" label="Researcher">Researcher</option>
+                    </select>
                 </div>
             </div>
         {{ csrf }}
@@ -61,10 +71,12 @@
     <script>
         function addStudent(){
             console.log("here");
+            removeStudents();
             var first_name = $('#first_name_id').val();
             var last_name = $('#last_name_id').val();
             var username = $('#username_id').val();
             var email = $('#email_id').val();
+            var user_type = $("#user_type_id").val();
             $.ajax({
                 type: "GET",
                 url: "/student_system/search_user/",
@@ -72,7 +84,8 @@
                     first_name: first_name,
                     last_name: last_name,
                     username: username,
-                    email: email
+                    email: email,
+                    user_type: user_type
                 },
                 success: function(data) {
                     console.log(data);
@@ -98,7 +111,11 @@
                         emailCell.appendChild(emailText);
                         firstNameCell.appendChild(firstNameText);
                         lastNameCell.appendChild(lastNameText);
-                        userTypeCell.appendChild(userTypeText);
+
+                        if(element.department_name)
+                            userTypeCell.insertAdjacentHTML('afterbegin', '<div><strong>Department:</strong> '+element.department_name+'<br/>'+element.user_type+"</div>");
+                        else
+                            userTypeCell.appendChild(userTypeText);
                         removeCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="deleteStudent(this.id)" class="ui negative button" id="'+element.user_id+'" type="button">Remove</button>')
                     });
                 }

@@ -96,6 +96,7 @@ class MasterTable extends React.Component {
                             <Table.HeaderCell>Credits</Table.HeaderCell>
                             <Table.HeaderCell width={3}>Seating</Table.HeaderCell>
                             <Table.HeaderCell>Time Slot</Table.HeaderCell>
+                            <Table.HeaderCell>Semester</Table.HeaderCell>
                             <Table.HeaderCell width={2}>Location</Table.HeaderCell>
                             <Table.HeaderCell>Prerequisites</Table.HeaderCell>
                         </Table.Row>
