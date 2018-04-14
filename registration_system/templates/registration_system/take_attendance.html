@@ -68,11 +68,11 @@
                 },
                 success: function(data) {
                     console.log(data);
-                    if(data.is_successful) {
+                    if(data.students_array) {
                         data.students_array.forEach(function (element) {
-                            var tBody = document.getElementById('sections_added');
+                            var tBody = document.getElementById('students_added');
                             var newRow = tBody.insertRow(tBody.rows.length);
-                            newRow.id = element.course_id + '_row';
+                            newRow.id = element.student_id + '_row';
                             var studentIdCell = newRow.insertCell(0);
                             var firstNameCell = newRow.insertCell(1);
                             var lastNameCell = newRow.insertCell(2);
@@ -82,6 +82,9 @@
                             var studentIdText = document.createTextNode(element.student_id);
                             var firstNameText = document.createTextNode(element.first_name);
                             var lastNameText = document.createTextNode(element.last_name);
+                            studentIdCell.appendChild(studentIdText);
+                            firstNameCell.appendChild(firstNameText);
+                            lastNameCell.appendChild(lastNameText);
                             if( element.meeting_date){
                                 var meetingDateText = document.createTextNode(element.meeting_date);
                                 meetingDateCell.appendChild(meetingDateText);
@@ -89,24 +92,22 @@
                                 meetingDateCell.appendChild(document.createTextNode(" "));
                             }
                             if( element.present_or_absent){
-                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<i class=\"large green checkmark icon\"></i>");
-                            } else {
-                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<button type='button' onclick='takeAttendance(this.id, "+element.student_id+")'  id='"+element.enrollment_id+"'> <i id='"+element.student_id+"__present_or_absent' style='display: none;' class='large green checkmark icon'></i></button>");
+                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<i class='large green checkmark icon'></i>");
+                            } else {                                                    //onclick='takeAttendance(this.id, "+element.student_id+")'
+                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<input type='checkbox'   id='"+element.enrollment_id+"_attendance' name='"+element.enrollment_id+"'/><label>Present</label>");
                             }
 
                         });
                         $('#course_name_id').append("<h1 class='ui header' >"+data.section_name+" Attendance</h1>");
-                        var today = new Date();
-                        var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();
-                        var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();
-                        var year = today.getFullYear();
-                        $('#searched').append("<form action="+window.location.href+" method=\"post\" class=\"ui form m-top2 \">\n" +
+                        {#var today = new Date();#}
+                        {#var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();#}
+                        {#var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();#}
+                        {#var year = today.getFullYear();#}
+                        $('#searched').append("<div id='attendance_submit' class=\"ui form m-top2 \">\n" +
                             "            <div class=\"field\">\n" +
-                            "                <button class=\"ui button\" role=\"button\">Submit Attendance</button>\n" +
+                            "                <button onclick='takeAttendance()' class=\"ui button\" role=\"button\">Submit Attendance</button>\n" +
                             "            </div>\n" +
-                            "            <input id=\"meeting_date_id\" name=\"meeting_date\" type=\"hidden\" value="+year+"-"+month+"-"+day+"/>\n" +
-                            "            <input id=\"hidden_section_id\" name=\"section\" type=\"hidden\" value="+data.section_id+"/>\n" +
-                            "        </form>")
+                            "        </div>")
                     } else {
                       $('#course_name_id').append("<h1 class='ui header red' >No Students enrolled in this section.</h1>")
                     }
@@ -116,35 +117,64 @@
 
         }
 
-
-        function takeAttendance(enrollment_id, student_id){
-            if($("#"+student_id+"__present_or_absent").is(':hidden')) {
-                $.ajax({
-                    type: "POST",
-                    url: "/student_system/taken_attendance/",
-                    data: {
-                        enrollment_id: enrollment_id,
-                        student_id: student_id,
-                        present_or_absent_id: 'P'
-                    },
-                    success: function (data) {
-                        $("#" + student_id + "__present_or_absent").show();
-                    }
-                });
-            } else {
-                $.ajax({
-                    type: "POST",
-                    url: "/student_system/taken_attendance/",
-                    data: {
-                        enrollment_id: enrollment_id,
-                        student_id: student_id,
-                        present_or_absent_id: 'A'
-                    },
-                    success: function (data) {
-                        $("#" + student_id + "__present_or_absent").hide();
-                    }
-                });
-            }
+        function takeAttendance(){
+            {#console.log("james");#}
+            var students_array = [];
+            var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();
+            var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();
+            var year = today.getFullYear();
+            $('tbody tr').each(function(i, row){
+               var row = $(row);
+               console.log(row);
+               var student_id = row[i].children[0].innerHTML;
+               var enrollment_id = row[i].children[4].children[0].name;
+               var is_checked = row[i].children[4].children[0].checked;
+               students_array.push({
+                   student_id: student_id,
+                   enrollment_id: enrollment_id,
+                   is_checked: is_checked
+               });
+            });
+            $.ajax({
+                type: "POST",
+                url: "/student_system/taken_attendance/",
+                data: {
+                    students_array: students_array,
+                    day: day,
+                    month: month,
+                    year:  year
+                },
+                success: function (data) {
+                    {#$("#" + student_id + "__present_or_absent").show();#}
+                }
+            });
+            {#if($("#"+student_id+"__present_or_absent").is(':hidden')) {#}
+            {#    $.ajax({#}
+            {#        type: "POST",#}
+            {#        url: "/student_system/taken_attendance/",#}
+            {#        data: {#}
+            {#            enrollment_id: enrollment_id,#}
+            {#            student_id: student_id,#}
+            {#            present_or_absent_id: 'P'#}
+            {#        },#}
+            {#        success: function (data) {#}
+            {#            $("#" + student_id + "__present_or_absent").show();#}
+            {#        }#}
+            {#    });#}
+            {# else     #}
+            {#    $.ajax({#}
+            {#        type: "POST",#}
+            {#        url: "/student_system/taken_attendance/",#}
+            {#        data: {#}
+            {#            enrollment_id: enrollment_id,#}
+            {#            student_id: student_id,#}
+            {#            present_or_absent_id: 'A'#}
+            {#        },#}
+            {#        success: function (data) {#}
+            {#            $("#" + student_id + "__present_or_absent").hide();#}
+            {#        }#}
+            {#    });#}
+            {# #}
 
 
         }
