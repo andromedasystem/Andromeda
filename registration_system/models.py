@@ -456,6 +456,13 @@ class Course(models.Model):
         return '{} {} {} {} {}'.format(self.course_id, self.department_id, self.name,
                                        self.description, self.credits)
 
+    def has_prerequisites(self):
+        try:
+            Prerequisite.objects.get(course_id=self.course_id)
+            return True
+        except Prerequisite.DoesNotExist:
+            return False
+
 
 class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True)

@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f2bd7db-577c-4430-9ec6-c93f0a14de32" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/appoint_chair.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Andromeda/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Andromeda/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/static/registration_system/js/components/container/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/static/registration_system/js/components/container/Nav.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/static/registration_system/js/intro-page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/static/registration_system/js/intro-page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/submit_grades.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/submit_grades.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/view_student_transcript_result.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/view_student_transcript_result.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registration_system/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/registration_system/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/registration_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/registration_system/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,20 +38,20 @@
       <content type="file-editors">
         <state>
           <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+            <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/registration_system/models.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="287">
-                    <caret line="140" column="16" selection-start-line="140" selection-start-column="6" selection-end-line="140" selection-end-column="16" />
+                  <state relative-caret-position="167">
+                    <caret line="462" column="41" lean-forward="true" selection-start-line="462" selection-start-column="41" selection-end-line="462" selection-end-column="41" />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="appoint_chair.html" pinned="false" current-in-tab="true">
+            <file leaf-file-name="appoint_chair.html" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/appoint_chair.html">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="54">
-                    <caret line="42" column="30" lean-forward="true" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+                  <state relative-caret-position="156">
+                    <caret line="54" column="81" selection-start-line="54" selection-start-column="81" selection-end-line="54" selection-end-column="81" />
                   </state>
                 </provider>
               </entry>
@@ -71,8 +67,8 @@
             <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/registration_system/views.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="115">
-                    <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
+                  <state relative-caret-position="531">
+                    <caret line="980" column="63" selection-start-line="980" selection-start-column="63" selection-end-line="980" selection-end-column="63" />
                     <folding>
                       <element signature="e#0#15#0" expanded="true" />
                     </folding>
@@ -114,10 +110,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/registration_system/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
+            <state relative-caret-position="595">
               <caret line="36" column="19" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
             </state>
           </provider>
@@ -132,47 +128,47 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create_advising.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/create_advising.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-102">
-              <caret selection-end-line="151" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="view_student_schedule.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_student_schedule.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1411">
-              <caret line="83" column="38" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="view_student_transcript.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_student_transcript.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="53" selection-start-line="21" selection-start-column="53" selection-end-line="21" selection-end-column="53" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="view_student_transcript_result.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_student_transcript_result.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="submit_grades.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/submit_grades.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1802">
-              <caret line="106" column="18" selection-start-line="106" selection-start-column="18" selection-end-line="106" selection-end-column="18" />
+            <state relative-caret-position="426">
+              <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="take_attendance.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/take_attendance.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1326">
+              <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="59" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="register_course.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="273">
+              <caret line="162" column="154" selection-start-line="162" selection-start-column="154" selection-end-line="162" selection-end-column="154" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view_hold.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="205">
+              <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view_adviser.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="17" column="95" selection-start-line="17" selection-start-column="95" selection-end-line="17" selection-end-column="95" />
             </state>
           </provider>
         </entry>
@@ -191,8 +187,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>building</find>
-      <find>foreignkey</find>
       <find>department</find>
       <find>onclick</find>
       <find>.saven</find>
@@ -205,7 +199,6 @@
       <find>ViewStudentT</find>
       <find>ViewADvisee</find>
       <find>Meeting</find>
-      <find>RegisterCourse</find>
       <find>Meetings</find>
       <find>ViewFacult</find>
       <find>Date</find>
@@ -221,6 +214,9 @@
       <find>course</find>
       <find>request.POST.get</find>
       <find>Department</find>
+      <find>RegisterCourse</find>
+      <find>register</find>
+      <find>Course</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -247,10 +243,8 @@
         <option value="$PROJECT_DIR$/registration_system/static/registration_system/js/nav-holder.jsx" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/student_view_student_schedule.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/student_view_student_transcript.html" />
-        <option value="$PROJECT_DIR$/registration_system/models.py" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/take_attendance.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/attendance_submitted.html" />
-        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_graphs.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration/login.html" />
         <option value="$PROJECT_DIR$/registration_system/management/commands/loadseeddata.py" />
@@ -264,8 +258,6 @@
         <option value="$PROJECT_DIR$/registration_system/forms.py" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_student_transcript.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/search_user.html" />
-        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html" />
-        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_advisees.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_faculty_schedule.html" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_student_schedule.html" />
@@ -278,8 +270,12 @@
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/search_course.html" />
         <option value="$PROJECT_DIR$/registration_system/urls.py" />
         <option value="$PROJECT_DIR$/registration_system/static/registration_system/js/components/container/Nav.jsx" />
-        <option value="$PROJECT_DIR$/registration_system/views.py" />
         <option value="$PROJECT_DIR$/registration_system/templates/registration_system/appoint_chair.html" />
+        <option value="$PROJECT_DIR$/registration_system/models.py" />
+        <option value="$PROJECT_DIR$/registration_system/views.py" />
+        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html" />
+        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html" />
+        <option value="$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html" />
       </list>
     </option>
   </component>
@@ -687,13 +683,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="23" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_graphs.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -799,13 +788,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/take_attendance.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/update_course.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="833">
@@ -858,13 +840,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="17" column="38" selection-start-line="17" selection-start-column="38" selection-end-line="17" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_advisees.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -883,13 +858,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1224">
           <caret line="74" column="54" selection-start-line="74" selection-start-column="54" selection-end-line="74" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="84" selection-start-line="11" selection-start-column="37" selection-end-line="11" selection-end-column="84" />
         </state>
       </provider>
     </entry>
@@ -959,24 +927,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/submit_grades.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1802">
-          <caret line="106" column="18" selection-start-line="106" selection-start-column="18" selection-end-line="106" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="140" column="16" selection-start-line="140" selection-start-column="6" selection-end-line="140" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1015,27 +969,69 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/appoint_chair.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="54" column="81" selection-start-line="54" selection-start-column="81" selection-end-line="54" selection-end-column="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/submit_grades.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="426">
+          <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/take_attendance.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1326">
+          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="36" column="19" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="462" column="41" lean-forward="true" selection-start-line="462" selection-start-column="41" selection-end-line="462" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/registration_system/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
+        <state relative-caret-position="531">
+          <caret line="980" column="63" selection-start-line="980" selection-start-column="63" selection-end-line="980" selection-end-column="63" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/urls.py">
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/register_course.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="36" column="19" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
+        <state relative-caret-position="273">
+          <caret line="162" column="154" selection-start-line="162" selection-start-column="154" selection-end-line="162" selection-end-column="154" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/appoint_chair.html">
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_hold.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="42" column="30" lean-forward="true" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+        <state relative-caret-position="205">
+          <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registration_system/templates/registration_system/view_adviser.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="95" selection-start-line="17" selection-start-column="95" selection-end-line="17" selection-end-column="95" />
         </state>
       </provider>
     </entry>

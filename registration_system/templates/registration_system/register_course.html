@@ -81,6 +81,7 @@
                     <tr>
                         <th>Section</th>
                         <th>Course Name</th>
+                        <th>Department</th>
                         <th>Professor</th>
                         <th>Credits</th>
                         <th>Seating</th>
@@ -134,7 +135,8 @@
                         var seatsCell = newRow.insertCell(5);
                         var timeSlotCell = newRow.insertCell(6);
                         var locationCell = newRow.insertCell(7);
-                        var registerCell = newRow.insertCell(8);
+                        var prerequisiteCell = newRow.insertCell(8);
+                        var registerCell = newRow.insertCell(9);
 {# editing faculty, meeeting days, time period, building, and room number  #}
                         var sectionIdText = document.createTextNode(element.section_id);
                         var courseNameText = document.createTextNode(element.course_name);
@@ -154,6 +156,13 @@
                             registerCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="registerCourse(this.id)" class="ui info button" id="'+element.section_id+'" type="button">Register</button>');
                         else
                             registerCell.insertAdjacentHTML('afterbegin', "<div class='ui red message'>Registered for a course at that time.</div>");
+                        prerequisiteCell.insertAdjacentHTML('afterbegin', "<div class='ui relaxed divided list' id='"+element.section_id+"__prerequisites'></div> ");
+                        if(element.prerequisites_array){
+                            element.prerequisites_array.forEach(function(e){
+                               {#prerequisiteCell.insertAdjacentHTML('afterbegin', '') #}
+                                $('#'+element.section_id+"__prerequisites").append("<div class='item'><div class='content'><h4>"+e.prerequisite_name+"</h4></div></div>")
+                            });
+                        }
                     });
                 }
             });
@@ -165,7 +174,7 @@
         }
 
         function registerCourse(section_id) {
-
+            $("#success").empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/register_course/",
@@ -175,8 +184,26 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
 
-                success: function(){
-                    $('#success').append("<h2>Course Registration Successful</h2>")
+                success: function(data){
+
+                    if(data.has_hold === true){
+                        $('#'+section_id + '_row').find('td:eq(9)').empty();
+                        $('#'+section_id + '_row').find('td:eq(9)').append("<div class='ui red message'>You currently have a hold preventing you from reigstering.</div> ");
+                    } else if(data.time_conflict === true){
+                        $('#'+section_id + '_row').find('td:eq(9)').empty();
+                        $('#'+section_id + '_row').find('td:eq(9)').append("<div class='ui red message'>You are currently registered for a class in that time-slot.</div> ");
+                    } else if(data.unfulfilled_prerequisite === true){
+                        $('#'+section_id + '_row').find('td:eq(9)').empty();
+                        $('#'+section_id + '_row').find('td:eq(9)').append("<div class='ui red message'>You do not currently fulfill the prerequisites for this class.</div> ");
+                    } else {
+                        $('#'+section_id + '_row').find('td:eq(9)').empty();
+                        $('#'+section_id + '_row').find('td:eq(9)').append("<div class='ui green message'>Course registered successfully.</div> ");
+                    }
+                },
+
+                error: function(data){
+                    $("#"+section_id+ '_row').find('td:eq(8)').empty();
+                    $("#"+section_id+ '_row').find('td:eq(8)').append("<div class='ui red header'>Error Occurred in Registering</div> ");
                 }
             })
 

@@ -957,6 +957,12 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
                 print(s)
                 print("here\n")
                 can_register = True
+                prerequisites_array = []
+                for p in Prerequisite.objects.filter(course_id=s.course_id):
+                    prerequisites_array.append({
+                        'prerequisite_name': p.course_required_id.name,
+                        'prerequisite_id': p.course_required_id.course_id
+                    })
                 for e in Enrollment.objects.all():
                     if e.student_id_id == student_id:
                         if e.section_id.time_slot_id.period_id.start_time == s.time_slot_id.period_id.start_time or e.section_id.time_slot_id.period_id.end_time == s.time_slot_id.period_id.end_time:
@@ -972,6 +978,7 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
                     'seats_taken': s.seats_taken,
                     'seating_capacity': s.room_id.capacity,
                     'time_slot_id': s.time_slot_id.time_slot_id,
+                    'prerequisites_array': prerequisites_array,
                     'time_period_id': s.time_slot_id.period_id.period_id,
                     'time_period_range': s.time_slot_id.period_id.start_time.strftime('%H:%M %p')
                                          + " " + s.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
@@ -1031,10 +1038,36 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
             student = Student.objects.get(pk=userprofile.student.student_id_id)
             section_id = request.POST.get('section_id')
             section = Section.objects.get(pk=int(section_id))
-            enrollment = Enrollment.objects.create(student_id=student, section_id=section)
-            meeting = Meetings.objects.create(enrollment_id=enrollment, student_id=student)
-            student_history = StudentHistory.objects.create(student_id=student, enrollment_id=enrollment)
-            data['is_successful'] = True
+            try:
+                student_hold = StudentHold.objects.get(student_id=student)
+                data['is_successful'] = False
+                data['has_hold'] = True
+            except StudentHold.DoesNotExist:
+                current_enrollments = Enrollment.objects.filter(student_id=student)
+                for e in current_enrollments:
+                    if e.section_id.time_slot_id == section.time_slot_id:
+                        data['is_successful'] = False
+                        data['time_conflict'] = True
+                        return JsonResponse(data)
+                if section.course_id.has_prerequisites():
+                    prerequisites = Prerequisite.objects.filter(course_id=section.course_id)
+                    prerequisite_fulfilled = False
+                    for e in current_enrollments:
+                        for p in prerequisites:
+                            if p.course_required_id == e.section_id.course_id:
+                                prerequisite_fulfilled = True
+                                break
+                        else:
+                            continue
+                        break
+                    if not prerequisite_fulfilled:
+                        data['is_successful'] = False
+                        data['unfulfilled_prerequisite'] = True
+                        # if e.section_id.course_id == section.course_id.p
+                enrollment = Enrollment.objects.create(student_id=student, section_id=section)
+                meeting = Meetings.objects.create(enrollment_id=enrollment, student_id=student)
+                student_history = StudentHistory.objects.create(student_id=student, enrollment_id=enrollment)
+                data['is_successful'] = True
         else:
             data['is_successful'] = False
         return JsonResponse(data)
