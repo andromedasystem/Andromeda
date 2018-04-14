@@ -51,6 +51,11 @@ class Nav extends Component {
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/search_user/">Search/Update User</a></Dropdown.Item>
                    </Dropdown.Menu>
                 </Dropdown>
+                <Dropdown simple item text='Chair Actions'>
+                    <Dropdown.Menu>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/appoint_chair/">Appoint Chair</a></Dropdown.Item>
+                   </Dropdown.Menu>
+                </Dropdown>
             </Menu>;
         } else if(this.state.is_faculty) {
             menu = <Menu style={menuStyle} compact>

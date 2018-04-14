@@ -48,6 +48,65 @@ def home(request):
     return render(request, 'registration_system/index.html', {'rendered': rendered, 'user': user})
 
 
+class AppointChair(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/appoint_chair.html'
+    is_admin = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        if userprofile:
+            if userprofile.has_admin():
+                self.is_admin = True
+            else:
+                redirect('/student_system/')
+
+        departments = Department.objects.all()
+
+        if request.is_ajax():
+            department_id = request.GET.get('department_id')
+            faculty = Faculty.objects.filter(department_id_id=int(department_id))
+            faculty_array = []
+            print(faculty)
+            for f in faculty:
+                data = {
+                    'faculty_name': f.faculty_id.user.first_name + ' ' + f.faculty_id.user.last_name,
+                    'faculty_id': f.faculty_id_id
+                }
+                faculty_array.append(data)
+            return HttpResponse(json.dumps(faculty_array), content_type="application/json")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_admin': self.is_admin,
+                'header_text': 'Appoint Chairperson'
+            },
+            to_static_markup=False,
+        )
+        return render(request, self.template_name, {'rendered': rendered, 'departments': departments})
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'is_successful': False
+        }
+        if request.is_ajax():
+            department_id = request.POST.get('department_id')
+            faculty_id = request.POST.get('faculty_id')
+            print(department_id)
+            print(faculty_id)
+            faculty = Faculty.objects.get(pk=int(faculty_id))
+            # = request.POST.get('hold')
+            department = Department.objects.get(pk=int(department_id))
+            department.chair_id = faculty
+            department.save()
+            data['is_successful'] = True
+        else:
+            data['is_successful'] = False
+        return JsonResponse(data)
+
+
 class ViewGraphs(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/view_graphs.html'
     is_researcher = False
@@ -503,6 +562,7 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
         enrollments_array = []
         grades = 0.0
         counter = 0
+        print(enrollments)
         for e in enrollments:
             if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
                 grades += self.grading_key[e.grade]
@@ -1360,8 +1420,10 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             print(department_id)
 
             if (course_id is not None and int(course_id) != 0) and (faculty_id is not None and int(faculty_id) != 0) and (days_id is not None and int(days_id) !=0):
-                section = Section.objects.filter(faculty_id=int(faculty_id), time_slot_id__days_id=days_id,
+                section = Section.objects.filter(faculty_id=int(faculty_id), time_slot_id__days_id=int(days_id),
                                                  course_id=int(course_id))
+            if (faculty_id is not None and int(faculty_id) != 0) and (days_id is not None and int(days_id) != 0):
+                section = Section.objects.filter(faculty_id=int(faculty_id), time_slot_id__days_id=int(days_id))
             if (department_id is not None and int(department_id) != 0) and (course_id is not None and int(course_id) != 0):
                 section = Section.objects.filter(course_id__department_id_id=int(department_id),
                                                  course_id=int(course_id))

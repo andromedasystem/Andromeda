@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^search_user/$', core_views.UpdateUser.as_view(), name="search_user"),
     url(r'^create_hold/$', core_views.CreateHold.as_view(), name="create_hold"),
     url(r'^view_hold/$', core_views.ViewHold.as_view(), name="view_hold"),
+    url(r'^appoint_chair/$', core_views.AppointChair.as_view(), name="appoint_chair"),
     url(r'^create_advising/$', core_views.CreateAdvising.as_view(), name="create_advising"),
     url(r'^view_advising/$', core_views.ViewAdvising.as_view(), name="view_advising"),
     url(r'^view_advisees/$', core_views.ViewAdvisees.as_view(), name="view_advisees"),

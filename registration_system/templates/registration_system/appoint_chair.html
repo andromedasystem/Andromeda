@@ -1,0 +1,87 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+        <div class="ui form" id="ui-form">
+        {{ csrf }}
+             <div class="three fields">
+                <div class="field">
+                    <label for="id_department_id">Department</label>
+                    <select class="ui fluid dropdown" name="department_id" id="id_department_id" required>
+                        <option value="true">-------</option>
+                        {% if departments %}
+                            {% for department in departments %}
+                                <option value="{{ department.department_id }}" label="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="id_faculty_id">Faculty</label>
+                    <select class="ui fluid dropdown" name="faculty_id" id="id_faculty_id" required>
+                    </select>
+                </div>
+                <div class="field">
+                    <button class="ui primary button" id="submit" type="button">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+        function getFaculty(){
+            $('#id_faculty_id').empty();
+            var department_id = $('#id_department_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/appoint_chair/",
+                data : {
+                    department_id: department_id
+                },
+                success: function(data) {
+                    console.log(data);
+                    data.forEach(function(e){
+                        $('#id_faculty_id').append("<option value='"+e.faculty_id+"'>"+e.faculty_name+"</option>" );
+                    });
+                }
+            })
+
+        }
+
+        function appointChair(){
+            var faculty_id = $('#id_faculty_id').val();
+            console.log(faculty_id);
+            var department_id = $('#id_department_id').val();
+            $.ajax({
+                type: "POST",
+                url: "/student_system/appoint_chair/",
+                data : {
+                    department_id : department_id,
+                    faculty_id : faculty_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    $('#success').append("<h2>Chair appointed Successfully!</h2>")
+                }
+            })
+        }
+
+        $('#submit').click(appointChair);
+        $('#id_department_id').change(getFaculty);
+        {#$('#clear').click(removeStudents);#}
+
+
+    </script>
+
+{% endblock %}
