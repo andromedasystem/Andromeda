@@ -122,7 +122,7 @@ class Nav extends Component {
             menu= <Menu style={menuStyle} compact>
                     <Dropdown simple item text='Researcher Actions'>
                         <Dropdown.Menu>
-                            <Dropdown.Item >Create Report</Dropdown.Item>
+                            <Dropdown.Item ><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/create_report/">Generate Report</a></Dropdown.Item>
                             <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_graphs/">View Graphs</a></Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

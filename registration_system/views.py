@@ -107,6 +107,52 @@ class AppointChair(LoginRequiredMixin, generic.View):
         return JsonResponse(data)
 
 
+class CreateReport(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/create_report.html'
+    is_researcher = False
+    grading_key = {
+        'A': 4.0,
+        'A-': 3.5,
+        'B': 3.0,
+        'B-': 2.5,
+        'C': 2.0,
+        'C-': 1.5,
+        'D': 1.0,
+        'D-': 0.5,
+        'F': 0
+    }
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_researcher():
+                self.is_researcher = True
+            else:
+                redirect('/student_system/')
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static',
+                         'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_researcher': self.is_researcher,
+                'header_text': 'Generate Report '
+            },
+            to_static_markup=False,
+        )
+
+        context = {
+            'rendered': rendered,
+        }
+
+        return render(request, self.template_name, context)
+
+    # TODO: Finish post method for create_report route.
+    def post(self, request, *args, **kwargs):
+        pass
+
+
 class ViewGraphs(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/view_graphs.html'
     is_researcher = False
@@ -122,7 +168,7 @@ class ViewGraphs(LoginRequiredMixin, generic.View):
         'F': 0
     }
 
-    def get(self, request, *args, **kwargw):
+    def get(self, request, *args, **kwargs):
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
 
@@ -143,6 +189,7 @@ class ViewGraphs(LoginRequiredMixin, generic.View):
         )
         grades_tally = [0] * 9
         grades = [4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5, 0]
+        grades = ['A', 'A-', 'B', 'B-', 'C', 'C-', 'D', 'D-', 'F']
         for e in Enrollment.objects.all():
             if e.grade == 'A':
                 grades_tally[0] = grades_tally[0] + 1

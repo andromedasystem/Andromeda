@@ -1,0 +1,62 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2">
+
+            <div class="ui form" id="ui-form">
+            {{ csrf }}
+                    <div class="field">
+                        <label for="report_id">Create Report</label>
+                        <select id="report_id" class="ui fluid dropdown">
+                            <option value="0">--------</option>
+                            <option value="grade_report">Grade Report</option>
+                            <option value="generate_stats">Generate Statistical Analysis</option>
+                            <option value="attendance_report">Attendance Report</option>
+                        </select>
+                    </div>
+
+                <div class="display-inline ">
+                    <button class="ui primary button" id="submit" type="button">Download</button>
+                </div>
+            </div>
+            <div id="success">
+
+            </div>
+    </div>
+
+    <script>
+
+        function getReport() {
+            var report_id = $('#report_id').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/student_system/create_report/",
+
+                data: {
+                    report_id: report_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+
+                success: function(){
+
+                }
+            })
+
+        }
+
+        $('#submit').click(getReport);
+
+
+
+    </script>
+
+{% endblock %}
