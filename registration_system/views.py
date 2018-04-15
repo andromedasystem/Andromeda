@@ -204,6 +204,47 @@ class AttendanceSubmitted(LoginRequiredMixin, generic.View):
         return render(request, self.template_name, context)
 
 
+class ViewAttendance(LoginRequiredMixin, generic.View):
+    template_name = 'registration_system/view_attendance.html'
+    is_faculty = False
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        if user_profile:
+            if user_profile.has_faculty():
+                self.is_faculty = True
+            else:
+                redirect('/student_system/')
+
+        if request.is_ajax():
+            pass
+
+        sections = Section.objects.filter(faculty_id=user_profile.faculty)
+        meetings = Meetings.objects.raw("SELECT distinct meeting_id, meeting_date, section_id_id "
+                                        "from registration_system_meetings, registration_system_enrollment, "
+                                            "registration_system_section "
+                                        "where registration_system_meetings.enrollment_id_id = registration_system_enrollment.enrollment_id")
+
+        rendered = render_component(
+            os.path.join(os.getcwd(), 'registration_system', 'static', 'registration_system', 'js', 'nav-holder.jsx'),
+            {
+                'is_faculty': self.is_faculty,
+                'header_text': 'View Attendance'
+            },
+            to_static_markup=False,
+        )
+        context = {
+            'rendered': rendered,
+            'meetings': meetings,
+            'sections': sections,
+            'todays_date': datetime.today
+        }
+
+        return render(request, self.template_name, context)
+
+
 class TakeAttendance(LoginRequiredMixin, generic.View):
     template_name = 'registration_system/take_attendance.html'
     is_faculty = False
@@ -220,28 +261,42 @@ class TakeAttendance(LoginRequiredMixin, generic.View):
 
         if request.is_ajax():
             section_id = request.GET.get('section_id')
-            meetings = Meetings.objects.filter(student_id__enrollment__section_id_id=int(section_id))
-            # enrollments = Enrollment.objects.filter(section_id=section_id)
-            section_name = Section.objects.get(pk=int(section_id)).course_id.name
-            students_array = []
-            for m in meetings:
-                students_array.append({
-                    # 'section_id': e.section_id_id,
-                    'enrollment_id': m.enrollment_id_id,
-                    'student_id': m.student_id_id,
-                    'meeting_date': m.meeting_date,
-                    'first_name': m.student_id.student_id.user.first_name,
-                    'last_name': m.student_id.student_id.user.last_name,
-                    'present_or_absent': m.present_or_absent
-                })
-            data = {
-                'students_array': students_array,
-                'section_name': section_name,
-                'section_id': section_id,
-                'semester_status': Section.objects.get(pk=int(section_id)).semester_id.status
-            }
+            closest_date = request.GET.get('closest_date')
+            closest_date = datetime.fromtimestamp(float(closest_date) / 1000.0)
 
-            return HttpResponse(json.dumps(data), content_type="application/json")
+            meetings = Meetings.objects.filter(meeting_date=closest_date)
+
+            # except Meetings.DoesNotExist:
+            if not meetings:
+                enrollment = Enrollment.objects.filter(section_id_id=int(section_id))
+                # enrollments = Enrollment.objects.filter(section_id=section_id)
+                section = Section.objects.get(pk=int(section_id))
+                section_name = section.course_id.name
+                students_array = []
+                for m in enrollment:
+                    students_array.append({
+                        # 'section_id': e.section_id_id,
+                        'enrollment_id': m.enrollment_id,
+                        'student_id': m.student_id_id,
+                        'first_name': m.student_id.student_id.user.first_name,
+                        'last_name': m.student_id.student_id.user.last_name,
+                        # 'present_or_absent': m.present_or_absent
+                    })
+                data = {
+                    'students_array': students_array,
+                    'section_name': section_name,
+                    'meeting_day_1': section.time_slot_id.days_id.day_1,
+                    'meeting_day_2': section.time_slot_id.days_id.day_2,
+                    'section_id': section_id,
+                    'semester_status': Section.objects.get(pk=int(section_id)).semester_id.status
+                }
+
+                return HttpResponse(json.dumps(data), content_type="application/json")
+            else:
+                data = {
+                    'meeting_submitted': True
+                }
+                return HttpResponse(json.dumps(data), content_type='application/json')
 
         sections = Section.objects.filter(faculty_id=user_profile.faculty)
         rendered = render_component(
@@ -267,27 +322,29 @@ class TakeAttendance(LoginRequiredMixin, generic.View):
             'is_successful': False
         }
         if request.is_ajax():
-            student_id = request.POST.get('student_id')
-            enrollment_id = request.POST.get('enrollment_id')
-            present_or_absent = request.POST.get('present_or_absent_id')
-            meetings = Meetings.objects.get(enrollment_id=enrollment_id, student_id=student_id)
-            if present_or_absent == 'P':
-                meetings.present_or_absent = True
-            else:
-                meetings.present_or_absent = False
-            meetings.meeting_date = datetime.today
-            meetings.save()
+            student_array_data = request.POST.get('students_array')
+            attendance_date_in = request.POST.get('attendance_date')
+            student_array = json.loads(student_array_data)
+            print(attendance_date_in)
+            attendance_date = datetime.fromtimestamp(float(attendance_date_in)/1000.0)
+            # attendance_date = datetime.strptime(attendance_date, '%Y-%m-%d').date()
+            print(student_array)
+            print(attendance_date)
+            for s in student_array:
+                meetings = Meetings.objects.create(enrollment_id=Enrollment.objects.get(pk=int(s['enrollment_id'])),
+                                                   student_id=Student.objects.get(pk=int(s['student_id'])),
+                                                   present_or_absent=s['is_checked'],
+                                                   meeting_date=attendance_date)
+            # present_or_absent = request.POST.get('present_or_absent_id')
+            # meetings = Meetings.objects.get(enrollment_id=enrollment_id, student_id=student_id)
+            # if present_or_absent == 'P':
+            #     meetings.present_or_absent = True
+            # else:
+            #     meetings.present_or_absent = False
+            # meetings.meeting_date = datetime.today
+            # meetings.save()
             data['is_successful'] = True
             return JsonResponse(data)
-        else:
-            meeting_date_str = request.POST.get("meeting_date_id")
-            section_id = request.POST.get("hidden_section_id")
-            meeting_date = datetime.datetime.strptime(meeting_date_str, '%Y-%m-%d').date()
-            meetings = Meetings.objects.filter(meeting_date=meeting_date)
-            for m in meetings:
-                m.submitted = True
-                m.save()
-            return redirect('take_attendance', section_id=section_id)
 
 
 class SubmitGrades(LoginRequiredMixin, generic.View):
@@ -1065,7 +1122,7 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
                         data['unfulfilled_prerequisite'] = True
                         # if e.section_id.course_id == section.course_id.p
                 enrollment = Enrollment.objects.create(student_id=student, section_id=section)
-                meeting = Meetings.objects.create(enrollment_id=enrollment, student_id=student)
+                # meeting = Meetings.objects.create(enrollment_id=enrollment, student_id=student)
                 student_history = StudentHistory.objects.create(student_id=student, enrollment_id=enrollment)
                 data['is_successful'] = True
         else:

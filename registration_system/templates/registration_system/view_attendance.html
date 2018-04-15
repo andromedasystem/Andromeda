@@ -1,0 +1,119 @@
+{% extends "registration_system/partials/base.html" %}
+{% load staticfiles %}
+{% block navbar %}
+    {% include "registration_system/partials/main_navbar.html" %}
+{% endblock %}
+{% block content %}
+
+     <div class="ui container">
+        {{ rendered|safe }}
+    </div>
+
+    <div class="ui container m-top2" style="padding-top: 5rem; margin-bottom: 4rem;">
+        <div class="ui form" id="ui-form">
+            <div class="two fields">
+                <div class="field">
+                    <label for="id_section_id">Section </label>
+                    <select class="ui fluid dropdown" name="section_id" id="id_section_id" required>
+                        <option value="true">-------</option>
+                        {% if sections %}
+                            {% for s in sections %}
+                                <option value="{{ s.section_id }}" >{{ s.course_id.name }} -- {{ s.time_slot_id.days_id.day_1 }}-{{ s.time_slot_id.days_id.day_2 }}  {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="id_meeting_date_id">Meeting Date</label>
+                    <select class="ui fluid dropdown" name="meeting_date_id" id="id_meeting_date_id" required>
+                        <option value="true">-------</option>
+                        {% if meetings %}
+                            {% for m in meetings %}
+                                <option value="{{ m.meeting_date }}" label="{{ m.meeting_date }}">{{ m.meeting_date }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="display-inline ">
+                <button class="ui primary button" id="submit" type="button">Submit</button>
+            </div>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Meeting Date</th>
+                        <th>Present or Absent</th>
+                    </tr>
+                </thead>
+                <tbody id="students_added">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="success">
+
+        </div>
+    </div>
+
+    <script>
+        function getStudents(){
+            removeStudents();
+            var section_id = $('#id_section_id').val();
+            {#var department_name = $('select option:selected').text();#}
+            var meeting_date = $('#id_meeting_date_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/view_attendance/",
+                data : {
+                    section_id: section_id,
+                    meeting_date: meeting_date
+                },
+                success: function(data) {
+                    console.log(data);
+                    data.forEach(function(element){
+                        var tBody = document.getElementById('courses_added');
+                        var newRow = tBody.insertRow(tBody.rows.length);
+                        newRow.id = element.course_id + '_row';
+                        var courseIdCell = newRow.insertCell(0);
+                        var courseNameCell = newRow.insertCell(1);
+                        var descriptionCell = newRow.insertCell(2);
+                        var departmentCell = newRow.insertCell(3);
+                        var creditsCell = newRow.insertCell(4);
+                        var updateCell = newRow.insertCell(5);
+                        var courseIdText = document.createTextNode(element.course_id);
+                        var departmentText = document.createTextNode(element.department_name);
+                        courseIdCell.appendChild(courseIdText);
+                        departmentCell.appendChild(departmentText);
+                        courseNameCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input">' +
+                                '<input type="text" name="course_name" value="'+element.course_name+'" id="id_course_name_'+element.course_id+'" required />' +
+                            '</div>' );
+                        descriptionCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input" style="width: 100%;">' +
+                                '<textarea class="text-area-styled" name="course_description" maxlength="1000" required id="id_course_description_'+element.course_id+'">'+element.course_description+'</textarea>' +
+                            '</div>' );
+                        creditsCell.insertAdjacentHTML('afterbegin',
+                            '<div class="ui input">' +
+                                '<input type="number" name="course_credits" value="'+element.course_credits+'" required id="id_course_credits_'+element.course_id+'" step="1" min="2" max="4"/>' +
+                            '</div>' );
+                        updateCell.insertAdjacentHTML('afterbegin', '<button type="button" onclick="updateCourse(this.id)" class="ui info button" id="'+element.course_id+'" type="button">Update</button>')
+                    });
+                }
+            });
+
+        }
+
+        function removeStudents() {
+            $('#students_added').empty();
+        }
+
+
+        $('#submit').click(getStudents)
+
+
+    </script>
+
+{% endblock %}

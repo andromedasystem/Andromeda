@@ -83,6 +83,7 @@ class Nav extends Component {
                 <Dropdown simple item text='Attendance Actions'>
                     <Dropdown.Menu>
                         <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/take_attendance/">Take Attendance</a></Dropdown.Item>
+                        <Dropdown.Item><a style={{width: '100%', height: '100%', color: 'black'}} href="/student_system/view_attendance/">View Attendance History</a></Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </Menu>;

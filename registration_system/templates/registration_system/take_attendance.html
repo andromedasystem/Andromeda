@@ -14,14 +14,27 @@
         {{ csrf }}
              <div class="two fields">
                 <div class="field">
-                    <label for="section_id"></label>
-                    <select id="section_id" class="ui fluid dropdown">
+                    <label for="section_id">Section</label>
+                    <select id="section_id" class="ui fluid dropdown" required>
                         <option value="0">--------</option>
                         {% if sections %}
                             {% for s in sections %}
                                 <option value="{{ s.section_id }}" ><strong>{{ s.section_id }}.</strong> {{ s.course_id.name }}--{{ s.time_slot_id.days_id.day_1 }}--{{ s.time_slot_id.days_id.day_2 }} {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</option>
                             {% endfor %}
                         {% endif %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="days_id">Day</label>
+                    <select id="days_id" class="ui fluid dropdown" required>
+                        <option value="0">-------</option>
+                        <option value="MONDAY">MONDAY</option>
+                        <option value="TUESDAY">TUESDAY</option>
+                        <option value="WEDNESDAY">WEDNESDAY</option>
+                        <option value="THURSDAY">THURSDAY</option>
+                        <option value="FRIDAY">FRIDAY</option>
+                        <option value="SATURDAY">SATURDAY</option>
+                        <option value="SUNDAY">SUNDAY</option>
                     </select>
                 </div>
             </div>
@@ -56,73 +69,180 @@
 
     <script>
 
+        function getClosestDay(day_chosen){
+             switch(day_chosen){
+                            case 'MONDAY':
+                                return getClosestMonday(new Date()).toLocaleDateString();
+                            case 'TUESDAY':
+                                return getClosestTuesday(new Date()).toLocaleDateString();
+                            case 'WEDNESDAY':
+                                return getClosestWednesday(new Date()).toLocaleDateString();
+                            case 'THURSDAY':
+                                return getClosestThursday(new Date()).toLocaleDateString();
+                            case 'FRIDAY':
+                                return getClosestFriday(new Date()).toLocaleDateString();
+                            case 'SATURDAY':
+                                return getClosestSaturday(new Date()).toLocaleDateString();
+                            case 'SUNDAY':
+                                return getClosestSunday(new Date()).toLocaleDateString();
+             }
+        }
+
+        function getClosestDayObj(day_chosen){
+             switch(day_chosen){
+                            case 'MONDAY':
+                                return getClosestMonday(new Date());
+                            case 'TUESDAY':
+                                return getClosestTuesday(new Date());
+                            case 'WEDNESDAY':
+                                return getClosestWednesday(new Date());
+                            case 'THURSDAY':
+                                return getClosestThursday(new Date());
+                            case 'FRIDAY':
+                                return getClosestFriday(new Date());
+                            case 'SATURDAY':
+                                return getClosestSaturday(new Date());
+                            case 'SUNDAY':
+                                return getClosestSunday(new Date());
+             }
+        }
+
+        function getClosestMonday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff));
+        }
+
+        function getClosestTuesday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 1));
+        }
+
+        function getClosestWednesday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 2));
+        }
+
+        function getClosestThursday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 3));
+        }
+
+        function getClosestFriday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 4));
+        }
+
+        function getClosestSaturday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 5));
+        }
+
+        function getClosestSunday(d){
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6:1);
+            return new Date(d.setDate(diff + 6));
+        }
+
         function addStudents(){
             {#console.log("here");#}
             removeStudents();
+            var closest_day = getClosestDayObj($('#days_id').val());
             var section_id = $('#section_id').val();
             $.ajax({
                 type: "GET",
                 url: "/student_system/take_attendance/",
                 data : {
-                    section_id: section_id
+                    section_id: section_id,
+                    closest_date: closest_day.getTime()
                 },
                 success: function(data) {
                     console.log(data);
-                    if(data.students_array) {
-                        data.students_array.forEach(function (element) {
-                            var tBody = document.getElementById('students_added');
-                            var newRow = tBody.insertRow(tBody.rows.length);
-                            newRow.id = element.student_id + '_row';
-                            var studentIdCell = newRow.insertCell(0);
-                            var firstNameCell = newRow.insertCell(1);
-                            var lastNameCell = newRow.insertCell(2);
-                            var meetingDateCell = newRow.insertCell(3);
-                            var presentOrAbsentsCell = newRow.insertCell(4);
-                            {# editing faculty, meeeting days, time period, building, and room number  #}
-                            var studentIdText = document.createTextNode(element.student_id);
-                            var firstNameText = document.createTextNode(element.first_name);
-                            var lastNameText = document.createTextNode(element.last_name);
-                            studentIdCell.appendChild(studentIdText);
-                            firstNameCell.appendChild(firstNameText);
-                            lastNameCell.appendChild(lastNameText);
-                            if( element.meeting_date){
-                                var meetingDateText = document.createTextNode(element.meeting_date);
-                                meetingDateCell.appendChild(meetingDateText);
-                            } else {
-                                meetingDateCell.appendChild(document.createTextNode(" "));
-                            }
-                            if( element.present_or_absent){
-                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<i class='large green checkmark icon'></i>");
-                            } else {                                                    //onclick='takeAttendance(this.id, "+element.student_id+")'
-                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<input type='checkbox'   id='"+element.enrollment_id+"_attendance' name='"+element.enrollment_id+"'/><label>Present</label>");
-                            }
-
-                        });
-                        $('#course_name_id').append("<h1 class='ui header' >"+data.section_name+" Attendance</h1>");
-                        {#var today = new Date();#}
-                        {#var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();#}
-                        {#var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();#}
-                        {#var year = today.getFullYear();#}
-                        $('#searched').append("<div id='attendance_submit' class=\"ui form m-top2 \">\n" +
-                            "            <div class=\"field\">\n" +
-                            "                <button onclick='takeAttendance()' class=\"ui button\" role=\"button\">Submit Attendance</button>\n" +
-                            "            </div>\n" +
-                            "        </div>")
+                    if(data.meeting_submitted){
+                        $('#course_name_id').append("<h1 class='ui primary header'>The Attendance for this meeting day has already been submitted this week!</h1>")
                     } else {
-                      $('#course_name_id').append("<h1 class='ui header red' >No Students enrolled in this section.</h1>")
-                    }
 
+                        if (data.students_array) {
+                            data.students_array.forEach(function (element) {
+                                var tBody = document.getElementById('students_added');
+                                var newRow = tBody.insertRow(tBody.rows.length);
+                                newRow.id = element.student_id + '_row';
+                                var studentIdCell = newRow.insertCell(0);
+                                var firstNameCell = newRow.insertCell(1);
+                                var lastNameCell = newRow.insertCell(2);
+                                var meetingDateCell = newRow.insertCell(3);
+                                var presentOrAbsentsCell = newRow.insertCell(4);
+                                {# editing faculty, meeeting days, time period, building, and room number  #}
+                                var studentIdText = document.createTextNode(element.student_id);
+                                var firstNameText = document.createTextNode(element.first_name);
+                                var lastNameText = document.createTextNode(element.last_name);
+                                studentIdCell.appendChild(studentIdText);
+                                firstNameCell.appendChild(firstNameText);
+                                lastNameCell.appendChild(lastNameText);
+                                meetingDateCell.appendChild(document.createTextNode(getClosestDay($('#days_id').val())));
+                                //onclick='takeAttendance(this.id, "+element.student_id+")'
+                                presentOrAbsentsCell.insertAdjacentHTML('afterbegin', "<input type='checkbox'   id='" + element.enrollment_id + "_attendance' name='" + element.enrollment_id + "'/><label>Present</label>");
+
+                            });
+                            var day_chosen = $('#days_id').val();
+                            var attendance_date = "";
+                            switch (day_chosen) {
+                                case 'MONDAY':
+                                    attendance_date = getClosestMonday(new Date());
+                                    break;
+                                case 'TUESDAY':
+                                    attendance_date = getClosestTuesday(new Date());
+                                    break;
+                                case 'WEDNESDAY':
+                                    attendance_date = getClosestWednesday(new Date());
+                                    break;
+                                case 'THURSDAY':
+                                    attendance_date = getClosestThursday(new Date());
+                                    break;
+                                case 'FRIDAY':
+                                    attendance_date = getClosestFriday(new Date());
+                                    break;
+                                case 'SATURDAY':
+                                    attendance_date = getClosestSaturday(new Date());
+                                    break;
+                                case 'SUNDAY':
+                                    attendance_date = getClosestSunday(new Date());
+                                    break;
+                            }
+                            $('#course_name_id').append("<h1 class='ui header' >" + data.section_name + " Attendance for " + attendance_date.toLocaleDateString() + "</h1>");
+                            {#var today = new Date();#}
+                            {#var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();#}
+                            {#var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();#}
+                            {#var year = today.getFullYear();#}
+                            $('#searched').append("<div id='attendance_submit' class=\"ui form m-top2 \">\n" +
+                                "            <div class=\"field\">\n" +
+                                "                <button onclick='takeAttendance(" + attendance_date.getTime() + ")' class=\"ui button\" role=\"button\">Submit Attendance</button>\n" +
+                                "            </div>\n" +
+                                "        </div>")
+                        } else {
+                            $('#course_name_id').append("<h1 class='ui header red' >No Students enrolled in this section.</h1>")
+                        }
+                    }
                 }
             });
 
         }
 
-        function takeAttendance(){
+        function takeAttendance(attendance_date){
             {#console.log("james");#}
             var students_array = [];
-            var month = (today.getMonth() + 1)<10 ? '0'+today.getMonth() : today.getMonth();
-            var day = today.getDate()<10 ? '0'+today.getDate() : today.getDate();
-            var year = today.getFullYear();
             $('tbody tr').each(function(i, row){
                var row = $(row);
                console.log(row);
@@ -135,17 +255,19 @@
                    is_checked: is_checked
                });
             });
+            console.log(attendance_date);
             $.ajax({
                 type: "POST",
-                url: "/student_system/taken_attendance/",
+                url: "/student_system/take_attendance/",
                 data: {
-                    students_array: students_array,
-                    day: day,
-                    month: month,
-                    year:  year
+                    students_array: JSON.stringify(students_array),
+                    attendance_date: JSON.stringify(attendance_date),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (data) {
                     {#$("#" + student_id + "__present_or_absent").show();#}
+                    removeStudents();
+                    $('#course_name_id').append("<h1 class='ui green nheader' >Attendance Submitted Sucessfully!</h1>")
                 }
             });
             {#if($("#"+student_id+"__present_or_absent").is(':hidden')) {#}
@@ -180,6 +302,8 @@
         }
 
         function removeStudents() {
+            $('#course_name_id').empty();
+            $('#searched').empty();
             $('#students_added').empty();
         }
 
