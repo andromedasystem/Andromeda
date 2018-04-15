@@ -219,7 +219,26 @@ class ViewAttendance(LoginRequiredMixin, generic.View):
                 redirect('/student_system/')
 
         if request.is_ajax():
-            pass
+            section_id = request.GET.get('section_id')
+            meeting_date = request.GET.get('meeting_date')
+            meeting_date = datetime.fromtimestamp(float(meeting_date) / 1000.0)
+            print(meeting_date)
+            meeting = Meetings.objects.filter(meeting_date=meeting_date, enrollment_id__section_id=section_id)
+            meeting_array = []
+            for m in meeting:
+                meeting_array.append({
+                    'meeting_id': m.meeting_id,
+                    'student_id': m.student_id_id,
+                    'first_name': m.student_id.student_id.user.first_name,
+                    'last_name': m.student_id.student_id.user.last_name,
+                    'meeting_date': m.meeting_date.strftime("%Y-%m-%d"),
+                    'present_or_absent': m.present_or_absent
+                })
+
+            data = {
+                'meeting_array': meeting_array
+            }
+            return HttpResponse(json.dumps(data), content_type="application/json")
 
         sections = Section.objects.filter(faculty_id=user_profile.faculty)
         meetings = Meetings.objects.raw("SELECT distinct meeting_id, meeting_date, section_id_id "
