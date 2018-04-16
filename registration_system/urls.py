@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
     url(r'^view_graphs/$', core_views.ViewGraphs.as_view(), name='view_graphs'),
     url(r'^create_report/$', core_views.CreateReport.as_view(), name='create_report'),
+    url(r'^create_report/get_csv_report/$', core_views.get_csv_report, name='get_csv_report'),
     url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),
     url(r'^student_system_api/get_general_data/$', core_views.get_master_schedule_input_data, name="ms_get_general_data"),
     url(r'^student_system_api/get_schedule_data/(?P<attribute_flag>[\w\-]+)/(?P<search_value>[\w\-]+)/$',

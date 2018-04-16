@@ -22,10 +22,14 @@
                             <option value="attendance_report">Attendance Report</option>
                         </select>
                     </div>
+                <form method="get" action="{{ url }}/get_csv_report/">
+                    {% csrf_token %}
+                    <div class="display-inline ">
+                        <button class="ui primary button" id="submit" type="button">Download</button>
+                    </div>
+                </form>
+                <a id="grade_report_link" style="display: none;" href="/student_system/create_report/get_csv_report/"></a>
 
-                <div class="display-inline ">
-                    <button class="ui primary button" id="submit" type="button">Download</button>
-                </div>
             </div>
             <div id="success">
 
@@ -36,20 +40,11 @@
 
         function getReport() {
             var report_id = $('#report_id').val();
-
-            $.ajax({
-                type: "POST",
-                url: "/student_system/create_report/",
-
-                data: {
-                    report_id: report_id,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-
-                success: function(){
-
-                }
-            })
+            switch(report_id){
+                case 'grade_report':
+                    window.location = '/student_system/create_report/get_csv_report/';
+                    break;
+            }
 
         }
 

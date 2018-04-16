@@ -1,4 +1,4 @@
-import os, json
+import os, json, csv
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -147,10 +147,6 @@ class CreateReport(LoginRequiredMixin, generic.View):
         }
 
         return render(request, self.template_name, context)
-
-    # TODO: Finish post method for create_report route.
-    def post(self, request, *args, **kwargs):
-        pass
 
 
 class ViewGraphs(LoginRequiredMixin, generic.View):
@@ -2295,6 +2291,44 @@ class UserDisplay(LoginRequiredMixin, generic.View):
             to_static_markup=False,
         )
         return render(request, self.template_name, {'rendered': rendered, 'user': user})
+
+
+# TODO: Finish CSV Report
+def get_csv_report(request):
+    grading_key = {
+        'A': 4.0,
+        'A-': 3.5,
+        'B': 3.0,
+        'B-': 2.5,
+        'C': 2.0,
+        'C-': 1.5,
+        'D': 1.0,
+        'D-': 0.5,
+        'F': 0
+    }
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Student Name', 'Grade'])
+
+    for s in Student.objects.all():
+        enrollments = Enrollment.objects.filter(student_id=s)
+        # enrollments_array = []
+        grades = 0.0
+        counter = 0
+        for e in enrollments:
+            if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
+                grades += grading_key[e.grade]
+
+            counter = counter + 1
+
+        if grades == 0.0 and counter == 0:
+            cumulative_gpa = 0.0
+        else:
+            cumulative_gpa = float(grades / counter)
+        writer.writerow([s.student_id.user.first_name + ' ' + s.student_id.user.last_name, cumulative_gpa])
+
+    return response
 
 
 def get_departments(request):
