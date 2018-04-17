@@ -3,8 +3,22 @@ html {
   box-sizing: border-box;
 }
 
+p {
+    font-family: "Montserrat";
+}
+
+.index-font-size {
+    font-size: 1.2rem;
+}
+
 body {
+    /*font-family: "Montserrat";*/
     height: 100%;
+}
+
+.img-drop-shdw {
+    border-bottom: 0 none;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.46);
 }
 
 .display-inline{
@@ -100,7 +114,7 @@ body {
 
 hr.title-rule {
     margin-top: 2em;
-    margin-bottom: 6em;
+    margin-bottom: 4em;
   border: 0;
   height: 1px;
   background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
