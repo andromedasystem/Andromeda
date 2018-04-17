@@ -85,8 +85,8 @@
                 </tbody>
             </table>
         </div>
-        <div id="success">
-
+        <div id="success" class="ui basic modal">
+          <div id="id_modal_section" class="ui green header"></div>
         </div>
     </div>
 {# TODO: Ajax call to building table and ajax post to submit update #}
@@ -223,7 +223,7 @@
         }
 
         function updateSection(section_id) {
-
+            $('#success').empty();
             var faculty = $('#id_faculty_id_'+section_id).val();
             var time_period = $('#id_time_period_id_'+section_id).val();
             var days = $('#id_days_id_'+section_id).val();
@@ -246,7 +246,10 @@
                 },
 
                 success: function(){
-                    $('#success').append("<h2>Section Update Successfully</h2>")
+                    $('.ui.modal').modal('show');
+                    $('#id_modal_section').empty();
+                    $('#id_modal_section').append("Section updated successfully!\n" );
+
                 }
             })
 

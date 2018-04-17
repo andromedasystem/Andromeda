@@ -60,6 +60,7 @@
         }
 
         function appointChair(){
+            $('#success').empty();
             var faculty_id = $('#id_faculty_id').val();
             console.log(faculty_id);
             var department_id = $('#id_department_id').val();
@@ -72,7 +73,11 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data) {
-                    $('#success').append("<h2>Chair appointed Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Chair Appointed Successfully\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
         }

@@ -46,6 +46,7 @@
     <script>
 
         function changeStatus() {
+            $('#success').empty();
             var semester_id = $('#semester_id').val();
             var status = $('#status_name_id').val();
             $.ajax({
@@ -59,7 +60,11 @@
                 },
 
                 success: function(){
-                    $('#success').append("<h2>Semester Status Updated Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Semester Status updated successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 

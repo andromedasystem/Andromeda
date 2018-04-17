@@ -65,7 +65,12 @@
                 },
 
                 success: function(){
-                    $('#success').append("<h2>Minor Declared Successfully!</h2>")
+                    $('#ui-form').hide();
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Minor Declared successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 

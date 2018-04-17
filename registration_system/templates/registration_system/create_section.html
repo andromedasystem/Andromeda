@@ -197,6 +197,7 @@
         }
 
         function submitTimePeriod(){
+             $('#time_success').empty();
             var start_time = $('#start_time_id').val();
             var end_time = $('#end_time_id').val();
             $.ajax({
@@ -209,7 +210,12 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(){
-                    $('#time_success').append("<h2>Time Slot Created Successfully!</h2>")
+                    $('#time_success').append("<div class=\"ui positive message\">\n" +
+                        "  <i class=\"close icon\"></i>\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Time Slot successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 
@@ -243,7 +249,11 @@
 
                 success: function(){
                     $('#section-form').hide();
-                    $('#success').append("<h2>Section Created Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Section created successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
         }

@@ -68,15 +68,15 @@
             {% endfor %}
         {% endif %}
 
-        <div id="success">
-
+        <div id="success" class="ui basic modal">
+          <div id="id_modal_section" class="ui green header"></div>
         </div>
     </div>
 {# TODO: Ajax call to building table and ajax post to submit update #}
     <script>
 
         function dropCourse(section_id) {
-
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/drop_course/",
@@ -88,7 +88,9 @@
 
                 success: function(){
 
-                    $('#success').append("<h2>Course Dropped!</h2>");
+                    $('.ui.modal').modal('show');
+                    $('#id_modal_section').empty();
+                    $('#id_modal_section').append("Course Dropped successfully!\n" );
                     $('#'+section_id+"_segment").empty();
                 }
             })

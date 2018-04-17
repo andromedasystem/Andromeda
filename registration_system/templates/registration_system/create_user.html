@@ -154,7 +154,11 @@
 
                 success: function(){
                     $('#user-form').hide();
-                    $('#success').append("<h2>User Created Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    User created successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
         }

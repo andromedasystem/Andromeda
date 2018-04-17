@@ -103,6 +103,7 @@
         }
 
         function createHold(user_id) {
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/create_hold/",
@@ -115,13 +116,17 @@
 
                 success: function(){
                     $('#'+user_id+'_row').remove();
-                    $('#success').append("<h2>Hold Appended Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Hold Appended successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
         }
 
         function deleteHold(user_id) {
-
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/create_hold/",
@@ -134,7 +139,11 @@
 
                 success: function(){
                     $('#'+user_id+'_row').remove();
-                    $('#success').append("<h2>Hold Removed Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Hold Removed successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 

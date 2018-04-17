@@ -51,7 +51,6 @@
 
         function changeStatus() {
             var major = $('#major_id').val();
-
             $.ajax({
                 type: "POST",
                 url: "/student_system/declare_major/",
@@ -62,7 +61,12 @@
                 },
 
                 success: function(){
-                    $('#success').append("<h2>Major Declared Successfully!</h2>")
+                    $('#ui-form').hide();
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Major declared successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 

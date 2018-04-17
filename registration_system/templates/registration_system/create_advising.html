@@ -105,6 +105,7 @@
         }
 
         function createAdvising(user_id) {
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/create_advising/",
@@ -117,13 +118,17 @@
 
                 success: function(){
                     $('#'+user_id+'_row').remove();
-                    $('#success').append("<h2>Advising Created Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Advising created successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
         }
         {# TODO: FINISH UPDATE ADVISING        #}
         function updateAdvising(user_id) {
-
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/create_advising/",
@@ -137,7 +142,11 @@
 
                 success: function(){
                     $('#'+user_id+'_row').remove();
-                    $('#success').append("<h2>Advising updated Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "   Advising updated successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 

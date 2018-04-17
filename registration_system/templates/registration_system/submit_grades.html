@@ -96,6 +96,7 @@
         }
 
         function submitGrade(section_id, student_id) {
+            $('#id_modal_success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/submit_grades/",
@@ -107,7 +108,11 @@
                 },
                 success: function (data) {
                     console.log(data);
-                    $('#id_modal_success').append("<h2>Grade Submitted Sucessfully!</h2>");
+                   $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    Grade Submitted successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             });
         }

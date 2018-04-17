@@ -40,8 +40,8 @@
                 </tbody>
             </table>
         </div>
-        <div id="success">
-
+        <div id="success" class="ui basic modal">
+          <div id="id_modal_section" class="ui green header"></div>
         </div>
     </div>
 
@@ -97,7 +97,7 @@
         }
 
         function updateCourse(course_id) {
-
+            $('#success').hide();
             var course_description = $('#id_course_description_'+course_id).val();
             var course_name = $('#id_course_name_'+course_id).val();
             var course_credits = $('#id_course_credits_'+course_id).val();
@@ -114,7 +114,9 @@
                 },
 
                 success: function(){
-                    $('#success').append("<h2>"+course_name+" Update Successfully</h2>")
+                    $('.ui.modal').modal('show');
+                    $('#id_modal_section').empty();
+                    $('#id_modal_section').append(course_name+" updated successfully!\n" );
                 }
             })
 

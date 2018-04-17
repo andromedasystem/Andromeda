@@ -128,7 +128,7 @@
         }
 
         function deleteStudent(user_id) {
-
+            $('#success').empty();
             $.ajax({
                 type: "POST",
                 url: "/student_system/search_user/",
@@ -140,7 +140,11 @@
 
                 success: function(){
                     $('#'+user_id+'_row').remove();
-                    $('#success').append("<h2>User Successfully!</h2>")
+                    $('#success').append("<div class=\"ui positive message\">\n" +
+                        "  <div class=\"header\">\n" +
+                        "    User Removed successfully!\n" +
+                        "  </div>\n" +
+                        "</div>")
                 }
             })
 
