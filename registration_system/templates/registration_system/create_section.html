@@ -114,6 +114,7 @@
    <script>
          function getCourses(){
             removeCourses();
+            {#$('#id_faculty_id').empty();#}
             var department_id = $('#id_department_id').val();
             var department_name = $('select option:selected').text();
             $.ajax({
@@ -125,10 +126,12 @@
                 },
                 success: function(data) {
                     console.log(data);
+                    $('#id_faculty_id').empty();
                     data.course_array.forEach(function(element){
                         $('#id_course_id').append("<option value='"+element.course_id+"'>"+element.course_name+"</option>" );
                     });
                     data.faculty_array.forEach(function(e){
+                        {#$('#id_faculty_id').empty();#}
                         $('#id_faculty_id').append("<option value='"+e.faculty_id+"'>"+e.faculty_name+"</option>" );
                     })
                 }
@@ -189,12 +192,13 @@
         }
 
         function removeRooms(){
-            $('id_room_id').empty();
+            $('#id_room_id').empty();
         }
 
         function removeCourses() {
             $('#id_course_id').empty();
-        }
+            {#$('#id_faculty_id').empty();#}
+         }
 
         function submitTimePeriod(){
              $('#time_success').empty();

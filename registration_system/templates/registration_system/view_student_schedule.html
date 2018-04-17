@@ -43,13 +43,14 @@
                 <thead>
                     <tr>
                         <th>Section ID</th>
-                        <th>Department</th>
                         <th>Course Name</th>
+                        <th>Department</th>
                         <th>Professor</th>
                         <th>Credits</th>
                         <th>Seating</th>
                         <th>Time Slot</th>
                         <th>Location</th>
+                        <th>Semester</th>
                         <th>Prerequisites</th>
                     </tr>
                 </thead>
@@ -95,22 +96,25 @@
                             var seatsCell = newRow.insertCell(5);
                             var timeSlotCell = newRow.insertCell(6);
                             var locationCell = newRow.insertCell(7);
-                            var prerequisitesCell = newRow.insertCell(8);
+                            var semesterCell = newRow.insertCell(8);
+                            var prerequisitesCell = newRow.insertCell(9);
                             {# editing faculty, meeeting days, time period, building, and room number  #}
                             var sectionIdText = document.createTextNode(element.section_id);
                             var courseNameText = document.createTextNode(element.course_name);
                             var departmentText = document.createTextNode(element.course_department);
                             var creditsText = document.createTextNode(element.credits);
+                            var semesterText = document.createTextNode(element.semester);
                             var facultyText = document.createTextNode(element.professor);
                             var prerequisitesText = $("<div id='" + element.section_id + "_prerequisites' class='ui celled ordered list' ></div>");
                             var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>" + element.seats_taken + "</li><li><span style='font-weight:bold;'>Capacity:</span>" + element.seating_capacity + "</li></span>");
                             sectionIdCell.appendChild(sectionIdText);
                             courseNameCell.appendChild(courseNameText);
                             departmentCell.appendChild(departmentText);
+                            semesterCell.appendChild(semesterText);
                             creditsCell.appendChild(creditsText);
                             facultyCell.appendChild(facultyText);
                             {#prerequisitesCell.appendChild(prerequisitesText);#}
-                            $('#' + element.section_id + '_row').find('td:eq(8)').append(prerequisitesText);
+                            $('#' + element.section_id + '_row').find('td:eq(9)').append(prerequisitesText);
                             locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>" + element.building + "</li><li><span style=\'font-weight:bold;\'>Room Number:</span>" + element.room_number + "</li></span>");
                             timeSlotCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Room:</span>" + element.meeting_days + "</li><li><span style=\'font-weight:bold;\'>Period:</span>" + element.time_period + "</li></span>");
                             $('#' + element.section_id + '_row').find('td:eq(5)').append(seatsText);

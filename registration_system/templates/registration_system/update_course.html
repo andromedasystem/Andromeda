@@ -9,59 +9,58 @@
         {{ rendered|safe }}
     </div>
 
-    <div class="ui container m-top2">
+    <div class="ui container m-bottom4 m-top2">
         {% if sections %}
             {% for s in sections %}
-                <div id="{{ s.section_id }}_segment">
-                    <div class="ui top attached header">
-                      Course Name  <span class="ui right aligned float-right course-close" style="float: right;"><i id="{{ s.section_id }}" onclick="dropCourse(this.id)" class="far fa-times-circle " style="font-size: 2rem"></i></span>
+                <div class="ui segments" id="{{ s.section_id }}_segment">
+                    <div class="ui segment">
+                      <h1 style=" display: inline;">{{ s.course_name }}</h1>  <span class="ui right aligned float-right course-close" style="float: right;"><i id="{{ s.section_id }}" onclick="dropCourse(this.id)" class="far fa-times-circle " style="font-size: 2rem"></i></span>
                     </div>
-                    <div class="ui attached segment">
-                      <p>{{ s.course_name }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                      Professor
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.professor }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                      Credits
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.credits }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Location
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.building }} -- {{ s.room_number }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Time Slot
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.meeting_days }}</p><br/>
-                        <p>{{ s.time_period }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Seating
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.seats_taken }}/{{ s.seating_capacity }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Prerequisites
-                    </h5>
-                    <div class="ui attached segment">
-                        <div class="ui celled list">
-                        {% for p in s.prerequisites %}
-                            <div class="item">
-                                <div class="content">
-                                    <div class="header">{{ p.name }}</div>
+                    <div class="ui segments">
+                        <h5 class="ui attached header">
+                          Professor
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.professor }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                          Credits
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.credits }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Location
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.building }} -- {{ s.room_number }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Time Slot
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.meeting_days }}</p><br/>
+                            <p>{{ s.time_period }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Seating
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.seats_taken }}/{{ s.seating_capacity }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Prerequisites
+                        </h5>
+                        <div class="ui attached segment">
+                            <div class="ui celled list">
+                            {% for p in s.prerequisites %}
+                                <div class="item">
+                                    <div class="content">
+                                        <div class="header">{{ p.name }}</div>
+                                    </div>
                                 </div>
+                            {% endfor %}
                             </div>
-                        {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -69,7 +68,9 @@
         {% endif %}
 
         <div id="success" class="ui basic modal">
-          <div id="id_modal_section" class="ui green header"></div>
+          <div id="id_modal_section" class="ui green header">
+
+          </div>
         </div>
     </div>
 {# TODO: Ajax call to building table and ajax post to submit update #}
@@ -88,9 +89,9 @@
 
                 success: function(){
 
-                    $('.ui.modal').modal('show');
                     $('#id_modal_section').empty();
                     $('#id_modal_section').append("Course Dropped successfully!\n" );
+                    $('.ui.modal').modal('show');
                     $('#'+section_id+"_segment").empty();
                 }
             })

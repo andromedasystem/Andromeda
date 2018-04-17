@@ -88,6 +88,7 @@
                         <th>Time Slot</th>
                         <th>Location</th>
                         <th>Prerequisites</th>
+                        <th>Semester</th>
                         <th>Register</th>
                     </tr>
                 </thead>
@@ -136,17 +137,20 @@
                         var timeSlotCell = newRow.insertCell(6);
                         var locationCell = newRow.insertCell(7);
                         var prerequisiteCell = newRow.insertCell(8);
-                        var registerCell = newRow.insertCell(9);
+                        var semesterCell = newRow.insertCell(9);
+                        var registerCell = newRow.insertCell(10);
 {# editing faculty, meeeting days, time period, building, and room number  #}
                         var sectionIdText = document.createTextNode(element.section_id);
                         var courseNameText = document.createTextNode(element.course_name);
                         var departmentText = document.createTextNode(element.course_department);
                         var creditsText = document.createTextNode(element.credits);
                         var facultyText = document.createTextNode(element.faculty_name);
+                        var semesterText = document.createTextNode(element.semester_info);
                         var seatsText = $("<ul style='list-style:none; padding-left:0px'><li><span style='font-weight:bold'>Taken:</span>"+element.seats_taken+"</li><li><span style='font-weight:bold;'>Capacity:</span>"+element.seating_capacity+"</li></span>");
                         sectionIdCell.appendChild(sectionIdText);
                         courseNameCell.appendChild(courseNameText);
                         departmentCell.appendChild(departmentText);
+                        semesterCell.appendChild(semesterText);
                         creditsCell.appendChild(creditsText);
                         facultyCell.appendChild(facultyText);
                         locationCell.insertAdjacentHTML('afterbegin', "<ul style=\'list-style:none; padding-left:0px\'><li><span style=\'font-weight:bold\'>Building:</span>"+element.building_name+"</li><li><span style=\'font-weight:bold;\'>Room Number:</span>"+element.room_number+"</li></span>");

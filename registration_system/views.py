@@ -464,7 +464,9 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
             }
 
             return HttpResponse(json.dumps(data), content_type="application/json")
+
         sections = Section.objects.filter(faculty_id=user_profile.faculty)
+
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
                              'registration_system', 'js', 'nav-holder.jsx'),
@@ -575,8 +577,10 @@ class ViewStudentSchedule(LoginRequiredMixin, generic.View):
                     faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
                     sections_array.append({
                         'section_id': e.section_id_id,
+                        'course_department': e.section_id.course_id.department_id.name,
                         'course_name': e.section_id.course_id.name,
                         'professor': faculty_name,
+                        'semester': e.section_id.semester_id.season + '-' + str(e.section_id.semester_id.year) + '--' + e.section_id.semester_id.status,
                         'credits': e.section_id.course_id.credits,
                         'room_number': e.section_id.room_id.room_number,
                         'building': e.section_id.room_id.building_id.name,
@@ -701,7 +705,7 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
         enrollments_array = []
         grades = 0.0
         counter = 0
-        print(enrollments)
+        # print(enrollments)
         for e in enrollments:
             if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
                 grades += self.grading_key[e.grade]
@@ -774,7 +778,7 @@ class ViewStudentTranscript(LoginRequiredMixin, generic.View):
     def post(self, request, *args, **kwargs):
         username = request.POST.get('username')
         email = request.POST.get('email')
-        print(request.POST)
+        # print(request.POST)
 
         if username:
             user = User.objects.get(username=username)
@@ -1074,8 +1078,8 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
             faculty_id = request.GET.get('faculty_id')
             period_id = request.GET.get('period_id')
             section = None
-            print(department_id)
-            print(department_name)
+            # print(department_id)
+            # print(department_name)
             # if department_id == '---------' and course_id == '---------' and
             if department_id is not None and department_id != '':
                 section = Section.objects.filter(course_id__department_id_id=int(department_id))
@@ -1093,8 +1097,8 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
             student_id = user.userprofile.student.student_id_id
             section_array = []
             for s in section:
-                print(s)
-                print("here\n")
+                # print(s)
+                # print("here\n")
                 can_register = True
                 prerequisites_array = []
                 for p in Prerequisite.objects.filter(course_id=s.course_id):
@@ -1108,6 +1112,7 @@ class RegisterCourse(LoginRequiredMixin, generic.View):
                             can_register = False
                 data = {
                     'section_id': s.section_id,
+                    'semester_info': s.semester_id.season + '-' + str(s.semester_id.year) + '--' + s.semester_id.status,
                     'course_id': s.course_id.course_id,
                     'course_department': s.course_id.department_id.name,
                     'course_name': s.course_id.name,
@@ -1589,7 +1594,7 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             days_id = request.GET.get('days_id')
             faculty_id = request.GET.get('faculty_id')
             section = None
-            print(department_id)
+            # print(department_id)
 
             if (course_id is not None and int(course_id) != 0) and (faculty_id is not None and int(faculty_id) != 0) and (days_id is not None and int(days_id) !=0):
                 section = Section.objects.filter(faculty_id=int(faculty_id), time_slot_id__days_id=int(days_id),
@@ -1681,8 +1686,8 @@ class UpdateSection(LoginRequiredMixin, generic.View):
 
             section_array = []
             for s in section:
-                print(s)
-                print("here\n")
+                # print(s)
+                # print("here\n")
                 data = {
                     'faculty_array': faculty,
                     'departments_array': departments,
@@ -1759,8 +1764,8 @@ class UpdateSection(LoginRequiredMixin, generic.View):
             faculty = Faculty.objects.get(pk=int(faculty_id))
             time_period = request.POST.get('time_period')
             days = request.POST.get('days')
-            print(time_period)
-            print(days)
+            # print(time_period)
+            # print(days)
             try:
                 time_slot = TimeSlot.objects.get(days_id=int(days), period_id=int(time_period))
             except TimeSlot.DoesNotExist:
@@ -1834,7 +1839,7 @@ class CreateSection(LoginRequiredMixin, generic.View):
                 courses = Course.objects.filter(department_id=int(department_id))
                 course_array = []
                 for c in courses:
-                    print(c)
+                    # print(c)
                     data = {
                         'course_id': c.course_id,
                         'department_name': department_name,
@@ -1926,7 +1931,7 @@ class UpdateCourse(LoginRequiredMixin, generic.View):
             courses = Course.objects.filter(department_id=int(department_id))
             course_array = []
             for c in courses:
-                print(c)
+                # print(c)
                 data = {
                     'course_id': c.course_id,
                     'department_name': department_name,
@@ -2018,7 +2023,7 @@ class UpdateUser(LoginRequiredMixin, generic.View):
                 user = User.objects.filter(last_name=last_name)
             user_array = []
             for u in user:
-                print(u)
+                # print(u)
                 user_profile = UserProfile.objects.get(user_id=u.id)
                 data = {
                     'user_id': u.id,
@@ -2106,8 +2111,8 @@ class CreateUser(LoginRequiredMixin, generic.View):
 
             user_form = self.user_form_class(request.POST, instance=User())
             user_profile_form = self.user_profile_form_class(request.POST, instance=UserProfile())
-            print(user_form.errors)
-            print(user_profile_form.errors)
+            # print(user_form.errors)
+            # print(user_profile_form.errors)
             if user_form.is_valid() and user_profile_form.is_valid():
                 username = user_form.cleaned_data['username']
                 password = user_form.cleaned_data['password']
@@ -2123,7 +2128,7 @@ class CreateUser(LoginRequiredMixin, generic.View):
                     user_profile.save()
                     admin = Admin.objects.create(admin_id=user_profile)
                     data['is_successful'] = True
-                    print(admin)
+                    # print(admin)
                 elif user_type == 'R':
                     user_profile.user_type = 'R'
                     user_profile.save()
@@ -2163,7 +2168,7 @@ class CreateUser(LoginRequiredMixin, generic.View):
                         faculty = Faculty.objects.create(faculty_id=user_profile, department_id=department_id,
                                                          faculty_type=faculty_type.strip())
                         data['is_successful'] = True
-                        print(faculty)
+                        # print(faculty)
                 # data['errors'] = self.user_form_class.errors if self.user_form_class.errors else None
                 # data['errors'] = self.user_profile_form_class.errors if self.user_profile_form_class.errors else None
                 # data['errors'] = self.faculty_form_class.errors if self.faculty_form_class.errors else None
@@ -2250,8 +2255,8 @@ class CreateCourse(LoginRequiredMixin, generic.View):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        print(form.is_valid())
-        print(form.errors)
+        # print(form.is_valid())
+        # print(form.errors)
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
@@ -2289,7 +2294,7 @@ class UserDisplay(LoginRequiredMixin, generic.View):
                 self.is_researcher = True
             elif userprofile.has_faculty():
                 faculty = Faculty.objects.get(faculty_id=userprofile)
-                print(faculty)
+                # print(faculty)
                 self.is_faculty = True
         is_student = self.is_full_time_student or self.is_part_time_student
 
@@ -2370,7 +2375,7 @@ def get_attendance_csv_report(request):
             meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] = meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] + 1
             meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['class'] = m.enrollment_id.section_id.course_id.name
 
-    print(meeting_dates)
+    # print(meeting_dates)
 
     for key, value in meeting_dates.items():
         writer.writerow([value['date'], value['class'], value['tally']])

@@ -172,8 +172,8 @@ class Faculty(models.Model):
 
     faculty_type = models.CharField(max_length=1, choices=FACULTY_CHOICES)
 
-    def __str__(self):
-        return '{} {} {}'.format(self.faculty_id, self.department_id, self.faculty_type)
+    # def __str__(self):
+    #     return '{} {} {}'.format(self.faculty_id, self.department_id, self.faculty_type)
 
     def has_full_time_faculty(self):
         has_ft = False
@@ -435,7 +435,7 @@ class Enrollment(models.Model):
     grade = models.CharField(max_length=2, default='NA', choices=GRADE_CHOICES)
 
     def __str__(self):
-        return '{} {} {} {}'.format(self.student_id, self.section_id, self.enrollment_id, self.grade)
+        return '{} {} {}'.format(self.student_id, self.section_id, self.grade)
 
     def grade_c_or_above(self):
         return self.grade in ['A', 'A-', 'B', 'B-', 'C',]

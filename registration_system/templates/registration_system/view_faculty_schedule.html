@@ -12,51 +12,50 @@
     <div class="ui container m-top2" style="margin-bottom: 3em;">
         {% if sections %}
             {% for s in sections %}
-                <div id="{{ s.section_id }}_segment" style="margin-bottom: 2em;">
-                    <div class="ui top attached header">
-                      Course Name
+                <div class="ui segments" id="{{ s.section_id }}_segment" style="margin-bottom: 2em;">
+                    <div class="ui segment ">
+                        <h1>{{ s.course_id.name }}</h1>
                     </div>
-                    <div class="ui attached segment">
-                      <p>{{ s.course_id.name }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                      Credits
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.course_id.credits }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Location
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.room_id.building_id.name }} -- {{ s.room_id.room_number }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Time Slot
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.time_slot_id.days_id.day_1 }} -- {{ s.time_slot_id.days_id.day_2 }}</p><br/>
-                        <p>{{ s.time_slot_id.period_id.start_time }} -- {{ s.time_slot_id.period_id.end_time }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Seating
-                    </h5>
-                    <div class="ui attached segment">
-                      <p>{{ s.seats_taken }}/{{ s.room_id.capacity }}</p>
-                    </div>
-                    <h5 class="ui attached header">
-                        Prerequisites
-                    </h5>
-                    <div class="ui attached segment">
-                        <div class="ui celled list">
-                        {% for p in s.prerequisites %}
-                            <div class="item">
-                                <div class="content">
-                                    <div class="header">{{ p.name }}</div>
-                                </div>
-                            </div>
-                        {% endfor %}
+                    <div class="ui segments">
+                        <h5 class="ui attached header">
+                          Credits
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.course_id.credits }}</p>
                         </div>
+                        <h5 class="ui attached header">
+                            Location
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.room_id.building_id.name }} -- {{ s.room_id.room_number }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Time Slot
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.time_slot_id.days_id.day_1 }} -- {{ s.time_slot_id.days_id.day_2 }}</p><br/>
+                            <p>{{ s.time_slot_id.period_id.start_time }} -- {{ s.time_slot_id.period_id.end_time }}</p>
+                        </div>
+                        <h5 class="ui attached header">
+                            Seating
+                        </h5>
+                        <div class="ui attached segment">
+                          <p>{{ s.seats_taken }}/{{ s.room_id.capacity }}</p>
+                        </div>
+{#                        <h5 class="ui attached header">#}
+{#                            Prerequisites#}
+{#                        </h5>#}
+{#                        <div class="ui attached segment">#}
+{#                            <div class="ui celled list">#}
+{#                            {% for p in s.prerequisites %}#}
+{#                                <div class="item">#}
+{#                                    <div class="content">#}
+{#                                        <div class="header">{{ p.name }}</div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            {% endfor %}#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
                 </div>
                 <br/>
