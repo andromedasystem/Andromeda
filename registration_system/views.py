@@ -205,10 +205,30 @@ class ViewGraphs(LoginRequiredMixin, generic.View):
                 grades_tally[7] = grades_tally[7] + 1
             elif e.grade == 'F':
                 grades_tally[8] = grades_tally[8] + 1
+
+        meeting_dates = {}
+        for m in Meetings.objects.values('meeting_date').distinct():
+            # print(m)
+            meeting_dates[m['meeting_date'].strftime("%Y-%m-%d")] = {
+                'date': m['meeting_date'].strftime("%Y-%m-%d"),
+                'tally': 0
+            }
+        for m in Meetings.objects.all():
+            if m.meeting_date.strftime("%Y-%m-%d") == meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['date']:
+                meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] = meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] + 1
+        print(meeting_dates)
+        meeting_date_x_axis = []
+        meeting_date_y_axis = []
+        for key, value in meeting_dates.items():
+            meeting_date_x_axis.append(value['date'])
+            meeting_date_y_axis.append(value['tally'])
+
         context = {
             'rendered': rendered,
             'x_axis': grades,
-            'y_axis': grades_tally
+            'y_axis': grades_tally,
+            'meeting_dates_x_axis': meeting_date_x_axis,
+            'meeting_dates_y_axis': meeting_date_y_axis
         }
 
         return render(request, self.template_name, context)
@@ -2328,6 +2348,32 @@ def get_csv_report(request):
             cumulative_gpa = float(grades / counter)
         writer.writerow([s.student_id.user.first_name + ' ' + s.student_id.user.last_name, cumulative_gpa])
 
+    return response
+
+
+def get_attendance_csv_report(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Date ', 'Class', 'Tally'])
+
+    meeting_dates = {}
+    for m in Meetings.objects.values('meeting_date').distinct():
+        # print(m)
+        meeting_dates[m['meeting_date'].strftime("%Y-%m-%d")] = {
+            'date': m['meeting_date'].strftime("%Y-%m-%d"),
+            'tally': 0,
+            'class': None
+        }
+    for m in Meetings.objects.all():
+        if m.meeting_date.strftime("%Y-%m-%d") == meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['date']:
+            meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] = meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['tally'] + 1
+            meeting_dates[m.meeting_date.strftime("%Y-%m-%d")]['class'] = m.enrollment_id.section_id.course_id.name
+
+    print(meeting_dates)
+
+    for key, value in meeting_dates.items():
+        writer.writerow([value['date'], value['class'], value['tally']])
     return response
 
 

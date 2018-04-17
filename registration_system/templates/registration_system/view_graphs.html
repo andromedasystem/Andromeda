@@ -9,13 +9,26 @@
     <div class="ui container">
         {{ rendered|safe }}
     </div>
-    <h1>Student Grades Graph:</h1>
+    <h1>Student Overrall Grading Graph:</h1>
     <div id="student_plot" style="width: 600px; height:250px;" class="ui container">
 
     </div>
 
+    <h1>Student Attendance Graph</h1>
+    <div id="attendance_plot" style="width: 600px; height:250px;" class="ui container">
+
+    </div>
+
     <script>
-        var PLOT = document.getElementById('student_plot');
+        let ATTENDANCE_PLOT = document.getElementById('attendance_plot');
+        Plotly.plot(ATTENDANCE_PLOT, [{
+            type: 'bar',
+            x: {{ meeting_dates_x_axis|safe }},
+            y: {{ meeting_dates_y_axis|safe }}
+        }], {
+            margin: { t: 0}
+        });
+        let PLOT = document.getElementById('student_plot');
         Plotly.plot(PLOT, [{
             type: 'bar',
             x: {{ x_axis|safe }},
@@ -23,6 +36,10 @@
         }], {
             margin: { t: 0}
         });
+    </script>
+
+    <script>
+
     </script>
 {#    {{ form }}#}
 
