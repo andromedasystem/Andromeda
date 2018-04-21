@@ -706,6 +706,14 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
         grades = 0.0
         counter = 0
         # print(enrollments)
+        student_major_rec = StudentMajor.objects.get(student_id=student)
+        student_major = student_major_rec.major_id.name
+        student_major_dep = student_major_rec.major_id.department_id.name
+        adviser_array = []
+        for a in Advising.objects.filter(student_id=student):
+            adviser_array.append({
+                'adviser_name': a.faculty_id.faculty_id.user.first_name + ' ' + a.faculty_id.faculty_id.user.last_name
+            })
         for e in enrollments:
             if e.grade != 'I' and e.grade != 'W' and e.grade != 'NA':
                 grades += self.grading_key[e.grade]
@@ -737,7 +745,11 @@ class ViewStudentTranscriptResult(LoginRequiredMixin, generic.View):
         context = {
             'rendered': rendered,
             'enrollment_array': enrollments_array,
-            'cumulative_gpa': cumulative_gpa
+            'cumulative_gpa': cumulative_gpa,
+            'student_name': student.student_id.user.first_name + ' ' + student.student_id.user.last_name,
+            'birth_date': student.date_of_birth.strftime("%Y-%m-%d"),
+            'student_advisers': adviser_array,
+            'major_and_department': student_major + " / " + student_major_dep
         }
 
         return render(request, self.template_name, context)
@@ -819,6 +831,15 @@ class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
             else:
                 redirect('/student_system/')
 
+        student_major_rec = StudentMajor.objects.get(student_id=userprofile.student)
+        student_major = student_major_rec.major_id.name
+        student_major_dep = student_major_rec.major_id.department_id.name
+        adviser_array = []
+        for a in Advising.objects.filter(student_id=userprofile.student):
+            adviser_array.append({
+                'adviser_name': a.faculty_id.faculty_id.user.first_name + ' ' + a.faculty_id.faculty_id.user.last_name
+            })
+
         enrollments = Enrollment.objects.filter(student_id=userprofile.student)
         enrollments_array = []
         grades = 0.0
@@ -853,8 +874,12 @@ class StudentViewStudentTranscript(LoginRequiredMixin, generic.View):
 
         context = {
             'rendered': rendered,
+            'student_name': userprofile.user.first_name + '' + userprofile.user.last_name,
             'enrollment_array': enrollments_array,
-            'cumulative_gpa': cumulative_gpa
+            'birth_date': userprofile.student.date_of_birth.strftime("%Y-%m-%d"),
+            'cumulative_gpa': cumulative_gpa,
+            'student_advisers': adviser_array,
+            'major_and_department': student_major + ' / ' + student_major_dep
         }
 
         return render(request, self.template_name, context)

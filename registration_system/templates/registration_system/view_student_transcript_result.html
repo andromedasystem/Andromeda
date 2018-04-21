@@ -8,10 +8,24 @@
      <div class="ui container">
         {{ rendered|safe }}
     </div>
-    <div class="ui icon message">
+     <div class="ui icon message">
         <i class=""></i>
         <div class="content">
-            <div class="header">Cumulative GPA : {{ cumulative_gpa }}</div>
+            <div class="header">Birth Date: <span style="font-weight: 300;" >{{ birth_date }}</span></div>
+            <div class="header" style="margin-top: 1em;">Student Name: <span style="font-weight: 300;">{{ student_name }}</span></div>
+            {% if major_and_department %}
+                <div class="header" style="margin-top: 1em;">Major & Department:  <span style="font-weight: 300; ">{{ major_and_department }}</span></div>
+            {% else %}
+                <div class="header" style="margin-top: 1em;">Major & Department:  <span style="font-weight: 300;">No Major declared yet!</span></div>
+            {% endif %}
+            {% if student_adviser %}
+                {% for s in student_adviser %}
+                    <div class="header" style="margin-top: 1em;">Adviser:  <span style="font-weight: 300;">{{ s.adviser_name }}</span></div>
+                {% endfor %}
+            {% else %}
+                <div class="header" style="margin-top: 1em;">Adviser:  <span style="font-weight: 300;">No Adviser assigned yet!</span></div>
+            {% endif %}
+            <div class="header" style="margin-top: 1em;">Cumulative GPA :  <span style="font-weight: 300;">{{ cumulative_gpa }}</span></div>
         </div>
     </div>
     <table class="ui single line striped table">
