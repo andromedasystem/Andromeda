@@ -10,68 +10,89 @@
     </div>
 
     <div class="ui container m-top2 m-bottom4">
-        {% if sections %}
-            {% for s in sections %}
-                <div class="ui segments" id="{{ s.section_id }}_segment">
-                    <div class="ui segment">
-                      <h1>{{ s.course_name }}</h1>
-                    </div>
-                    <div class="ui segments">
-                        <h5 class="ui attached header">
-                          Professor
-                        </h5>
-                        <div class="ui attached segment">
-                          <p>{{ s.professor }}</p>
-                        </div>
-                        <h5 class="ui attached header">
-                          Credits
-                        </h5>
-                        <div class="ui attached segment">
-                          <p>{{ s.credits }}</p>
-                        </div>
-                        <h5 class="ui attached header">
-                            Location
-                        </h5>
-                        <div class="ui attached segment">
-                          <p>{{ s.building }} -- {{ s.room_number }}</p>
-                        </div>
-                        <h5 class="ui attached header">
-                            Time Slot
-                        </h5>
-                        <div class="ui attached segment">
-                          <p>{{ s.meeting_days }}</p><br/>
-                            <p>{{ s.time_period }}</p>
-                        </div>
-                        <h5 class="ui attached header">
-                            Seating
-                        </h5>
-                        <div class="ui attached segment">
-                          <p>{{ s.seats_taken }}/{{ s.seating_capacity }}</p>
-                        </div>
-                        <h5 class="ui attached header">
-                            Prerequisites
-                        </h5>
-                        <div class="ui attached segment">
-                            <div class="ui celled list">
-                            {% for p in s.prerequisites %}
-                                <div class="item">
-                                    <div class="content">
-                                        <div class="header">{{ p.name }}</div>
-                                    </div>
-                                </div>
+         <div class="ui form" id="ui-form">
+            <div class="inline fields">
+                <div class="field">
+                    <label for="id_semester_id">Semester/Year</label>
+                    <select class="ui fluid dropdown" name="semester_id" id="id_semester_id" required>
+                        <option value="true">-------</option>
+                        {% if semesters %}
+                            {% for s in semesters %}
+                                <option value="{{ s.semester_id }}">{{ s.year }}-{{ s.season }}-{{ s.status }}</option>
                             {% endfor %}
-                            </div>
-                        </div>
-                    </div>
+                        {% endif %}
+                    </select>
                 </div>
+            </div>
+         </div>
 
-            {% endfor %}
-        {% endif %}
+        <div id="content">
 
+        </div>
         <div id="success">
 
         </div>
     </div>
 
+    <script>
+        function getSections(){
+            removeSections();
+            var semester_id = $('#id_semester_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/student/view_student_schedule/",
+                data : {
+                    semester_id: semester_id
+                },
+                success: function(data) {
+                     data.sections_array.forEach(function(s){
+                           $('#content').append("<div class='ui segments' id='"+ s.section_id +"'_segment'>\n" +
+                                                "                    <div class=\"ui segment\">\n" +
+                                                "                      <h1>"+ s.course_name +"</h1>\n" +
+                                                "                    </div>\n" +
+                                                "                    <div class=\"ui segments\">\n" +
+                                                "                        <h5 class=\"ui attached header\">\n" +
+                                                "                          Professor\n" +
+                                                "                        </h5>\n" +
+                                                "                        <div class=\"ui attached segment\">\n" +
+                                                "                          <p>"+ s.professor +"</p>\n" +
+                                                "                        </div>\n" +
+                                                "                        <h5 class=\"ui attached header\">\n" +
+                                                "                          Credits\n" +
+                                                "                        </h5>\n" +
+                                                "                        <div class=\"ui attached segment\">\n" +
+                                                "                          <p>"+ s.credits +"</p>\n" +
+                                                "                        </div>\n" +
+                                                "                        <h5 class=\"ui attached header\">\n" +
+                                                "                            Location\n" +
+                                                "                        </h5>\n" +
+                                                "                        <div class=\"ui attached segment\">\n" +
+                                                "                          <p>"+ s.building +" -- "+ s.room_number +"</p>\n" +
+                                                "                        </div>\n" +
+                                                "                        <h5 class=\"ui attached header\">\n" +
+                                                "                            Time Slot\n" +
+                                                "                        </h5>\n" +
+                                                "                        <div class=\"ui attached segment\">\n" +
+                                                "                          <p>" + s.meeting_days +"</p><br/>\n" +
+                                                "                            <p>" + s.time_period +"</p>\n" +
+                                                "                        </div>\n" +
+                                                "                        <h5 class=\"ui attached header\">\n" +
+                                                "                            Seating\n" +
+                                                "                        </h5>\n" +
+                                                "                        <div class=\"ui attached segment\">\n" +
+                                                "                          <p>"+ s.seats_taken +" / "+ s.seating_capacity +"</p>\n" +
+                                                "                        </div>\n" +
+                                                "                    </div>\n" +
+                                                "                </div>")
+                     });
+                }
+            });
+        }
 
+        function removeSections(){
+            $('#content').empty();
+        }
+
+        $('#id_semester_id').change(getSections);
+    </script>
 {% endblock %}

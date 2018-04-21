@@ -513,6 +513,40 @@ class ViewFacultySchedule(LoginRequiredMixin, generic.View):
         else:
             redirect('/student_system/')
 
+        if request.is_ajax():
+            semester_id = request.GET.get('semester_id')
+            sections_array = []
+            for e in Enrollment.objects.filter(section_id__faculty_id=userprofile.faculty,
+                                               section_id__semester_id__semester_id=int(semester_id)):
+                prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+                prereq_array = []
+                for p in prerequisites:
+                    prereq_array.append({
+                        'name': p.course_required_id.name
+                    })
+                faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+                sections_array.append({
+                    'section_id': e.section_id_id,
+                    'course_name': e.section_id.course_id.name,
+                    'professor': faculty_name,
+                    'credits': e.section_id.course_id.credits,
+                    'room_number': e.section_id.room_id.room_number,
+                    'building': e.section_id.room_id.building_id.name,
+                    'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                    'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                                   + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                    'seats_taken': e.section_id.seats_taken,
+                    'seating_capacity': e.section_id.room_id.capacity,
+                    'prerequisites': prereq_array
+                })
+
+            data = {
+                'sections_array': sections_array,
+                'faculty_name': user.first_name + " " + user.last_name,
+                'is_successful': True
+            }
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
         sections = Section.objects.filter(faculty_id=userprofile.faculty)
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -526,7 +560,8 @@ class ViewFacultySchedule(LoginRequiredMixin, generic.View):
 
         context = {
             'rendered': rendered,
-            'sections': sections
+            'sections': sections,
+            'semesters': Semester.objects.all()
         }
 
         return render(request, self.template_name, context)
@@ -632,31 +667,38 @@ class StudentViewSchedule(LoginRequiredMixin, generic.View):
             else:
                 redirect('/student_system/')
 
-        student = userprofile.student
-        enrollment = Enrollment.objects.filter(student_id=student)
-        sections_array = []
-        for e in enrollment:
-            prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
-            prereq_array = []
-            for p in prerequisites:
-                prereq_array.append({
-                    'name': p.course_required_id.name
-                })
-            faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
-            sections_array.append({
-                'section_id': e.section_id_id,
-                'course_name': e.section_id.course_id.name,
-                'professor': faculty_name,
-                'credits': e.section_id.course_id.credits,
-                'room_number': e.section_id.room_id.room_number,
-                'building': e.section_id.room_id.building_id.name,
-                'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
-                'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
-                               + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
-                'seats_taken': e.section_id.seats_taken,
-                'seating_capacity': e.section_id.room_id.capacity,
-                'prerequisites': prereq_array
-            })
+        if request.is_ajax():
+                semester_id = request.GET.get('semester_id')
+                sections_array = []
+                for e in Enrollment.objects.filter(student_id=userprofile.student, section_id__semester_id__semester_id=int(semester_id)):
+                    prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+                    prereq_array = []
+                    for p in prerequisites:
+                        prereq_array.append({
+                            'name': p.course_required_id.name
+                        })
+                    faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+                    sections_array.append({
+                        'section_id': e.section_id_id,
+                        'course_name': e.section_id.course_id.name,
+                        'professor': faculty_name,
+                        'credits': e.section_id.course_id.credits,
+                        'room_number': e.section_id.room_id.room_number,
+                        'building': e.section_id.room_id.building_id.name,
+                        'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                        'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                                       + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                        'seats_taken': e.section_id.seats_taken,
+                        'seating_capacity': e.section_id.room_id.capacity,
+                        'prerequisites': prereq_array
+                    })
+
+                data = {
+                    'sections_array': sections_array,
+                    'student_name': user.first_name + " " + user.last_name,
+                    'is_successful': True
+                }
+                return HttpResponse(json.dumps(data), content_type="application/json")
 
         rendered = render_component(
             os.path.join(os.getcwd(), 'registration_system', 'static',
@@ -669,8 +711,8 @@ class StudentViewSchedule(LoginRequiredMixin, generic.View):
         )
 
         context = {
+            'semesters': Semester.objects.all(),
             'rendered': rendered,
-            'sections': sections_array
         }
         return render(request, self.template_name, context)
 
