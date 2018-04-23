@@ -479,7 +479,8 @@ class SubmitGrades(LoginRequiredMixin, generic.View):
 
         context = {
             'rendered': rendered,
-            'sections': sections
+            'sections': sections,
+            'semesters': Semester.objects.all()
         }
 
         return render(request, self.template_name, context)
@@ -2472,6 +2473,50 @@ def create_time_slot(request):
         data['is_successful'] = True
     else:
         data['is_successful'] = False
+    return JsonResponse(data)
+
+
+def get_grading_sections(request):
+    user = request.user
+    faculty_id = user.userprofile.faculty
+    if request.is_ajax():
+        semester_id = request.GET.get('semester_id')
+        sections_array = []
+        for e in Enrollment.objects.filter(section_id__faculty_id=faculty_id,
+                                           section_id__semester_id__semester_id=int(semester_id)):
+            prerequisites = Prerequisite.objects.filter(course_id=e.section_id.course_id)
+            prereq_array = []
+            for p in prerequisites:
+                prereq_array.append({
+                    'name': p.course_required_id.name
+                })
+            faculty_name = e.section_id.faculty_id.faculty_id.user.first_name + " " + e.section_id.faculty_id.faculty_id.user.last_name
+            sections_array.append({
+                'section_id': e.section_id_id,
+                'course_name': e.section_id.course_id.name,
+                'professor': faculty_name,
+                'credits': e.section_id.course_id.credits,
+                'room_number': e.section_id.room_id.room_number,
+                'building': e.section_id.room_id.building_id.name,
+                'meeting_days': e.section_id.time_slot_id.days_id.day_1 + " " + e.section_id.time_slot_id.days_id.day_2,
+                'time_period': e.section_id.time_slot_id.period_id.start_time.strftime('%H:%M %p') + "-"
+                               + e.section_id.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+                'seats_taken': e.section_id.seats_taken,
+                'seating_capacity': e.section_id.room_id.capacity,
+                'prerequisites': prereq_array,
+                'semester_season': e.section_id.semester_id.season,
+                'semester_year': e.section_id.semester_id.year,
+                'semester_status': e.section_id.semester_id.status
+            })
+        data = {
+            'sections_array': sections_array,
+            'faculty_name': user.first_name + " " + user.last_name,
+            'is_successful': True
+        }
+    else:
+        data = {
+            'is_successful': False
+        }
     return JsonResponse(data)
 
 

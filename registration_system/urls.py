@@ -38,6 +38,7 @@ urlpatterns = [
     # url(r'^take_attendance/(?P<section_id>\d+)/', core_views.AttendanceSubmitted.as_view(), name='attendance_submitted'),
     url(r'^view_attendance/$', core_views.ViewAttendance.as_view(), name='view_attendance'),
     url(r'^submit_grades/$', core_views.SubmitGrades.as_view(), name="submit_grades"),
+    url(r'^submit_grades/get_sections/$', core_views.get_grading_sections, name='get_grading_sections'),
     url(r'^change_semester/$', core_views.ChangeSemesterStatus.as_view(), name="change_semester"),
     url(r'^view_graphs/$', core_views.ViewGraphs.as_view(), name='view_graphs'),
     url(r'^create_report/$', core_views.CreateReport.as_view(), name='create_report'),

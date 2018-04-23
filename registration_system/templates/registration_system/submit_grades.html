@@ -11,37 +11,22 @@
     </div>
 
     <div class="ui container m-top2">
-        {% if sections %}
-            {% for s in sections %}
-                <div class="ui segments">
-                  <div class="ui segment">
-                    <h1>{{ s.course_id.name }}</h1>
-                  </div>
-                  <div class="ui segments">
-                    <div class="ui segment">
-                      <strong>Building Name: </strong><p>{{ s.room_id.building_id.name }}</p>
-                    </div>
-                    <div class="ui segment">
-                      <strong>Room Number: </strong><p>{{ s.room_id.room_number }}</p>
-                    </div>
-                    <div class="ui segment">
-                      <strong>Time Slot: </strong><p>{{ s.time_slot_id.days_id.day_1 }} {{ s.time_slot_id.days_id.day_2 }} ---- {{ s.time_slot_id.period_id.start_time }}-{{ s.time_slot_id.period_id.end_time }}</p>
-                    </div>
-                    <div class="ui segment">
-                        <strong>Season/Semester</strong><p>{{ s.semester_id.season }} -  {{ s.semester_id.year }}</p>
-                    </div>
-                  </div>
-                    <div class="ui segment">
-                        {% if s.semester_id.status == 'OPEN_GRADING' %}
-                            <button onclick="getSectionStudents({{ s.section_id }})" class="ui primary button"  type="button">Grading</button>
+        <div class="ui form" id="ui-form">
+            <div class="inline fields">
+                <div class="field">
+                    <label for="id_semester_id">Semester/Year</label>
+                    <select class="ui fluid dropdown" name="semester_id" id="id_semester_id" required>
+                        <option value="true">-------</option>
+                        {% if semesters %}
+                            {% for s in semesters %}
+                                <option value="{{ s.semester_id }}">{{ s.year }}-{{ s.season }}-{{ s.status }}</option>
+                            {% endfor %}
                         {% endif %}
-                    </div>
-
+                    </select>
                 </div>
-            {% endfor %}
-        {% else %}
-            <h1><i class="fas fa-exclamation-triangle"></i> No Courses Taught</h1>
-        {% endif %}
+            </div>
+         </div>
+         <div id="content"></div>
         <div class="ui modal">
           <div id="id_modal_section" class="header"></div>
           <div  class="scrolling content">
@@ -52,6 +37,46 @@
     </div>
 
     <script>
+
+        function getSectionsTaught() {
+            let semester_id = $('#id_semester_id').val();
+            $.ajax({
+                type: "GET",
+                url: "/student_system/submit_grades/get_sections/",
+                data : {
+                    semester_id: semester_id
+                },
+                success: function(data) {
+                    data.sections_array.forEach(function(s){
+                        $('#content').append("<div class=\"ui segments\">\n" +
+                            "                  <div class=\"ui segment\">\n" +
+                            "                    <h1>"+s.course_name+"</h1>\n" +
+                            "                  </div>\n" +
+                            "                  <div class=\"ui segments\">\n" +
+                            "                    <div class=\"ui segment\">\n" +
+                            "                      <strong>Building Name: </strong><p>"+ s.building +"</p>\n" +
+                            "                    </div>\n" +
+                            "                    <div class=\"ui segment\">\n" +
+                            "                      <strong>Room Number: </strong><p>"+ s.room_number +"</p>\n" +
+                            "                    </div>\n" +
+                            "                    <div class=\"ui segment\">\n" +
+                            "                      <strong>Time Slot: </strong><p>"+s.meeting_days+" ---- "+s.time_period+"</p>\n" +
+                            "                    </div>\n" +
+                            "                    <div class=\"ui segment\">\n" +
+                            "                        <strong>Season/Semester</strong><p>"+s.semester_season +" - " + s.semester_year +"</p>\n" +
+                            "                    </div>\n" +
+                            "                  </div>\n" +
+                            "                    <div id='"+s.section_id+"__grading' class=\"ui segment\">\n" +
+                            "                    </div>\n" +
+                            "\n" +
+                            "                </div>");
+                            if( s.semester_status === 'OPEN GRADING') {
+                                $('#' + s.section_id + "__grading").append("<button onclick='getSectionStudents("+ s.section_id +")' class='ui primary button'  type='button'>Grading</button>");
+                            }
+                    })
+                }
+            })
+        }
 
         function getSectionStudents(section_id) {
             $('#id_modal_content').empty();
@@ -118,6 +143,8 @@
                 }
             });
         }
+
+        $('#id_semester_id').change(getSectionsTaught);
 
     </script>
 {% endblock %}
