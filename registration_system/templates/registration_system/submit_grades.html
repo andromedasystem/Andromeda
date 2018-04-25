@@ -39,7 +39,9 @@
     <script>
 
         function getSectionsTaught() {
+            $('#content').empty();
             let semester_id = $('#id_semester_id').val();
+            if(semester_id === "true"){ return; }
             $.ajax({
                 type: "GET",
                 url: "/student_system/submit_grades/get_sections/",
@@ -70,7 +72,8 @@
                             "                    </div>\n" +
                             "\n" +
                             "                </div>");
-                            if( s.semester_status === 'OPEN GRADING') {
+                            {#console.log(s.semester_status);#}
+                            if( s.semester_status === 'OPEN_GRADING') {
                                 $('#' + s.section_id + "__grading").append("<button onclick='getSectionStudents("+ s.section_id +")' class='ui primary button'  type='button'>Grading</button>");
                             }
                     })
@@ -88,7 +91,7 @@
                     section_id: section_id
                 },
                 success: function (data) {
-                    console.log(data);
+                    {#console.log(data);#}
                     $('#id_modal_section').append("<h1>"+data.section_name+"</h1>");
                     {# hidden input for section_id #}
                      data.students_array.forEach(function(e) {

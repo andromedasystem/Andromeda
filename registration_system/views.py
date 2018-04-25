@@ -2658,3 +2658,166 @@ def get_master_schedule_input_data(request):
 class MasterScheduleView(generic.TemplateView):
     template_name = 'registration_system/master_schedule.html'
 
+
+@csrf_exempt
+def get_master_schedule_search_data_v2(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    department_id = body['department_id']
+    faculty_id = body['faculty_id']
+    days_id = body['days_id']
+    time_period_id = body['period_id']
+    building_id = body['building_id']
+    room_id = body['room_id']
+    course_name = body['course_name']
+    semester_id = body['semester_id']
+    section = None
+    schedule_data = []
+    # if department_id:
+    #     if faculty_id:
+    #         pass
+    #     elif days_id:
+    #         pass
+    #     elif time_period_id:
+    #         pass
+    #     elif building_id:
+    #         pass
+    #     elif room_id:
+    #         pass
+    #     elif semester_id:
+    #         pass
+    #     else:
+    #         pass
+    # elif faculty_id:
+    #     if semester_id:
+    #     if days_id:
+    #         pass
+    #     elif time_period_id:
+    #         pass
+    #     elif building_id:
+    #         pass
+    #     elif room_id:
+    #         pass
+    #     elif course_name:
+    #         pass
+    #     else:
+    #         pass
+    # elif course_name:
+    #     if faculty_id:
+    #         pass
+    #     elif days_id:
+    #         pass
+    #     elif time_period_id:
+    #         pass
+    #     elif building_id:
+    #         pass
+    #     elif room_id:
+    #         pass
+    #     elif semester_id:
+    #         pass
+    #     else:
+    #         pass
+    if department_id:
+        section = Section.objects.filter(course_id__department_id_id=int(department_id))
+        if department_id and building_id:
+            print(building_id)
+            print(department_id)
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), room_id__building_id_id=int(building_id))
+            print("here")
+        if department_id and room_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), room_id_id=int(room_id))
+            # print("here")
+        if department_id and semester_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), semester_id_id=int(semester_id))
+        if department_id and faculty_id and semester_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), faculty_id_id=int(faculty_id),
+                                             semester_id_id=int(semester_id))
+        if department_id and faculty_id and days_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), faculty_id_id=int(faculty_id),
+                                             time_slot_id__days_id_id=int(days_id))
+        if department_id and faculty_id and time_period_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), faculty_id_id=int(faculty_id),
+                                             time_slot_id__period_id_id=int(time_period_id))
+        if department_id and faculty_id and building_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), faculty_id_id=int(faculty_id),
+                                             room_id__building_id_id=int(building_id))
+        if department_id and faculty_id and room_id:
+            section = Section.objects.filter(course_id__department_id_id=int(department_id), faculty_id_id=int(faculty_id),
+                                             room_id_id=int(room_id))
+    elif faculty_id:
+        section = Section.objects.filter(faculty_id_id=int(faculty_id))
+        if faculty_id and semester_id:
+            section = Section.objects.filter(faculty_id_id=int(faculty_id), semester_id_id=int(semester_id))
+        if faculty_id and days_id:
+            section = Section.objects.filter(faculty_id_id=int(faculty_id), time_slot_id__days_id_id=int(days_id))
+        if faculty_id and time_period_id:
+            section = Section.objects.filter(faculty_id_id=int(faculty_id), time_slot_id__period_id_id=int(time_period_id))
+        if faculty_id and semester_id and days_id:
+            section = Section.objects.filter(faculty_id_id=int(faculty_id), semester_id_id=int(semester_id),
+                                             time_slot_id__days_id_id=int(days_id))
+        if faculty_id and semester_id and time_period_id:
+            section = Section.objects.filter(faculty_id_id=int(faculty_id), semester_id_id=int(semester_id),
+                                             time_slot_id__period_id_id=int(time_period_id))
+    elif days_id:
+        section = Section.objects.filter(time_slot_id__days_id_id=int(days_id))
+        if days_id and time_period_id:
+            section = Section.objects.filter(time_slot_id__days_id_id=int(days_id),
+                                             time_slot_id__period_id_id=int(time_period_id))
+        if days_id and semester_id:
+            section = Section.objects.filter(time_slot_id__days_id_id=int(days_id), semester_id_id=int(semester_id))
+    elif time_period_id:
+        section = Section.objects.filter(time_slot_id__period_id_id=int(time_period_id))
+        if time_period_id and semester_id:
+            section = Section.objects.filter(time_slot_id__period_id_id=int(time_period_id), semester_id_id=int(semester_id))
+    elif building_id:
+        section = Section.objects.filter( room_id__building_id_id=int(building_id))
+        if building_id and room_id:
+            section = Section.objects.filter( room_id__building_id_id=int(building_id), room_id_id=int(room_id))
+        if building_id and room_id and semester_id:
+            section = Section.objects.filter( room_id__building_id_id=int(building_id),
+                                             room_id_id=int(room_id), semester_id_id=int(semester_id))
+        if building_id and semester_id:
+            section = Section.objects.filter( room_id__building_id_id=int(building_id),
+                                             semester_id_id=int(semester_id))
+    elif room_id:
+        section = Section.objects.filter(room_id_id=int(room_id))
+        if room_id and semester_id:
+            section = Section.objects.filter(room_id_id=int(room_id), semester_id_id=int(semester_id))
+    elif course_name:
+        section = Section.objects.filter(course_id__name__contains=course_name)
+        if course_name and semester_id:
+            section = Section.objects.filter(course_id__name__contains=course_name, semester_id_id=semester_id)
+    elif semester_id:
+        section = Section.objects.filter(semester_id_id=int(semester_id))
+
+    for s in section:
+        faculty = Faculty.objects.get(pk=int(s.faculty_id_id))
+        faculty_name = faculty.faculty_id.user.first_name + ' ' + faculty.faculty_id.user.last_name
+        prerequisites = Prerequisite.objects.filter(course_id=s.course_id)
+        prereq_array = []
+        for p in prerequisites:
+            prereq_array.append({
+                'name': p.course_required_id.name
+            })
+        data = {
+            'faculty': faculty_name,
+            'course_name': s.course_id.name,
+            'course_description': s.course_id.description,
+            'department': s.course_id.department_id.name,
+            'semester_year': s.semester_id.year,
+            'semester_season': s.semester_id.season,
+            'semester_status': s.semester_id.status,
+            'section_id': s.section_id,
+            'credits' : s.course_id.credits,
+            'seats_taken': s.seats_taken,
+            'capacity': s.room_id.capacity,
+            'meeting_days': s.time_slot_id.days_id.day_1 + ' ' + s.time_slot_id.days_id.day_2,
+            'time_period': s.time_slot_id.period_id.start_time.strftime('%H:%M %p') + '-'
+                           + s.time_slot_id.period_id.end_time.strftime('%H:%M %p'),
+            'room': s.room_id.room_number,
+            'building': s.room_id.building_id.name,
+            'prerequisites': prereq_array
+        }
+        schedule_data.append(data)
+
+    return HttpResponse(json.dumps(schedule_data), content_type="application/json")

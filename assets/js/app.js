@@ -9,6 +9,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
+
         };
         this.onBlur = this.onBlur.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -109,7 +110,15 @@ class App extends React.Component {
                     submittedValue: false,
                     rooms: room_options,
                     faculty: faculty_options,
-                    isLoading: false
+                    isLoading: false,
+                    semester_id: false,
+                    department_id: false,
+                    faculty_id: false,
+                    days_id: false,
+                    period_id: false,
+                    building_id: false,
+                    room_id: false,
+                    course_name: false
                 };
 
                 this.setState(this.baseState);
@@ -127,7 +136,7 @@ class App extends React.Component {
 
     onBlur(){
         this.setState({
-            submittedValue: this.state.course_name_input,
+            course_name: this.state.course_name_input,
             attributeFlag: 'course_name'
         })
     }
@@ -137,30 +146,94 @@ class App extends React.Component {
         console.log(id);
         if( value === true){
             console.log(this.state);
-            this.setState(this.baseState);
+
+             switch (id) {
+                case 'semester_select':
+                    this.setState({
+                        semester_id: false
+                    });
+                    break;
+                case 'department_select':
+                    this.setState({
+                        department_id: false
+                    });
+                    break;
+                case 'faculty_select':
+                    this.setState({
+                        faculty_id: false
+                    });
+                    break;
+                case 'days_select':
+                    this.setState({
+                        days_id: false
+                    });
+                    break;
+                case 'time_period_select':
+                    this.setState({
+                        period_id: false
+                    });
+                    break;
+                case 'building_select':
+                    this.setState({
+                        building_id: false
+                    });
+                    break;
+                case 'room_select':
+                    this.setState({
+                        room_id: false
+                    });
+                    break;
+            }
+            if(!this.state.room_id && !this.state.building_id
+                && !this.state.period_id && !this.state.days_id
+                && !this.state.faculty_id && !this.state.department_id && !this.state.semester_id) {
+                this.setState(this.baseState);
+            }
+
         } else {
             let attribute_flag;
             switch (id) {
                 case 'semester_select':
                     attribute_flag = 'semester';
+                    this.setState({
+                        semester_id: value
+                    });
                     break;
                 case 'department_select':
                     attribute_flag = 'department';
+                    this.setState({
+                        department_id: value
+                    });
                     break;
                 case 'faculty_select':
                     attribute_flag = 'faculty';
+                    this.setState({
+                        faculty_id: value
+                    });
                     break;
                 case 'days_select':
                     attribute_flag = 'days';
+                    this.setState({
+                        days_id: value
+                    });
                     break;
                 case 'time_period_select':
                     attribute_flag = 'time_period';
+                    this.setState({
+                        period_id: value
+                    });
                     break;
                 case 'building_select':
                     attribute_flag = 'building';
+                    this.setState({
+                        building_id: value
+                    });
                     break;
                 case 'room_select':
                     attribute_flag = 'rooms';
+                    this.setState({
+                        room_id: value
+                    });
                     break;
             }
             console.log(value);
@@ -203,7 +276,18 @@ class App extends React.Component {
                 </Form>
                 <Divider horizontal>Results</Divider>
                 { (this.state.submittedValue) &&
-                    <MasterTable search_value={this.state.submittedValue} attribute_flag={this.state.attributeFlag} />
+                    //<MasterTable search_value={this.state.submittedValue} attribute_flag={this.state.attributeFlag} />
+                    <MasterTable
+                        semester_id={this.state.semester_id}
+                        department_id={this.state.department_id}
+                        faculty_id={this.state.faculty_id}
+                        days_id={this.state.days_id}
+                        period_id={this.state.period_id}
+                        building_id={this.state.building_id}
+                        room_id={this.state.room_id}
+                        course_name={this.state.course_name}
+
+                    />
                 }
             </Container>
         );

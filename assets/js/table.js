@@ -11,7 +11,15 @@ class MasterTable extends React.Component {
         this.state = {
             attribute_flag: this.props.attribute_flag,
             isLoading: true,
-            search_value: this.props.search_value
+            search_value: this.props.search_value,
+            semester_id: this.props.semester_id,
+            department_id: this.props.department_id,
+            faculty_id: this.props.faculty_id,
+            days_id: this.props.days_id,
+            period_id: this.props.period_id,
+            building_id: this.props.building_id,
+            room_id: this.props.room_id,
+            course_name: this.props.course_name
         };
         // this.onBlur = this.onBlur.bind(this);
         // this.handleInputChange = this.handleInputChange.bind(this);
@@ -19,7 +27,26 @@ class MasterTable extends React.Component {
     }
 
     componentDidMount(){
-         fetch("/student_system/student_system_api/get_schedule_data/"+ this.state.attribute_flag +"/" + this.state.search_value +"/")
+         const postData = {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'Accept': 'application/json'
+             },
+             body: JSON.stringify({
+                semester_id: this.state.semester_id,
+                department_id: this.state.department_id,
+                faculty_id: this.state.faculty_id,
+                days_id: this.state.days_id,
+                building_id: this.state.building_id,
+                period_id: this.state.period_id,
+                room_id: this.state.room_id,
+                course_name: this.state.course_name
+             })
+         };
+
+         //fetch("/student_system/student_system_api/get_schedule_data/"+ this.state.attribute_flag +"/" + this.state.search_value +"/")
+         fetch("/student_system/student_system_api/get_schedule_data/v2/", postData)
             .then((response) => {
                 if(!response.ok){
                     throw Error(response.statusText);
@@ -41,8 +68,29 @@ class MasterTable extends React.Component {
     }
 
     componentWillReceiveProps(nextProps){
-        if(this.props.search_value !== nextProps.search_value){
-             fetch("/student_system/student_system_api/get_schedule_data/"+ nextProps.attribute_flag +"/" + nextProps.search_value +"/")
+        if(this.props.semester_id !== nextProps.semester_id || this.props.department_id !== nextProps.department_id
+            || this.props.faculty_id !== nextProps.faculty_id || this.props.days_id !== nextProps.days_id
+            || this.props.period_id !== nextProps.period_id || this.props.building_id !== nextProps.building_id
+            || this.props.room_id !== nextProps.room_id || this.props.course_name !== nextProps.course_name) {
+            const postData = {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     'Accept': 'application/json'
+                 },
+                 body: JSON.stringify({
+                    semester_id: nextProps.semester_id,
+                    department_id: nextProps.department_id,
+                    faculty_id: nextProps.faculty_id,
+                    days_id:  nextProps.days_id,
+                    building_id: nextProps.building_id,
+                    period_id: nextProps.period_id,
+                    room_id: nextProps.room_id,
+                    course_name: nextProps.course_name
+                 })
+             };
+             //fetch("/student_system/student_system_api/get_schedule_data/"+ nextProps.attribute_flag +"/" + nextProps.search_value +"/")
+            fetch("/student_system/student_system_api/get_schedule_data/v2/", postData)
             .then((response) => {
                 if(!response.ok){
                     throw Error(response.statusText);

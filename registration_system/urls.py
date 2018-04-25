@@ -46,8 +46,11 @@ urlpatterns = [
     url(r'^create_report/get_attendance_csv_report', core_views.get_attendance_csv_report, name='get_attendance_csv_report'),
     url(r'^master_schedule/$', core_views.MasterScheduleView.as_view(), name="master_schedule"),
     url(r'^student_system_api/get_general_data/$', core_views.get_master_schedule_input_data, name="ms_get_general_data"),
+    url(r'^student_system_api/get_schedule_data/v2/$', core_views.get_master_schedule_search_data_v2,
+        name='ms_get_schedule_data_v2'),
     url(r'^student_system_api/get_schedule_data/(?P<attribute_flag>[\w\-]+)/(?P<search_value>[\w\-]+)/$',
-        core_views.get_master_schedule_search_data, name='ms_get_schedule_data')
+        core_views.get_master_schedule_search_data, name='ms_get_schedule_data'),
+
 ]
 
 
